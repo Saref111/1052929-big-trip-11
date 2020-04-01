@@ -1,9 +1,9 @@
 # Личный проект «Большое путешествие» [![Build status][travis-image]][travis-url]
 
 * Студент: [Иван Боровик](https://up.htmlacademy.ru/ecmascript/11/user/1052929).
-* Наставник: [Сергей Сергеев](https://htmlacademy.ru/profile/id1205257).
 
----
+* Наставник: [Сергей Сергиенко](https://htmlacademy.ru/profile/id1205257).
+
 
 _Не удаляйте и не изменяйте папки и файлы:_
 _`.editorconfig`, `.gitattributes`, `.travis.yml`._
