@@ -26,15 +26,38 @@ const renderTripEvents = (arr) => {
   }
 };
 
+const closeFormHandler = (evt) => {
+  if (evt.key === `Escape`) {
+    const form = document.querySelector(`.trip-events__item`);
+    form.remove();
+    newEventButtonElement.disabled = false;
+    newEventButtonElement.addEventListener(`click`, addNewEventHandler);
+    document.removeEventListener(`keydown`, closeFormHandler);
+  }
+};
+
+const addNewEventHandler = () => {
+  // if (editForm) editForm.close()
+  const eventListElement = document.querySelector(`.trip-events__list`);
+
+  render(eventListElement, createEventEditFormElement(), `afterbegin`);
+  document.addEventListener(`keydown`, closeFormHandler);
+
+  //  reset filters - everything
+  //  reset sorting - default
+  newEventButtonElement.removeEventListener(`click`, addNewEventHandler);
+  newEventButtonElement.disabled = `true`;
+};
+
 const headerMainElement = document.querySelector(`.trip-main`);
 const tripControlsElement = headerMainElement.querySelector(`.trip-controls`);
 const menuHeaderElement = tripControlsElement.querySelector(`h2`);
 const tripEventsElement = document.querySelector(`.trip-events`);
+const newEventButtonElement = headerMainElement.querySelector(`.btn`);
 
 render(headerMainElement, createTripInfoElement(), `afterbegin`);
 render(menuHeaderElement, createMenuElement(), `afterend`);
 render(tripControlsElement, createFilterElement());
 render(tripEventsElement, createSortingElement());
 renderTripEvents(events);
-const eventListElement = document.querySelector(`.trip-events__list`);
-render(eventListElement, createEventEditFormElement(), `afterbegin`);
+newEventButtonElement.addEventListener(`click`, addNewEventHandler);
