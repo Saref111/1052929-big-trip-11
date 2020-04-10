@@ -1,3 +1,4 @@
+import {getEventObjects} from "./mock/event.js";
 import {createTripInfoElement} from "./components/trip-info.js";
 import {createMenuElement} from "./components/menu.js";
 import {createFilterElement} from "./components/filter.js";
@@ -6,6 +7,10 @@ import {createDaysListElement} from "./components/day-list.js";
 import {createDayElement} from "./components/day.js";
 import {createEventElement} from "./components/event.js";
 import {createEventEditFormElement} from "./components/event-edit-form.js";
+
+const events = getEventObjects(20);
+console.log(events);
+
 
 const render = (container, component, place = `beforeend`) => {
   container.insertAdjacentHTML(place, component);
