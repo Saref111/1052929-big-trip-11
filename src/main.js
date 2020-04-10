@@ -9,22 +9,20 @@ import {createEventElement} from "./components/event.js";
 import {createEventEditFormElement} from "./components/event-edit-form.js";
 
 const events = getEventObjects(20);
-console.log(events);
-
 
 const render = (container, component, place = `beforeend`) => {
   container.insertAdjacentHTML(place, component);
 };
 
-const renderTripEvents = (eventsAmount) => {
+const renderTripEvents = (arr) => {
   render(tripEventsElement, createDaysListElement());
   const daysListElement = tripEventsElement.querySelector(`.trip-days`);
 
   render(daysListElement, createDayElement());
   const eventListElement = daysListElement.querySelector(`.trip-events__list`);
 
-  for (let i = 0; i < eventsAmount; i++) {
-    render(eventListElement, createEventElement());
+  for (let event of arr) {
+    render(eventListElement, createEventElement(event));
   }
 };
 
@@ -37,6 +35,6 @@ render(headerMainElement, createTripInfoElement(), `afterbegin`);
 render(menuHeaderElement, createMenuElement(), `afterend`);
 render(tripControlsElement, createFilterElement());
 render(tripEventsElement, createSortingElement());
-renderTripEvents(3);
+renderTripEvents(events);
 const eventListElement = document.querySelector(`.trip-events__list`);
 render(eventListElement, createEventEditFormElement(), `afterbegin`);

@@ -1,11 +1,40 @@
-export const createEventElement = () => {
+const getTitleByType = (type, place) => {
+  let title = ``;
+
+  if (type === `sightseeing` || type === `restaurant` || type === `check-in`) {
+
+    title = `${type[0].toUpperCase() + type.slice(1)} in ${place}`;
+  } else {
+    title = `${type[0].toUpperCase() + type.slice(1)} to ${place}`;
+  }
+
+  return title;
+};
+
+const getOffers = (arr) => {
+  const activeOffers = arr.filter((it) => it.active).slice(1, 3);
+
+  return activeOffers.map((it) => {
+    return (
+      `<li class="event__offer">
+        <span class="event__offer-title">${it.text}</span>
+        &plus;
+        &euro;&nbsp;<span class="event__offer-price">${it.price}</span>
+      </li>`
+    );
+  }).join(`\n`);
+};
+
+export const createEventElement = (object) => {
+  let {type, place, offers} = object;
+
   return (
     `<li class="trip-events__item">
       <div class="event">
         <div class="event__type">
-          <img class="event__type-icon" width="42" height="42" src="img/icons/taxi.png" alt="Event type icon">
+          <img class="event__type-icon" width="42" height="42" src="img/icons/${type}.png" alt="Event type icon">
         </div>
-        <h3 class="event__title">Taxi to Amsterdam</h3>
+        <h3 class="event__title">${getTitleByType(type, place)}</h3>
 
         <div class="event__schedule">
           <p class="event__time">
@@ -22,11 +51,7 @@ export const createEventElement = () => {
 
         <h4 class="visually-hidden">Offers:</h4>
         <ul class="event__selected-offers">
-          <li class="event__offer">
-            <span class="event__offer-title">Order Uber</span>
-            &plus;
-            &euro;&nbsp;<span class="event__offer-price">20</span>
-          </li>
+          ${getOffers(offers)}
         </ul>
 
         <button class="event__rollup-btn" type="button">

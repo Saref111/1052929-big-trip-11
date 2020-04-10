@@ -1,4 +1,4 @@
-import {TYPES, CITIES, OFFERS, getInfo, PICTURE} from "../const.js";
+import {TYPES, CITIES, getOffers, getInfo, PICTURE} from "../const.js";
 import {getRandomArrayElement} from "../util.js";
 
 export const getEventObjects = (count) => {
@@ -9,7 +9,7 @@ export const getEventObjects = (count) => {
 
     object.type = getRandomArrayElement(TYPES);
     object.place = getRandomArrayElement(CITIES);
-    object.offers = OFFERS;
+    object.offers = getOffers();
     object.info = getInfo();
     object.pic = PICTURE;
 

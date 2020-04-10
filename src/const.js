@@ -1,32 +1,9 @@
-const TYPES = [`taxi`, `bus`, `train`, `ship`, `transport`, `drive`, `flight`, `check`, `sightseeing`, `restuarant`];
+const TYPES = [`taxi`, `bus`, `train`, `ship`, `transport`, `drive`, `flight`, `check-in`, `sightseeing`, `restaurant`];
 const CITIES = [`Amsterdam`, `Chamonix`, `Geneva`];
-const OFFERS = [
-  {
-    name: `luggage`,
-    price: 30,
-    active: Math.random() > 0.5,
-  },
-  {
-    name: `comfort`,
-    price: 100,
-    active: Math.random() > 0.5,
-  },
-  {
-    name: `meal`,
-    price: 15,
-    active: Math.random() > 0.5,
-  },
-  {
-    name: `seats`,
-    price: 5,
-    active: Math.random() > 0.5,
-  },
-  {
-    name: `train`,
-    price: 40,
-    active: Math.random() > 0.5,
-  },
-];
+
+
+const PICTURE = `http://picsum.photos/248/152?r=${Math.random()}`;
+
 const getInfo = () => {
   const DESTINATION_INFO = [
     `Lorem ipsum dolor sit amet, consectetur adipiscing elit. `,
@@ -43,6 +20,47 @@ const getInfo = () => {
   return DESTINATION_INFO.map((it) => Math.random() > 0.5 ? it : undefined).join(``);
 };
 
-const PICTURE = `http://picsum.photos/248/152?r=${Math.random()}`;
+const getOffers = () => {
+  const OFFERS = [
+    {
+      name: `luggage`,
+      text: `Add luggage`,
+      price: 30,
+      active: Math.random() > 0.5,
+    },
+    {
+      name: `comfort`,
+      text: `Switch to comfort class`,
+      price: 100,
+      active: Math.random() > 0.5,
+    },
+    {
+      name: `meal`,
+      text: `Add meal`,
+      price: 15,
+      active: Math.random() > 0.5,
+    },
+    {
+      name: `seats`,
+      text: `Choose sits`,
+      price: 5,
+      active: Math.random() > 0.5,
+    },
+    {
+      name: `train`,
+      text: `Travel by train`,
+      price: 40,
+      active: Math.random() > 0.5,
+    },
+    {
+      name: `uber`,
+      text: `Order Uber`,
+      price: 20,
+      active: Math.random() > 0.5,
+    },
+  ];
 
-export {TYPES, CITIES, OFFERS, getInfo, PICTURE};
+  return OFFERS;
+};
+
+export {TYPES, CITIES, getOffers, getInfo, PICTURE};
