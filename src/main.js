@@ -26,13 +26,19 @@ const renderTripEvents = (arr) => {
   }
 };
 
-const closeFormHandler = (evt) => {
-  if (evt.key === `Escape`) {
+const closeFormHandler = () => {
+
     const form = document.querySelector(`.trip-events__item`);
     form.remove();
     newEventButtonElement.disabled = false;
     newEventButtonElement.addEventListener(`click`, addNewEventHandler);
-    document.removeEventListener(`keydown`, closeFormHandler);
+    document.removeEventListener(`keydown`, closeFormOnEscHandler);
+
+};
+
+const closeFormOnEscHandler = (evt) => {
+  if (evt.key === `Escape`) {
+    closeFormHandler();
   }
 };
 
@@ -77,10 +83,15 @@ const addNewEventHandler = () => {
   const eventListElement = document.querySelector(`.trip-events__list`);
 
   render(eventListElement, createEventEditFormElement(), `afterbegin`);
-  document.addEventListener(`keydown`, closeFormHandler);
+  document.addEventListener(`keydown`, closeFormOnEscHandler);
 
   const formElement = document.querySelector(`.event`);
   formElement.addEventListener(`submit`, saveEventHandler);
+
+  const deleteButtonElement = formElement.querySelector(`.event__reset-btn`);
+  console.log(deleteButtonElement);
+
+  deleteButtonElement.addEventListener(`click`, closeFormHandler);
   //  reset filters - everything
   //  reset sorting - default
   newEventButtonElement.removeEventListener(`click`, addNewEventHandler);

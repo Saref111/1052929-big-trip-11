@@ -12,7 +12,6 @@ const getTitleByType = (type, place) => {
 };
 
 const getOffers = (arr) => {
-  debugger
   const activeOffers = arr.filter((it) => it.active).slice(0, 2);
 
   return activeOffers.map((it) => {
