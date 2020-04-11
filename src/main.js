@@ -15,15 +15,14 @@ const render = (container, component, place = `beforeend`) => {
 };
 
 const renderTripEvents = (arr) => {
-  //  rendering of the biggest list should be only once
-  render(tripEventsElement, createDaysListElement());
   const daysListElement = tripEventsElement.querySelector(`.trip-days`);
 
   render(daysListElement, createDayElement());
-  const eventListElement = daysListElement.querySelector(`.trip-events__list`);
+  const eventListElements = daysListElement.querySelectorAll(`.trip-events__list`);
+  const lastEventListElement = eventListElements[eventListElements.length - 1]; // temporary
 
   for (let event of arr) {
-    render(eventListElement, createEventElement(event));
+    render(lastEventListElement, createEventElement(event));
   }
 };
 
@@ -98,5 +97,7 @@ render(headerMainElement, createTripInfoElement(), `afterbegin`);
 render(menuHeaderElement, createMenuElement(), `afterend`);
 render(tripControlsElement, createFilterElement());
 render(tripEventsElement, createSortingElement());
+render(tripEventsElement, createDaysListElement());
 renderTripEvents(events);
 newEventButtonElement.addEventListener(`click`, addNewEventHandler);
+
