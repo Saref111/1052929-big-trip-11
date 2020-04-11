@@ -6,7 +6,7 @@ import {createSortingElement} from "./components/sorting.js";
 import {createDaysListElement} from "./components/day-list.js";
 import {createDayElement} from "./components/day.js";
 import {createEventElement} from "./components/event.js";
-import {createEventEditFormElement} from "./components/event-edit-form.js";
+import {createAddEventFormElement} from "./components/event-edit-form.js";
 import {getOffers} from "./const.js";
 const events = getEventObjects(20);
 
@@ -27,13 +27,11 @@ const renderTripEvents = (arr) => {
 };
 
 const closeFormHandler = () => {
-
-    const form = document.querySelector(`.trip-events__item`);
-    form.remove();
-    newEventButtonElement.disabled = false;
-    newEventButtonElement.addEventListener(`click`, addNewEventHandler);
-    document.removeEventListener(`keydown`, closeFormOnEscHandler);
-
+  const form = document.querySelector(`.trip-events__item`);
+  form.remove();
+  newEventButtonElement.disabled = false;
+  newEventButtonElement.addEventListener(`click`, addNewEventHandler);
+  document.removeEventListener(`keydown`, closeFormOnEscHandler);
 };
 
 const closeFormOnEscHandler = (evt) => {
@@ -80,16 +78,14 @@ const saveEventHandler = (evt) => {
 
 const addNewEventHandler = () => {
   // if (editForm) editForm.close()
-  const eventListElement = document.querySelector(`.trip-events__list`);
-
-  render(eventListElement, createEventEditFormElement(), `afterbegin`);
+  const sortingFormElement = document.querySelector(`.trip-sort`);
+  render(sortingFormElement, createAddEventFormElement(), `afterend`);
   document.addEventListener(`keydown`, closeFormOnEscHandler);
 
   const formElement = document.querySelector(`.event`);
   formElement.addEventListener(`submit`, saveEventHandler);
 
   const deleteButtonElement = formElement.querySelector(`.event__reset-btn`);
-  console.log(deleteButtonElement);
 
   deleteButtonElement.addEventListener(`click`, closeFormHandler);
   //  reset filters - everything
