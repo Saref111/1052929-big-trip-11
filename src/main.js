@@ -6,8 +6,9 @@ import {createSortingElement} from "./components/sorting.js";
 import {createDaysListElement} from "./components/day-list.js";
 import {createDayElement} from "./components/day.js";
 import {createEventElement} from "./components/event.js";
-import {createAddEventFormElement} from "./components/event-edit-form.js";
+import {createAddEventFormElement, createFirstEventFormElement} from "./components/event-edit-form.js";
 import {getOffers} from "./const.js";
+
 const events = getEventObjects(20);
 
 const render = (container, component, place = `beforeend`) => {
@@ -19,7 +20,7 @@ const renderTripEvents = (arr) => {
 
   render(daysListElement, createDayElement());
   const eventListElements = daysListElement.querySelectorAll(`.trip-events__list`);
-  const lastEventListElement = eventListElements[eventListElements.length - 1]; // temporary
+  const lastEventListElement = eventListElements[eventListElements.length - 1]; // temporary. need to find the day element
 
   for (let event of arr) {
     render(lastEventListElement, createEventElement(event));
@@ -74,6 +75,8 @@ const saveEventHandler = (evt) => {
   getOffersArray(formData, newEventObject);
 
   renderTripEvents([newEventObject]);
+
+  closeFormHandler();
 };
 
 const addNewEventHandler = () => {
@@ -103,8 +106,13 @@ const newEventButtonElement = headerMainElement.querySelector(`.btn`);
 render(headerMainElement, createTripInfoElement(), `afterbegin`);
 render(menuHeaderElement, createMenuElement(), `afterend`);
 render(tripControlsElement, createFilterElement());
-render(tripEventsElement, createSortingElement());
-render(tripEventsElement, createDaysListElement());
-renderTripEvents(events);
+
+if (!events) {
+  render(tripEventsElement, createFirstEventFormElement());
+} else {
+  render(tripEventsElement, createSortingElement());
+  render(tripEventsElement, createDaysListElement());
+  renderTripEvents(events);
+}
 newEventButtonElement.addEventListener(`click`, addNewEventHandler);
 
