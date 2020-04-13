@@ -6,17 +6,28 @@ import {createSortingElement} from "./components/sorting.js";
 import {createDaysListElement} from "./components/day-list.js";
 import {createDayElement} from "./components/day.js";
 import {createEventElement} from "./components/event.js";
-import {createAddEventFormElement, createFirstEventFormElement} from "./components/event-edit-form.js";
+import {createAddEventFormElement, createFirstEventFormElement, createNoPointsText} from "./components/event-edit-form.js";
 import {getOffers} from "./const.js";
+import {addHandlerBySelector, removeHandlerBySelector} from "./util.js";
 
-const events = getEventObjects(20);
+const events = undefined;// getEventObjects(20);
 
 const render = (container, component, place = `beforeend`) => {
   container.insertAdjacentHTML(place, component);
 };
 
 const renderTripEvents = (arr) => {
-  const daysListElement = tripEventsElement.querySelector(`.trip-days`);
+  let daysListElement = tripEventsElement.querySelector(`.trip-days`);
+  debugger
+  if (!daysListElement) {
+    document.querySelector(`.trip-events__msg`).remove();
+
+    render(tripEventsElement, createSortingElement());
+    render(tripEventsElement, createDaysListElement());
+
+    daysListElement = tripEventsElement.querySelector(`.trip-days`);
+    newEventButtonElement.removeEventListener(`click`, addFirstEventHandler);
+  }
 
   render(daysListElement, createDayElement());
   const eventListElements = daysListElement.querySelectorAll(`.trip-events__list`);
@@ -59,7 +70,7 @@ const getOffersArray = (dataObj, newObj) => {
 
 const saveEventHandler = (evt) => {
   evt.preventDefault();
-
+  debugger
   const formData = Object.fromEntries(new FormData(evt.target).entries());
 
   const newEventObject = {
@@ -85,16 +96,19 @@ const addNewEventHandler = () => {
   render(sortingFormElement, createAddEventFormElement(), `afterend`);
   document.addEventListener(`keydown`, closeFormOnEscHandler);
 
-  const formElement = document.querySelector(`.event`);
-  formElement.addEventListener(`submit`, saveEventHandler);
-
-  const deleteButtonElement = formElement.querySelector(`.event__reset-btn`);
-
-  deleteButtonElement.addEventListener(`click`, closeFormHandler);
+  addHandlerBySelector(`.event`, saveEventHandler, `submit`);
+  addHandlerBySelector(`.event__reset-btn`, closeFormHandler);
   //  reset filters - everything
   //  reset sorting - default
   newEventButtonElement.removeEventListener(`click`, addNewEventHandler);
   newEventButtonElement.disabled = `true`;
+};
+
+const addFirstEventHandler = () => {
+  render(tripEventsElement, createFirstEventFormElement(), `afterbegin`);
+  newEventButtonElement.disabled = true;
+  addHandlerBySelector(`.event`, saveEventHandler, `submit`);
+  addHandlerBySelector(`.event__reset-btn`, closeFormHandler);
 };
 
 const headerMainElement = document.querySelector(`.trip-main`);
@@ -108,11 +122,12 @@ render(menuHeaderElement, createMenuElement(), `afterend`);
 render(tripControlsElement, createFilterElement());
 
 if (!events) {
-  render(tripEventsElement, createFirstEventFormElement());
+  render(tripEventsElement, createNoPointsText());
+  newEventButtonElement.addEventListener(`click`, addFirstEventHandler);
+
 } else {
   render(tripEventsElement, createSortingElement());
   render(tripEventsElement, createDaysListElement());
   renderTripEvents(events);
+  newEventButtonElement.addEventListener(`click`, addNewEventHandler);
 }
-newEventButtonElement.addEventListener(`click`, addNewEventHandler);
-
