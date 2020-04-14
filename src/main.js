@@ -33,9 +33,7 @@ const renderTripEvents = (arr) => {
   const eventListElements = daysListElement.querySelectorAll(`.trip-events__list`);
   const lastEventListElement = eventListElements[eventListElements.length - 1]; // temporary. need to find the day element
 
-  for (let event of arr) {
-    render(lastEventListElement, createEventElement(event));
-  }
+  arr.forEach((event) => render(lastEventListElement, createEventElement(event)));
 };
 
 const closeFormHandler = () => {
@@ -52,20 +50,19 @@ const closeFormOnEscHandler = (evt) => {
   }
 };
 
+const pushOffer = (eventObject, offer) => {
+  offer.active = true;
+  eventObject.offers.push(offer);
+};
+
 const getOffersArray = (dataObj, newObj) => {
   const keys = Object.keys(dataObj);
   const filteredKeys = keys.filter((it) => it.startsWith(`event-offer`)).map((it) => it.slice(12));
 
-  for (const key of filteredKeys) {
+  filteredKeys.forEach((key) => {
     let offers = getOffers();
-    offers.forEach((it) => {
-      if (it.name === key) {
-        it.active = true;
-        newObj.offers.push(it);
-      }
-    });
-  }
-
+    offers.forEach((it) => it.name.includes(key) ? pushOffer(newObj, it) : undefined);
+  });
 };
 
 const saveEventHandler = (evt) => {
