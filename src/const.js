@@ -5,7 +5,7 @@ const CITIES = [`Amsterdam`, `Chamonix`, `Geneva`];
 const PICTURE = `http://picsum.photos/248/152?r=${Math.random()}`;
 
 const getInfo = () => {
-  const DESTINATION_INFO = [
+  return [
     `Lorem ipsum dolor sit amet, consectetur adipiscing elit. `,
     `Cras aliquet varius magna, non porta ligula feugiat eget. Fusce tristique felis at fermentum pharetra. `,
     `Aliquam id orci ut lectus varius viverra. `,
@@ -15,9 +15,7 @@ const getInfo = () => {
     `Aliquam erat volutpat. `,
     `Nunc fermentum tortor ac porta dapibus. `,
     `In rutrum ac purus sit amet tempus. `,
-  ];
-
-  return DESTINATION_INFO.map((it) => Math.random() > 0.5 ? it : undefined).join(``);
+  ].map((it) => Math.random() > 0.5 ? it : undefined).join(``);
 };
 
 const getOffers = () => {
