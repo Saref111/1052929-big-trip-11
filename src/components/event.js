@@ -1,15 +1,15 @@
-const getTitleByType = (type, place) => {
-  let title = ``;
-
-  if (type === `sightseeing` || type === `restaurant` || type === `check-in`) {
-
-    title = `${type[0].toUpperCase() + type.slice(1)} in ${place}`;
-  } else {
-    title = `${type[0].toUpperCase() + type.slice(1)} to ${place}`;
+const capitalize = (string) => `${string[0].toUpperCase()}${string.slice(1)}`;
+const getPreposition = (type) => {
+  switch (type) {
+    case `sightseeing`:
+    case `restaurant`:
+    case `check-in`:
+      return ` in `;
+    default:
+      return ` to `;
   }
-
-  return title;
 };
+const getTitleByType = (type, place) => `${capitalize(type)}${getPreposition(type)}${place}`;
 
 const getOffers = (arr) => {
   const activeOffers = arr.filter((it) => it.active).slice(0, 2);
