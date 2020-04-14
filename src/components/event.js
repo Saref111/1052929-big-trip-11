@@ -1,18 +1,9 @@
 const capitalize = (string) => `${string[0].toUpperCase()}${string.slice(1)}`;
-const getPreposition = (type) => {
-  switch (type) {
-    case `sightseeing`:
-    case `restaurant`:
-    case `check-in`:
-      return ` in `;
-    default:
-      return ` to `;
-  }
-};
+const getPreposition = (type) => [`sightseeing`, `restaurant`, `check-in`].includes(type) ? ` in ` : ` to `;
 const getTitleByType = (type, place) => `${capitalize(type)}${getPreposition(type)}${place}`;
 
 const getOffers = (arr) => {
-  const activeOffers = arr.filter((it) => it.active).slice(0, 2);
+  const activeOffers = arr.filter((it) => it.active).slice(0, 3);
 
   return activeOffers.map((it) => {
     return (
