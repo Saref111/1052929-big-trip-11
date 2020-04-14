@@ -8,7 +8,7 @@ import {createDayElement} from "./components/day.js";
 import {createEventElement} from "./components/event.js";
 import {createEventFormElement, createNoPointsText} from "./components/event-edit-form.js";
 import {getOffers} from "./const.js";
-import {addHandlerBySelector, removeHandlerBySelector} from "./util.js";
+import {addEventListenerBySelector, removeEventListenerBySelector} from "./util.js";
 
 const events = getEventObjects(20);
 
@@ -93,8 +93,8 @@ const addNewEventHandler = () => {
   render(sortingFormElement, createEventFormElement(`create`), `afterend`);
   document.addEventListener(`keydown`, closeFormOnEscHandler);
 
-  addHandlerBySelector(`.event`, saveEventHandler, `submit`);
-  addHandlerBySelector(`.event__reset-btn`, closeFormHandler);
+  addEventListenerBySelector(`.event--edit`, saveEventHandler, `submit`);
+  addEventListenerBySelector(`.event__reset-btn`, closeFormHandler);
   //  reset filters - everything
   //  reset sorting - default
   newEventButtonElement.removeEventListener(`click`, addNewEventHandler);
@@ -104,8 +104,8 @@ const addNewEventHandler = () => {
 const addFirstEventHandler = () => {
   render(tripEventsElement, createEventFormElement(`first`), `afterbegin`);
   newEventButtonElement.disabled = true;
-  addHandlerBySelector(`.event`, saveEventHandler, `submit`);
-  addHandlerBySelector(`.event__reset-btn`, closeFormHandler);
+  addEventListenerBySelector(`.event--edit`, saveEventHandler, `submit`);
+  addEventListenerBySelector(`.event__reset-btn`, closeFormHandler);
 };
 
 const headerMainElement = document.querySelector(`.trip-main`);

@@ -1,12 +1,17 @@
 const getRandomInt = (max) => Math.floor(Math.random() * max);
 const getRandomArrayElement = (arr) => arr[getRandomInt(arr.length)];
-const addHandlerBySelector = (selector, handler, type = `click`) => {
-  const element = document.querySelector(selector);
-  element.addEventListener(type, handler);
-};
-const removeHandlerBySelector = (selector, handler, type = `click`) => {
-  const element = document.querySelector(selector);
-  element.removeEventListener(type, handler);
+const addEventListenerBySelector = (selector, handler, type = `click`, ctx = document) => {
+  const elements = ctx.querySelectorAll(selector);
+  if (elements) {
+    elements.forEach((it) => it.addEventListener(type, handler));
+  }
 };
 
-export {getRandomArrayElement, getRandomInt, addHandlerBySelector, removeHandlerBySelector};
+const removeEventListenerBySelector = (selector, handler, type = `click`, ctx = document) => {
+  const elements = ctx.querySelectorAll(selector);
+  if (elements) {
+    elements.forEach((it) => it.removeEventListener(type, handler));
+  }
+};
+
+export {getRandomArrayElement, getRandomInt, addEventListenerBySelector, removeEventListenerBySelector};
