@@ -6,11 +6,11 @@ import {createSortingElement} from "./components/sorting.js";
 import {createDaysListElement} from "./components/day-list.js";
 import {createDayElement} from "./components/day.js";
 import {createEventElement} from "./components/event.js";
-import {createAddEventFormElement, createFirstEventFormElement, createNoPointsText} from "./components/event-edit-form.js";
+import {createEventFormElement, createNoPointsText} from "./components/event-edit-form.js";
 import {getOffers} from "./const.js";
 import {addHandlerBySelector, removeHandlerBySelector} from "./util.js";
 
-const events = undefined;// getEventObjects(20);
+const events = getEventObjects(20);
 
 const render = (container, component, place = `beforeend`) => {
   container.insertAdjacentHTML(place, component);
@@ -18,7 +18,7 @@ const render = (container, component, place = `beforeend`) => {
 
 const renderTripEvents = (arr) => {
   let daysListElement = tripEventsElement.querySelector(`.trip-days`);
-  debugger
+
   if (!daysListElement) {
     document.querySelector(`.trip-events__msg`).remove();
 
@@ -70,7 +70,7 @@ const getOffersArray = (dataObj, newObj) => {
 
 const saveEventHandler = (evt) => {
   evt.preventDefault();
-  debugger
+
   const formData = Object.fromEntries(new FormData(evt.target).entries());
 
   const newEventObject = {
@@ -93,7 +93,7 @@ const saveEventHandler = (evt) => {
 const addNewEventHandler = () => {
   // if (editForm) editForm.close()
   const sortingFormElement = document.querySelector(`.trip-sort`);
-  render(sortingFormElement, createAddEventFormElement(), `afterend`);
+  render(sortingFormElement, createEventFormElement(`create`), `afterend`);
   document.addEventListener(`keydown`, closeFormOnEscHandler);
 
   addHandlerBySelector(`.event`, saveEventHandler, `submit`);
@@ -105,7 +105,7 @@ const addNewEventHandler = () => {
 };
 
 const addFirstEventHandler = () => {
-  render(tripEventsElement, createFirstEventFormElement(), `afterbegin`);
+  render(tripEventsElement, createEventFormElement(`first`), `afterbegin`);
   newEventButtonElement.disabled = true;
   addHandlerBySelector(`.event`, saveEventHandler, `submit`);
   addHandlerBySelector(`.event__reset-btn`, closeFormHandler);
