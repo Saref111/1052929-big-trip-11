@@ -50,14 +50,15 @@ const closeFormOnEscHandler = (evt) => {
   }
 };
 
+const filterOffers = (dataObj) => Object.keys(dataObj).filter((it) => it.startsWith(`event-offer`)).map((it) => it.slice(12)); // the '12' is the length of `event-offer`
+
 const pushOffer = (eventObject, offer) => {
   offer.active = true;
   eventObject.offers.push(offer);
 };
 
 const getOffersArray = (dataObj, newObj) => {
-  const keys = Object.keys(dataObj);
-  const filteredKeys = keys.filter((it) => it.startsWith(`event-offer`)).map((it) => it.slice(12));
+  const filteredKeys = filterOffers(dataObj);
 
   filteredKeys.forEach((key) => {
     let offers = getOffers();
