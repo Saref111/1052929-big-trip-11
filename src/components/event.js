@@ -16,8 +16,8 @@ const getOffers = (arr) => {
   }).join(`\n`);
 };
 
-export const createEventElement = (object) => {
-  let {type, place, offers} = object;
+export const createEventElement = (data) => {
+  let {type, place, offers} = data;
 
   return (
     `<li class="trip-events__item">
