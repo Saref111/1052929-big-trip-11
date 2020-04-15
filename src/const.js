@@ -2,7 +2,7 @@ const TYPES = [`taxi`, `bus`, `train`, `ship`, `transport`, `drive`, `flight`, `
 const CITIES = [`Amsterdam`, `Chamonix`, `Geneva`];
 
 
-const PICTURE = `http://picsum.photos/248/152?r=${Math.random()}`;
+const PICTURE = `http://picsum.photos/248/152?r=`;
 
 const getInfo = () => {
   return [

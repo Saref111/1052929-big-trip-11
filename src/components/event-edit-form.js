@@ -1,4 +1,27 @@
-const createEventDetails = () => {
+const createPicElements = (src, imgAmount) => {
+  let pics = ``;
+
+  for (let i = 0; i < imgAmount; i++) {
+    pics += `<img class="event__photo" src="${src}${Math.random()}" alt="Event photo">\n`;
+  }
+
+  return pics;
+};
+export const createDescriptionElement = (info, src, imgAmount) => {
+  return (
+    `<section class="event__section  event__section--destination">
+      <h3 class="event__section-title  event__section-title--destination">Destination</h3>
+      <p class="event__destination-description">${info}</p>
+
+      <div class="event__photos-container">
+        <div class="event__photos-tape">
+          ${createPicElements(src, imgAmount)}
+        </div>
+      </div>
+    </section>`
+  );
+};
+const createEventDetails = (mode) => {
   return (
     `<section class="event__details">
       <section class="event__section  event__section--offers">
@@ -52,20 +75,6 @@ const createEventDetails = () => {
         </div>
       </section>
 
-      <section class="event__section  event__section--destination">
-        <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-        <p class="event__destination-description">Geneva is a city in Switzerland that lies at the southern tip of expansive Lac Léman (Lake Geneva). Surrounded by the Alps and Jura mountains, the city has views of dramatic Mont Blanc.</p>
-
-        <div class="event__photos-container">
-          <div class="event__photos-tape">
-            <img class="event__photo" src="img/photos/1.jpg" alt="Event photo">
-            <img class="event__photo" src="img/photos/2.jpg" alt="Event photo">
-            <img class="event__photo" src="img/photos/3.jpg" alt="Event photo">
-            <img class="event__photo" src="img/photos/4.jpg" alt="Event photo">
-            <img class="event__photo" src="img/photos/5.jpg" alt="Event photo">
-          </div>
-        </div>
-      </section>
     </section>
   </form>`
   );
@@ -147,7 +156,7 @@ export const createEventFormElement = (mode) => {
         <label class="event__label  event__type-output" for="event-destination-1">
           Flight to
         </label>
-        <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="Geneva" list="destination-list-1">
+        <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${mode === `create` ? `` : `Geneva`}" list="destination-list-1">
         <datalist id="destination-list-1">
           <option value="Amsterdam"></option>
           <option value="Geneva"></option>
@@ -179,7 +188,7 @@ export const createEventFormElement = (mode) => {
       <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
       <button class="event__reset-btn" type="reset">${mode === `edit` ? `Delete` : `Cancel`}</button>
     </header>
-    ${mode === `first` ? `` : createEventDetails()}`
+    ${mode === `first` ? `` : createEventDetails(mode)}`
   );
 };
 

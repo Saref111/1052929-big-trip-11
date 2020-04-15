@@ -6,9 +6,9 @@ import {createSortingElement} from "./components/sorting.js";
 import {createDaysListElement} from "./components/day-list.js";
 import {createDayElement} from "./components/day.js";
 import {createEventElement} from "./components/event.js";
-import {createEventFormElement, createNoPointsText} from "./components/event-edit-form.js";
-import {getOffers} from "./const.js";
-import {addEventListenerBySelector, removeEventListenerBySelector} from "./util.js";
+import {createEventFormElement, createNoPointsText, createDescriptionElement} from "./components/event-edit-form.js";
+import {getOffers, getInfo, CITIES, PICTURE} from "./const.js";
+import {addEventListenerBySelector, removeEventListenerBySelector, getRandomInt} from "./util.js";
 
 const events = getEventObjects(20);
 
@@ -88,14 +88,30 @@ const saveEventHandler = (evt) => {
   closeFormHandler();
 };
 
+const changeTypeIconHandler = (evt) => {
+  if (evt.target.tagName === `INPUT`) {
+    const typeIcon = document.querySelector(`.event__type-btn`).querySelector(`img`);
+    typeIcon.src = `img/icons/${evt.target.value}.png`;
+  }
+};
+
+const getInfoHandler = (evt) => {
+  if (CITIES.includes(evt.target.value)) {
+    const eventFormElement = document.querySelector(`.event--edit`);
+    render(eventFormElement, createDescriptionElement(getInfo(), PICTURE, getRandomInt(5))); // 5 is a max amount of pictures
+
+  }
+};
+
 const addNewEventHandler = () => {
-  // if (editForm) editForm.close()
   const sortingFormElement = document.querySelector(`.trip-sort`);
   render(sortingFormElement, createEventFormElement(`create`), `afterend`);
   document.addEventListener(`keydown`, closeFormOnEscHandler);
 
   addEventListenerBySelector(`.event--edit`, saveEventHandler, `submit`);
   addEventListenerBySelector(`.event__reset-btn`, closeFormHandler);
+  addEventListenerBySelector(`.event__type-list`, changeTypeIconHandler);
+  addEventListenerBySelector(`.event__input--destination`, getInfoHandler, `change`);
   //  reset filters - everything
   //  reset sorting - default
   newEventButtonElement.removeEventListener(`click`, addNewEventHandler);
@@ -122,7 +138,6 @@ render(tripControlsElement, createFilterElement());
 if (!events) {
   render(tripEventsElement, createNoPointsText());
   newEventButtonElement.addEventListener(`click`, addFirstEventHandler);
-
 } else {
   render(tripEventsElement, createSortingElement());
   render(tripEventsElement, createDaysListElement());
