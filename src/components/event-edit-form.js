@@ -173,7 +173,7 @@ export const createEventFormElement = (mode, {type, place, price}) => {
 
       <div class="event__field-group  event__field-group--destination">
         <label class="event__label  event__type-output" for="event-destination-1">
-          ${type && place ? getTitleByType(type, ``) : `Flight to`}
+          ${type ? getTitleByType(type, ``) : `Flight to`}
         </label>
         <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${mode === `create` ? `` : place}" list="destination-list-1">
         <datalist id="destination-list-1">
@@ -201,7 +201,7 @@ export const createEventFormElement = (mode, {type, place, price}) => {
           <span class="visually-hidden">Price</span>
           €
         </label>
-        <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="">
+        <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${price}">
       </div>
 
       <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
