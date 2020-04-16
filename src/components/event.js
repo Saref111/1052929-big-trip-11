@@ -1,6 +1,6 @@
 const capitalize = (string) => `${string[0].toUpperCase()}${string.slice(1)}`;
 const getPreposition = (type) => [`sightseeing`, `restaurant`, `check-in`].includes(type) ? ` in ` : ` to `;
-const getTitleByType = (type, place) => `${capitalize(type)}${getPreposition(type)}${place}`;
+export const getTitleByType = (type, place) => `${capitalize(type)}${getPreposition(type)}${place}`;
 
 const getOffers = (arr) => {
   const activeOffers = arr.filter((it) => it.active).slice(0, 3);
@@ -17,15 +17,15 @@ const getOffers = (arr) => {
 };
 
 export const createEventElement = (data) => {
-  let {type, place, offers} = data;
+  let {type, place, offers, startTime, endTime, price} = data;
 
   return (
     `<li class="trip-events__item">
       <div class="event">
-        <div class="event__type">
+        <div class="event__type" id="${type}">
           <img class="event__type-icon" width="42" height="42" src="img/icons/${type}.png" alt="Event type icon">
         </div>
-        <h3 class="event__title">${getTitleByType(type, place)}</h3>
+        <h3 class="event__title" id="${place}">${getTitleByType(type, place)}</h3>
 
         <div class="event__schedule">
           <p class="event__time">
@@ -37,7 +37,7 @@ export const createEventElement = (data) => {
         </div>
 
         <p class="event__price">
-          &euro;&nbsp;<span class="event__price-value">20</span>
+          &euro;&nbsp;<span class="event__price-value">${price}</span>
         </p>
 
         <h4 class="visually-hidden">Offers:</h4>

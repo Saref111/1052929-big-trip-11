@@ -6,7 +6,7 @@ import {createSortingElement} from "./components/sorting.js";
 import {createDaysListElement} from "./components/day-list.js";
 import {createDayElement} from "./components/day.js";
 import {createEventElement} from "./components/event.js";
-import {createEventFormElement, createNoPointsText, createDescriptionElement} from "./components/event-edit-form.js";
+import {createEventFormElement, createNoPointsText, createDescriptionElement, createListItemForFormElement} from "./components/event-edit-form.js";
 import {getOffers, getInfo, CITIES, PICTURE} from "./const.js";
 import {addEventListenerBySelector, removeEventListenerBySelector, getRandomInt} from "./util.js";
 
@@ -66,10 +66,8 @@ const getOffersArray = (dataObj, newObj) => {
   });
 };
 
-const saveEventHandler = (evt) => {
-  evt.preventDefault();
-
-  const formData = Object.fromEntries(new FormData(evt.target).entries());
+const createDataObject = (formElement) => {
+  const formData = Object.fromEntries(new FormData(formElement).entries());
 
   const newEventObject = {
     type: formData[`event-type`],
@@ -80,6 +78,14 @@ const saveEventHandler = (evt) => {
     favorite: formData[`event-favorite`],
     offers: [],
   };
+
+  return {formData, newEventObject};
+};
+
+const saveEventHandler = (evt) => {
+  evt.preventDefault();
+
+  const {formData, newEventObject} = createDataObject(evt.target);
 
   getOffersArray(formData, newEventObject);
 
@@ -96,16 +102,20 @@ const changeTypeIconHandler = (evt) => {
 };
 
 const getInfoHandler = (evt) => {
+  const eventDescriptionElement = document.querySelector(`.event__section--destination`);
+  if (eventDescriptionElement) {
+    eventDescriptionElement.remove();
+  }
+
   if (CITIES.includes(evt.target.value)) {
     const eventFormElement = document.querySelector(`.event--edit`);
     render(eventFormElement, createDescriptionElement(getInfo(), PICTURE, getRandomInt(5))); // 5 is a max amount of pictures
-
   }
 };
 
 const addNewEventHandler = () => {
   const sortingFormElement = document.querySelector(`.trip-sort`);
-  render(sortingFormElement, createEventFormElement(`create`), `afterend`);
+  render(sortingFormElement, createEventFormElement(`create`, {}), `afterend`);
   document.addEventListener(`keydown`, closeFormOnEscHandler);
 
   addEventListenerBySelector(`.event--edit`, saveEventHandler, `submit`);
@@ -118,11 +128,58 @@ const addNewEventHandler = () => {
   newEventButtonElement.disabled = `true`;
 };
 
+const closeIfExistEditFormElement = (evt) => {
+  let formElement = document.querySelector(`.event--edit`);
+  if (!formElement) {
+    return undefined;
+  } else if (formElement.id === `create`) {
+    formElement.remove();
+
+    newEventButtonElement.disabled = false;
+    newEventButtonElement.addEventListener(`click`, addNewEventHandler);
+    document.removeEventListener(`keydown`, closeFormOnEscHandler);
+  } else if (formElement.id === `edit`) {
+    console.log(evt);
+
+  }
+};
+
 const addFirstEventHandler = () => {
   render(tripEventsElement, createEventFormElement(`first`), `afterbegin`);
   newEventButtonElement.disabled = true;
   addEventListenerBySelector(`.event--edit`, saveEventHandler, `submit`);
   addEventListenerBySelector(`.event__reset-btn`, closeFormHandler);
+};
+
+const closeEditFormHandler = (evt) => {
+  let parentListItem = evt.target.closest(`li`);
+  console.log(evt);
+
+
+};
+
+const findDataObjectFromListItem = (listItem) => {
+  return {
+    type: listItem.querySelector(`.event__type`).id,
+    place: listItem.querySelector(`.event__title`).id,
+    price: listItem.querySelector(`.event__price-value`).textContent,
+  };
+};
+
+const openEditFormHandler = (evt) => {
+  closeIfExistEditFormElement(evt);
+
+  const parentListItemElement = evt.target.closest(`li`);
+
+  const formDataObject = findDataObjectFromListItem(parentListItemElement);
+  console.log(formDataObject);
+
+  parentListItemElement.style = `display: none;`;
+  removeEventListenerBySelector(`.event__rollup-btn`, openEditFormHandler, `click`, parentListItemElement); // do we need to delete this handler??
+  render(parentListItemElement, createListItemForFormElement(`edit`, formDataObject), `afterend`);
+  addEventListenerBySelector(`.event__rollup-btn`, closeEditFormHandler, `click`, parentListItemElement);
+
+
 };
 
 const headerMainElement = document.querySelector(`.trip-main`);
@@ -143,4 +200,5 @@ if (!events) {
   render(tripEventsElement, createDaysListElement());
   renderTripEvents(events);
   newEventButtonElement.addEventListener(`click`, addNewEventHandler);
+  addEventListenerBySelector(`.event__rollup-btn`, openEditFormHandler);
 }
