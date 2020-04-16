@@ -143,7 +143,7 @@ const closeIfExistEditFormElement = () => {
     const hiddenEvent = document.querySelector(`#hidden-event`);
     hiddenEvent.style = ``;
     hiddenEvent.id = ``;
-    addEventListenerBySelector(`.event__rollup-btn`, openEditFormHandler, `click`, hiddenEvent);
+    // addEventListenerBySelector(`.event__rollup-btn`, openEditFormHandler, `click`, hiddenEvent); // или просто оставить? (начало вопроса на строке 183)
   }
 
   return undefined; // как сделать так, чтобы не возвращать undefined?
@@ -180,11 +180,8 @@ const openEditFormHandler = (evt) => {
 
   parentListItemElement.style = `display: none;`;
   parentListItemElement.id = `hidden-event`;
-  removeEventListenerBySelector(`.event__rollup-btn`, openEditFormHandler, `click`, parentListItemElement); // do we need to delete this handler??
+  // removeEventListenerBySelector(`.event__rollup-btn`, openEditFormHandler, `click`, parentListItemElement); // удалять ли здесь этот обработчки, чтобы потом опять добавлять его на строке 146?
   render(parentListItemElement, createListItemForFormElement(`edit`, formDataObject), `afterend`);
-  addEventListenerBySelector(`.event__rollup-btn`, closeEditFormHandler, `click`, parentListItemElement);
-
-
 };
 
 const headerMainElement = document.querySelector(`.trip-main`);
