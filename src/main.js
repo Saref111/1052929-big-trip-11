@@ -128,7 +128,7 @@ const addNewEventHandler = () => {
   newEventButtonElement.disabled = `true`;
 };
 
-const closeIfExistEditFormElement = (evt) => {
+const closeIfExistEditFormElement = () => {
   let formElement = document.querySelector(`.event--edit`);
   if (!formElement) {
     return undefined;
@@ -139,9 +139,14 @@ const closeIfExistEditFormElement = (evt) => {
     newEventButtonElement.addEventListener(`click`, addNewEventHandler);
     document.removeEventListener(`keydown`, closeFormOnEscHandler);
   } else if (formElement.id === `edit`) {
-    console.log(evt);
-
+    formElement.remove();
+    const hiddenEvent = document.querySelector(`#hidden-event`);
+    hiddenEvent.style = ``;
+    hiddenEvent.id = ``;
+    addEventListenerBySelector(`.event__rollup-btn`, openEditFormHandler, `click`, hiddenEvent);
   }
+
+  return undefined; // как сделать так, чтобы не возвращать undefined?
 };
 
 const addFirstEventHandler = () => {
@@ -167,14 +172,14 @@ const findDataObjectFromListItem = (listItem) => {
 };
 
 const openEditFormHandler = (evt) => {
-  closeIfExistEditFormElement(evt);
+  closeIfExistEditFormElement();
 
   const parentListItemElement = evt.target.closest(`li`);
 
   const formDataObject = findDataObjectFromListItem(parentListItemElement);
-  console.log(formDataObject);
 
   parentListItemElement.style = `display: none;`;
+  parentListItemElement.id = `hidden-event`;
   removeEventListenerBySelector(`.event__rollup-btn`, openEditFormHandler, `click`, parentListItemElement); // do we need to delete this handler??
   render(parentListItemElement, createListItemForFormElement(`edit`, formDataObject), `afterend`);
   addEventListenerBySelector(`.event__rollup-btn`, closeEditFormHandler, `click`, parentListItemElement);
