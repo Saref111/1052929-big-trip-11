@@ -40,7 +40,7 @@ export const createDescriptionElement = (info, src, imgAmount) => {
   );
 };
 
-const createEventDetails = (mode) => {
+const createEventDetails = () => {
   return (
     `<section class="event__details">
       <section class="event__section  event__section--offers">

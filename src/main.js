@@ -160,11 +160,15 @@ const addFirstEventHandler = () => {
 };
 
 const findDataObjectFromListItem = (listItem) => {
-  return {
+  const formData = {
     type: listItem.querySelector(`.event__type`).id,
     place: listItem.querySelector(`.event__title`).id,
     price: listItem.querySelector(`.event__price-value`).textContent,
   };
+
+  const currentEventDataObject = events.find((event) => Number(formData.price) === event.price && formData.place === event.place && formData.type === event.type);
+
+  return currentEventDataObject;
 };
 
 const openEditFormHandler = (evt) => {
@@ -178,7 +182,10 @@ const openEditFormHandler = (evt) => {
   parentListItemElement.id = `hidden-event`;
   // removeEventListenerBySelector(`.event__rollup-btn`, openEditFormHandler, `click`, parentListItemElement); // удалять ли здесь этот обработчки, чтобы потом опять добавлять его на строке 146?
   render(parentListItemElement, createListItemForFormElement(`edit`, formDataObject), `afterend`);
+  addEventListenerBySelector(`.event--edit`, saveEventHandler, `submit`);
+  addEventListenerBySelector(`.event__reset-btn`, closeFormHandler);
   addEventListenerBySelector(`.event__type-list`, changeTypeIconHandler);
+
 };
 
 const headerMainElement = document.querySelector(`.trip-main`);
