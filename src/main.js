@@ -8,9 +8,14 @@ import {createDayElement} from "./components/day.js";
 import {createEventElement, getTitleByType} from "./components/event.js";
 import {createEventFormElement, createNoPointsText, createDescriptionElement, createListItemForFormElement} from "./components/event-edit-form.js";
 import {getOffers, getInfo, CITIES, PICTURE} from "./const.js";
-import {addEventListenerBySelector, removeEventListenerBySelector, getRandomInt} from "./util.js";
+import {addEventListenerBySelector, removeEventListenerBySelector, getRandomInt, findEventObject} from "./util.js";
 
 const events = getEventObjects(20);
+
+let compareEventObject = {
+  object: {},
+  index: -1,
+};
 
 const render = (container, component, place = `beforeend`) => {
   container.insertAdjacentHTML(place, component);
@@ -33,7 +38,10 @@ const renderTripEvents = (arr) => {
   const eventListElements = daysListElement.querySelectorAll(`.trip-events__list`);
   const lastEventListElement = eventListElements[eventListElements.length - 1]; // temporary. need to find the day element
 
-  arr.forEach((event) => render(lastEventListElement, createEventElement(event)));
+  arr.forEach((event) => {
+    render(lastEventListElement, createEventElement(event));
+    addEventListenerBySelector(`.event__rollup-btn`, openEditFormHandler);
+  });
 };
 
 const closeFormHandler = () => {
@@ -101,7 +109,22 @@ const saveEditedEventHandler = (evt) => {
 
   getOffersArray(formData, newEventObject);
 
-  console.log(formData, newEventObject);
+  const {foundedEvent, index} = findEventObject(compareEventObject.object, events);
+
+  events.splice(index, 1, newEventObject);
+
+  let hiddenEvent = document.querySelector(`#hidden-event`);
+  console.log(hiddenEvent);
+  hiddenEvent.style = ``;
+  hiddenEvent.remove();
+  hiddenEvent = document.querySelector(`#hidden-event`);
+  console.log(hiddenEvent);
+
+  renderTripEvents([newEventObject]);
+
+  let formElement = document.querySelector(`.event--edit`).closest(`li`);
+  formElement.remove();
+
 };
 
 const changeTypeIconHandler = (evt) => {
@@ -175,10 +198,7 @@ const findDataObjectFromListItem = (listItem) => {
     place: listItem.querySelector(`.event__title`).id,
     price: listItem.querySelector(`.event__price-value`).textContent,
   };
-
-  const currentEventDataObject = events.find((event) => Number(formData.price) === event.price && formData.place === event.place && formData.type === event.type);
-
-  return currentEventDataObject;
+  return findEventObject(formData, events);
 };
 
 const openEditFormHandler = (evt) => {
@@ -186,12 +206,17 @@ const openEditFormHandler = (evt) => {
 
   const parentListItemElement = evt.target.closest(`li`);
 
-  const formDataObject = findDataObjectFromListItem(parentListItemElement);
+  const {foundedEvent, index} = findDataObjectFromListItem(parentListItemElement);
+
+  compareEventObject = {
+    object: foundedEvent,
+    index
+  };
 
   parentListItemElement.style = `display: none;`;
   parentListItemElement.id = `hidden-event`;
   // removeEventListenerBySelector(`.event__rollup-btn`, openEditFormHandler, `click`, parentListItemElement); // удалять ли здесь этот обработчки, чтобы потом опять добавлять его на строке 146?
-  render(parentListItemElement, createListItemForFormElement(`edit`, formDataObject), `afterend`);
+  render(parentListItemElement, createListItemForFormElement(`edit`, foundedEvent), `afterend`);
   addEventListenerBySelector(`.event--edit`, saveEditedEventHandler, `submit`);
   addEventListenerBySelector(`.event__reset-btn`, closeFormHandler);
   addEventListenerBySelector(`.event__type-list`, changeTypeIconHandler);
@@ -216,5 +241,5 @@ if (!events) {
   render(tripEventsElement, createDaysListElement());
   renderTripEvents(events);
   newEventButtonElement.addEventListener(`click`, addNewEventHandler);
-  addEventListenerBySelector(`.event__rollup-btn`, openEditFormHandler);
+
 }
