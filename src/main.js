@@ -5,7 +5,7 @@ import {createFilterElement} from "./components/filter.js";
 import {createSortingElement} from "./components/sorting.js";
 import {createDaysListElement} from "./components/day-list.js";
 import {createDayElement} from "./components/day.js";
-import {createEventElement} from "./components/event.js";
+import {createEventElement, getTitleByType} from "./components/event.js";
 import {createEventFormElement, createNoPointsText, createDescriptionElement, createListItemForFormElement} from "./components/event-edit-form.js";
 import {getOffers, getInfo, CITIES, PICTURE} from "./const.js";
 import {addEventListenerBySelector, removeEventListenerBySelector, getRandomInt} from "./util.js";
@@ -98,6 +98,7 @@ const changeTypeIconHandler = (evt) => {
   if (evt.target.tagName === `INPUT`) {
     const typeIcon = document.querySelector(`.event__type-btn`).querySelector(`img`);
     typeIcon.src = `img/icons/${evt.target.value}.png`;
+    document.querySelector(`.event__type-output`).textContent = getTitleByType(evt.target.value, ``);
   }
 };
 
@@ -114,6 +115,8 @@ const getInfoHandler = (evt) => {
 };
 
 const addNewEventHandler = () => {
+  closeIfExistEditFormElement();
+
   const sortingFormElement = document.querySelector(`.trip-sort`);
   render(sortingFormElement, createEventFormElement(`create`, {}), `afterend`);
   document.addEventListener(`keydown`, closeFormOnEscHandler);
@@ -156,13 +159,6 @@ const addFirstEventHandler = () => {
   addEventListenerBySelector(`.event__reset-btn`, closeFormHandler);
 };
 
-const closeEditFormHandler = (evt) => {
-  let parentListItem = evt.target.closest(`li`);
-  console.log(evt);
-
-
-};
-
 const findDataObjectFromListItem = (listItem) => {
   return {
     type: listItem.querySelector(`.event__type`).id,
@@ -182,6 +178,7 @@ const openEditFormHandler = (evt) => {
   parentListItemElement.id = `hidden-event`;
   // removeEventListenerBySelector(`.event__rollup-btn`, openEditFormHandler, `click`, parentListItemElement); // удалять ли здесь этот обработчки, чтобы потом опять добавлять его на строке 146?
   render(parentListItemElement, createListItemForFormElement(`edit`, formDataObject), `afterend`);
+  addEventListenerBySelector(`.event__type-list`, changeTypeIconHandler);
 };
 
 const headerMainElement = document.querySelector(`.trip-main`);
