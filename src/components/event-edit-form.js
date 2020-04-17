@@ -204,7 +204,6 @@ export const createNoPointsText = () => {
 
 
 export const createListItemForFormElement = (mode, currentData) => {
-  debugger
   return (
     `<li class="trip-events__item">${createEventFormElement(mode, currentData)}</li>`
   );

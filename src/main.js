@@ -60,9 +60,12 @@ const closeFormOnEscHandler = (evt) => {
 
 const filterOffers = (dataObj) => Object.keys(dataObj).filter((it) => it.startsWith(`event-offer`)).map((it) => it.slice(12)); // the '12' is the length of `event-offer`
 
-const pushOffer = (eventObject, offer) => {
-  offer.active = true;
-  eventObject.offers.push(offer);
+const pushOffer = (eventObject, offer, active) => {
+  offer.active = active;
+  if (!eventObject.offers.includes(offer)) { // При повторном открытии формы редактирования дополнительные услуги рендеряться не верно. Пока не могу понять почему
+
+    eventObject.offers.push(offer);
+  }
 };
 
 const getOffersArray = (dataObj, newObj) => {
@@ -70,7 +73,7 @@ const getOffersArray = (dataObj, newObj) => {
 
   filteredKeys.forEach((key) => {
     let offers = getOffers();
-    offers.forEach((it) => it.name.includes(key) ? pushOffer(newObj, it) : undefined);
+    offers.forEach((it) => it.name.includes(key) ? pushOffer(newObj, it, true) : pushOffer(newObj, it, false));
   });
 };
 
@@ -114,11 +117,7 @@ const saveEditedEventHandler = (evt) => {
   events.splice(index, 1, newEventObject);
 
   let hiddenEvent = document.querySelector(`#hidden-event`);
-  console.log(hiddenEvent);
-  hiddenEvent.style = ``;
   hiddenEvent.remove();
-  hiddenEvent = document.querySelector(`#hidden-event`);
-  console.log(hiddenEvent);
 
   renderTripEvents([newEventObject]);
 
@@ -179,7 +178,7 @@ const closeIfExistEditFormElement = () => {
     const hiddenEvent = document.querySelector(`#hidden-event`);
     hiddenEvent.style = ``;
     hiddenEvent.id = ``;
-    // addEventListenerBySelector(`.event__rollup-btn`, openEditFormHandler, `click`, hiddenEvent); // или просто оставить? (начало вопроса на строке 183)
+    addEventListenerBySelector(`.event__rollup-btn`, openEditFormHandler, `click`, hiddenEvent); // или просто оставить? (начало вопроса на строке 183)
   }
 
   return undefined; // как сделать так, чтобы не возвращать undefined?
@@ -215,7 +214,7 @@ const openEditFormHandler = (evt) => {
 
   parentListItemElement.style = `display: none;`;
   parentListItemElement.id = `hidden-event`;
-  // removeEventListenerBySelector(`.event__rollup-btn`, openEditFormHandler, `click`, parentListItemElement); // удалять ли здесь этот обработчки, чтобы потом опять добавлять его на строке 146?
+  removeEventListenerBySelector(`.event__rollup-btn`, openEditFormHandler, `click`, parentListItemElement); // удалять ли здесь этот обработчки, чтобы потом опять добавлять его на строке 146?
   render(parentListItemElement, createListItemForFormElement(`edit`, foundedEvent), `afterend`);
   addEventListenerBySelector(`.event--edit`, saveEditedEventHandler, `submit`);
   addEventListenerBySelector(`.event__reset-btn`, closeFormHandler);
