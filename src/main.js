@@ -88,7 +88,6 @@ const saveEventHandler = (evt) => {
   const {formData, newEventObject} = createDataObject(evt.target);
 
   getOffersArray(formData, newEventObject);
-  console.log(newEventObject);
 
   renderTripEvents([newEventObject]);
 

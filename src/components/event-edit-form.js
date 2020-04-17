@@ -40,7 +40,15 @@ export const createDescriptionElement = (info, src, imgAmount) => {
   );
 };
 
-const createEventDetails = () => {
+const createEventDetails = (mode, offers) => {
+  if (offers === undefined) {
+    offers = [{name: `luggage`, active: true}, {name: `comfort`, active: true}]
+  }
+  const activeOffers = offers.reduce((object, offer) => {
+    object[offer.name] = offer.active;
+    return object;
+  }, {});
+
   return (
     `<section class="event__details">
       <section class="event__section  event__section--offers">
@@ -48,7 +56,7 @@ const createEventDetails = () => {
 
         <div class="event__available-offers">
           <div class="event__offer-selector">
-            <input class="event__offer-checkbox  visually-hidden" id="event-offer-luggage-1" type="checkbox" name="event-offer-luggage" checked="">
+            <input class="event__offer-checkbox  visually-hidden" id="event-offer-luggage-1" type="checkbox" name="event-offer-luggage" ${activeOffers[`luggage`] ? `checked` : ``}>
             <label class="event__offer-label" for="event-offer-luggage-1">
               <span class="event__offer-title">Add luggage</span>
               +
@@ -57,7 +65,7 @@ const createEventDetails = () => {
           </div>
 
           <div class="event__offer-selector">
-            <input class="event__offer-checkbox  visually-hidden" id="event-offer-comfort-1" type="checkbox" name="event-offer-comfort" checked="">
+            <input class="event__offer-checkbox  visually-hidden" id="event-offer-comfort-1" type="checkbox" name="event-offer-comfort" ${activeOffers[`comfort`] ? `checked` : ``}>
             <label class="event__offer-label" for="event-offer-comfort-1">
               <span class="event__offer-title">Switch to comfort class</span>
               +
@@ -66,7 +74,7 @@ const createEventDetails = () => {
           </div>
 
           <div class="event__offer-selector">
-            <input class="event__offer-checkbox  visually-hidden" id="event-offer-meal-1" type="checkbox" name="event-offer-meal">
+            <input class="event__offer-checkbox  visually-hidden" id="event-offer-meal-1" type="checkbox" name="event-offer-meal" ${activeOffers[`meal`] ? `checked` : ``}>
             <label class="event__offer-label" for="event-offer-meal-1">
               <span class="event__offer-title">Add meal</span>
               +
@@ -75,7 +83,7 @@ const createEventDetails = () => {
           </div>
 
           <div class="event__offer-selector">
-            <input class="event__offer-checkbox  visually-hidden" id="event-offer-seats-1" type="checkbox" name="event-offer-seats">
+            <input class="event__offer-checkbox  visually-hidden" id="event-offer-seats-1" type="checkbox" name="event-offer-seats" ${activeOffers[`seats`] ? `checked` : ``}>
             <label class="event__offer-label" for="event-offer-seats-1">
               <span class="event__offer-title">Choose seats</span>
               +
@@ -84,7 +92,7 @@ const createEventDetails = () => {
           </div>
 
           <div class="event__offer-selector">
-            <input class="event__offer-checkbox  visually-hidden" id="event-offer-train-1" type="checkbox" name="event-offer-train">
+            <input class="event__offer-checkbox  visually-hidden" id="event-offer-train-1" type="checkbox" name="event-offer-train" ${activeOffers[`train`] ? `checked` : ``}>
             <label class="event__offer-label" for="event-offer-train-1">
               <span class="event__offer-title">Travel by train</span>
               +
@@ -99,7 +107,7 @@ const createEventDetails = () => {
   );
 };
 
-export const createEventFormElement = (mode, {type, place, price}) => {
+export const createEventFormElement = (mode, {type, place, price, offers}) => {
   if (type === undefined) {
     type = `flight`;
   }
@@ -211,7 +219,7 @@ export const createEventFormElement = (mode, {type, place, price}) => {
       <button class="event__reset-btn" type="reset">${mode === `edit` ? `Delete` : `Cancel`}</button>
       ${mode === `edit` ? createFavoriteElement() : ``}
     </header>
-    ${mode === `first` ? `` : createEventDetails(mode)}`
+    ${mode === `first` ? `` : createEventDetails(mode, offers)}`
   );
 };
 
