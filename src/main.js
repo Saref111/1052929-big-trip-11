@@ -88,10 +88,21 @@ const saveEventHandler = (evt) => {
   const {formData, newEventObject} = createDataObject(evt.target);
 
   getOffersArray(formData, newEventObject);
+  console.log(newEventObject);
 
   renderTripEvents([newEventObject]);
 
   closeFormHandler();
+};
+
+const saveEditedEventHandler = (evt) => {
+  evt.preventDefault();
+
+  const {formData, newEventObject} = createDataObject(evt.target);
+
+  getOffersArray(formData, newEventObject);
+
+  console.log(formData, newEventObject);
 };
 
 const changeTypeIconHandler = (evt) => {
@@ -182,7 +193,7 @@ const openEditFormHandler = (evt) => {
   parentListItemElement.id = `hidden-event`;
   // removeEventListenerBySelector(`.event__rollup-btn`, openEditFormHandler, `click`, parentListItemElement); // удалять ли здесь этот обработчки, чтобы потом опять добавлять его на строке 146?
   render(parentListItemElement, createListItemForFormElement(`edit`, formDataObject), `afterend`);
-  addEventListenerBySelector(`.event--edit`, saveEventHandler, `submit`);
+  addEventListenerBySelector(`.event--edit`, saveEditedEventHandler, `submit`);
   addEventListenerBySelector(`.event__reset-btn`, closeFormHandler);
   addEventListenerBySelector(`.event__type-list`, changeTypeIconHandler);
 
