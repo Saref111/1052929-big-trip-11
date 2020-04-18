@@ -107,25 +107,30 @@ const saveEventHandler = (evt) => {
   closeFormHandler();
 };
 
-const saveEditedEventHandler = (evt) => {
-  evt.preventDefault();
-
-  const {formData, newEventObject} = createDataObject(evt.target);
-
-  getOffersArray(formData, newEventObject);
-
-  const {index} = findEventObject(compareEventObject.object, events);
-
-  events.splice(index, 1, newEventObject);
-
-  let hiddenEvent = document.querySelector(`#hidden-event`);
+const deleteEditEventHandler = () => {
+  const hiddenEvent = document.querySelector(`#hidden-event`);
   hiddenEvent.remove();
 
-  renderTripEvents([newEventObject]);
-
-  let formElement = document.querySelector(`.event--edit`).closest(`li`);
+  const formElement = document.querySelector(`.event--edit`).closest(`li`);
   formElement.remove();
+};
 
+const closeEditFormHandler = () => {
+  const formElement = document.querySelector(`.event--edit`).closest(`li`);
+  formElement.remove();
+  const hiddenEvent = document.querySelector(`#hidden-event`);
+  hiddenEvent.style = ``;
+  hiddenEvent.id = ``;
+};
+
+const saveEditedEventHandler = (evt) => {
+  evt.preventDefault();
+  const {formData, newEventObject} = createDataObject(evt.target);
+  getOffersArray(formData, newEventObject);
+  const {index} = findEventObject(compareEventObject.object, events);
+  events.splice(index, 1, newEventObject);
+  renderTripEvents([newEventObject]);
+  deleteEditEventHandler();
 };
 
 const changeTypeIconHandler = (evt) => {
@@ -171,16 +176,12 @@ const closeIfExistEditFormElement = () => {
     return undefined;
   } else if (formElement.id === `create`) {
     formElement.remove();
-
     newEventButtonElement.disabled = false;
     newEventButtonElement.addEventListener(`click`, addNewEventHandler);
     document.removeEventListener(`keydown`, closeFormOnEscHandler);
   } else if (formElement.id === `edit`) {
-    formElement.remove();
-    const hiddenEvent = document.querySelector(`#hidden-event`);
-    hiddenEvent.style = ``;
-    hiddenEvent.id = ``;
-    addEventListenerBySelector(`.event__rollup-btn`, openEditFormHandler, `click`, hiddenEvent); // или просто оставить? (начало вопроса на строке 183)
+    closeEditFormHandler();
+    // addEventListenerBySelector(`.event__rollup-btn`, openEditFormHandler, `click`, hiddenEvent); // или просто оставить? (начало вопроса на строке 183)
   }
 
   return undefined; // как сделать так, чтобы не возвращать undefined?
@@ -216,10 +217,11 @@ const openEditFormHandler = (evt) => {
 
   parentListItemElement.style = `display: none;`;
   parentListItemElement.id = `hidden-event`;
-  removeEventListenerBySelector(`.event__rollup-btn`, openEditFormHandler, `click`, parentListItemElement); // удалять ли здесь этот обработчки, чтобы потом опять добавлять его на строке 146?
+  // removeEventListenerBySelector(`.event__rollup-btn`, openEditFormHandler, `click`, parentListItemElement); // удалять ли здесь этот обработчки, чтобы потом опять добавлять его на строке 146?
   render(parentListItemElement, createListItemForFormElement(`edit`, foundedEvent), `afterend`);
   addEventListenerBySelector(`.event--edit`, saveEditedEventHandler, `submit`);
-  addEventListenerBySelector(`.event__reset-btn`, closeFormHandler);
+  addEventListenerBySelector(`.event__reset-btn`, deleteEditEventHandler);
+  addEventListenerBySelector(`.event__rollup-btn`, closeEditFormHandler, `click`, document.querySelector(`.event--edit`));
   addEventListenerBySelector(`.event__type-list`, changeTypeIconHandler);
 
 };
@@ -242,5 +244,4 @@ if (!events) {
   render(tripEventsElement, createDaysListElement());
   renderTripEvents(events);
   newEventButtonElement.addEventListener(`click`, addNewEventHandler);
-
 }
