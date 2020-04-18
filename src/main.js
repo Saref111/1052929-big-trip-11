@@ -7,7 +7,7 @@ import {createDaysListElement} from "./components/day-list.js";
 import {createDayElement} from "./components/day.js";
 import {createEventElement, getTitleByType} from "./components/event.js";
 import {createEventFormElement, createNoPointsText, createDescriptionElement, createListItemForFormElement} from "./components/event-edit-form.js";
-import {getOffers, getInfo, CITIES, PICTURE} from "./const.js";
+import {getInfo, CITIES, PICTURE} from "./const.js";
 import {addEventListenerBySelector, removeEventListenerBySelector, getRandomInt, findEventObject} from "./util.js";
 
 const events = getEventObjects(20);
@@ -60,20 +60,15 @@ const closeFormOnEscHandler = (evt) => {
 
 const filterOffers = (dataObj) => Object.keys(dataObj).filter((it) => it.startsWith(`event-offer`)).map((it) => it.slice(12)); // the '12' is the length of `event-offer`
 
-const pushOffer = (eventObject, offer, active) => {
-  offer.active = active;
-  if (!eventObject.offers.includes(offer)) { // При повторном открытии формы редактирования дополнительные услуги рендеряться не верно. Пока не могу понять почему
-
-    eventObject.offers.push(offer);
-  }
-};
-
 const getOffersArray = (dataObj, newObj) => {
   const filteredKeys = filterOffers(dataObj);
 
-  filteredKeys.forEach((key) => {
-    let offers = getOffers();
-    offers.forEach((it) => it.name.includes(key) ? pushOffer(newObj, it, true) : pushOffer(newObj, it, false));
+  newObj.offers.forEach((offer) => {
+    if (filteredKeys.includes(offer.name)) {
+      offer.active = true;
+    } else {
+      offer.active = false;
+    }
   });
 };
 
@@ -87,7 +82,14 @@ const createDataObject = (formElement) => {
     endTime: formData[`event-end-time`],
     price: formData[`event-price`],
     favorite: formData[`event-favorite`],
-    offers: [],
+    offers: [
+      {name: `luggage`, active: true, text: `Add luggage`, price: 30},
+      {name: `comfort`, active: true, text: `Switch to comfort class`, price: 100},
+      {name: `meal`, active: false, text: `Add meal`, price: 15},
+      {name: `seats`, active: false, text: `Choose seats`, price: 5},
+      {name: `train`, active: false, text: `Travel by train`, price: 40},
+      {name: `uber`, active: false, text: `Order Uber`, price: 20},
+    ],
   };
 
   return {formData, newEventObject};
@@ -112,7 +114,7 @@ const saveEditedEventHandler = (evt) => {
 
   getOffersArray(formData, newEventObject);
 
-  const {foundedEvent, index} = findEventObject(compareEventObject.object, events);
+  const {index} = findEventObject(compareEventObject.object, events);
 
   events.splice(index, 1, newEventObject);
 
