@@ -3,7 +3,6 @@ const getRandomArrayElement = (arr) => arr[getRandomInt(arr.length)];
 const findEventObject = (currentEvent, events) => {
   const foundedEvent = events.find((event) => Number(currentEvent.price) === Number(event.price) && String(currentEvent.place) === String(event.place) && String(currentEvent.type) === String(event.type));
   const index = events.indexOf(foundedEvent);
-  console.log(index);
   return {foundedEvent, index};
 };
 
