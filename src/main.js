@@ -38,8 +38,8 @@ const renderTripEvents = (arr) => {
   const eventListElements = daysListElement.querySelectorAll(`.trip-events__list`);
   const lastEventListElement = eventListElements[eventListElements.length - 1]; // temporary. need to find the day element
 
-  arr.forEach((event) => {
-    render(lastEventListElement, createEventElement(event));
+  arr.forEach((eventData) => {
+    render(lastEventListElement, createEventElement(eventData));
     addEventListenerBySelector(`.event__rollup-btn`, openEditFormHandler);
   });
 };
@@ -173,7 +173,7 @@ const addNewEventHandler = () => {
 const closeIfExistEditFormElement = () => {
   let formElement = document.querySelector(`.event--edit`);
   if (!formElement) {
-    return undefined;
+    return;
   } else if (formElement.id === `create`) {
     formElement.remove();
     newEventButtonElement.disabled = false;
@@ -181,10 +181,7 @@ const closeIfExistEditFormElement = () => {
     document.removeEventListener(`keydown`, closeFormOnEscHandler);
   } else if (formElement.id === `edit`) {
     closeEditFormHandler();
-    // addEventListenerBySelector(`.event__rollup-btn`, openEditFormHandler, `click`, hiddenEvent); // или просто оставить? (начало вопроса на строке 183)
   }
-
-  return undefined; // как сделать так, чтобы не возвращать undefined?
 };
 
 const addFirstEventHandler = () => {
@@ -217,13 +214,11 @@ const openEditFormHandler = (evt) => {
 
   parentListItemElement.style = `display: none;`;
   parentListItemElement.id = `hidden-event`;
-  // removeEventListenerBySelector(`.event__rollup-btn`, openEditFormHandler, `click`, parentListItemElement); // удалять ли здесь этот обработчки, чтобы потом опять добавлять его на строке 146?
   render(parentListItemElement, createListItemForFormElement(`edit`, foundedEvent), `afterend`);
   addEventListenerBySelector(`.event--edit`, saveEditedEventHandler, `submit`);
   addEventListenerBySelector(`.event__reset-btn`, deleteEditEventHandler);
   addEventListenerBySelector(`.event__rollup-btn`, closeEditFormHandler, `click`, document.querySelector(`.event--edit`));
   addEventListenerBySelector(`.event__type-list`, changeTypeIconHandler);
-
 };
 
 const headerMainElement = document.querySelector(`.trip-main`);

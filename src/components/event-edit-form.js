@@ -81,7 +81,7 @@ const createEventDetails = (mode, offers) => {
 
 export const createEventFormElement = (mode, object) => {
   const eventObject = {
-    type: object.type !== undefined ? object.type : `flight`,
+    type: object.type ? object.type : `flight`,
     place: object.place,
     price: object.price,
     offers: object.offers,
