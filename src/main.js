@@ -170,17 +170,29 @@ const addNewEventHandler = () => {
   newEventButtonElement.disabled = `true`;
 };
 
-const closeIfExistEditFormElement = () => {
-  let formElement = document.querySelector(`.event--edit`);
-  if (!formElement) {
-    return;
-  } else if (formElement.id === `create`) {
+const formHandlers = {
+  create: (formElement) => {
     formElement.remove();
     newEventButtonElement.disabled = false;
     newEventButtonElement.addEventListener(`click`, addNewEventHandler);
     document.removeEventListener(`keydown`, closeFormOnEscHandler);
-  } else if (formElement.id === `edit`) {
+  },
+  edit: () => {
     closeEditFormHandler();
+  }
+};
+
+const closeIfExistEditFormElement = () => {
+  const formElement = document.querySelector(`.event--edit`);
+
+  if (!formElement) {
+    return;
+  }
+
+  const handler = formHandlers[formElement.id];
+
+  if (typeof handler === `function`) {
+    handler(formElement);
   }
 };
 
