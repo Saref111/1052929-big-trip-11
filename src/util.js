@@ -20,4 +20,18 @@ const removeEventListenerBySelector = (selector, handler, type = `click`, ctx = 
   }
 };
 
-export {getRandomArrayElement, getRandomInt, addEventListenerBySelector, removeEventListenerBySelector, findEventObject};
+const createElement = (template) => {
+  const newElement = document.createElement(`div`);
+  newElement.innerHTML = template;
+
+  return newElement.firstChild;
+};
+
+export {
+  getRandomArrayElement,
+  getRandomInt,
+  addEventListenerBySelector,
+  removeEventListenerBySelector,
+  findEventObject,
+  createElement,
+};

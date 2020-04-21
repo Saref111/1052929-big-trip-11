@@ -17,9 +17,9 @@ let compareEventObject = {
   index: -1,
 };
 
-const render = (container, component, place = `beforeend`) => {
-  container.insertAdjacentHTML(place, component);
-};
+// const render = (container, component, place = `beforeend`) => {
+//   container.insertAdjacentHTML(place, component);
+// };
 
 const renderTripEvents = (arr) => {
   let daysListElement = tripEventsElement.querySelector(`.trip-days`);
