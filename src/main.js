@@ -1,15 +1,15 @@
 import {getEventObjects} from "./mock/event.js";
-import {TripInfoComponent} from "./components/trip-info.js";
-import {MenuComponent} from "./components/menu.js";
-import {FilterComponent} from "./components/filter.js";
-import {FavoriteComponent} from "./components/favorite.js";
-import {SortComponent} from "./components/sort.js";
-import {DescriptionComponent} from "./components/description.js";
-import {DaysListComponent} from "./components/day-list.js";
-import {DayComponent} from "./components/day.js";
-import {EventComponent} from "./components/event.js";
-import {EventListItemComponent} from "./components/event-list-item.js";
-import {EventEditFormComponent} from "./components/event-edit-form.js";
+import TripInfoComponent from "./components/trip-info.js";
+import MenuComponent from "./components/menu.js";
+import FilterComponent from "./components/filter.js";
+import FavoriteComponent from "./components/favorite.js";
+import SortComponent from "./components/sort.js";
+import DescriptionComponent from "./components/description.js";
+import DaysListComponent from "./components/day-list.js";
+import DayComponent from "./components/day.js";
+import EventComponent from "./components/event.js";
+import EventListItemComponent from "./components/event-list-item.js";
+import EventEditFormComponent from "./components/event-edit-form.js";
 import {getInfo, CITIES, PICTURE} from "./const.js";
 import {
   addEventListenerBySelector,
@@ -245,16 +245,16 @@ const menuHeaderElement = tripControlsElement.querySelector(`h2`);
 const tripEventsElement = document.querySelector(`.trip-events`);
 const newEventButtonElement = headerMainElement.querySelector(`.btn`);
 
-render(headerMainElement, createTripInfoElement(), `afterbegin`);
-render(menuHeaderElement, createMenuElement(), `afterend`);
-render(tripControlsElement, createFilterElement());
+render(headerMainElement, new TripInfoComponent().getElement(), RenderPosition.AFTERBEGIN);
+render(menuHeaderElement.nextSibling, new MenuComponent().getElement(), `afterend`);
+render(tripControlsElement, new FilterComponent().getElement(), RenderPosition.BEFOREEND);
 
-if (!events) {
-  render(tripEventsElement, createNoPointsText());
-  newEventButtonElement.addEventListener(`click`, addFirstEventHandler);
-} else {
-  render(tripEventsElement, createSortingElement());
-  render(tripEventsElement, createDaysListElement());
-  renderTripEvents(events);
-  newEventButtonElement.addEventListener(`click`, addNewEventHandler);
-}
+// if (!events) {
+//   render(tripEventsElement, createNoPointsText());
+//   newEventButtonElement.addEventListener(`click`, addFirstEventHandler);
+// } else {
+//   render(tripEventsElement, createSortingElement());
+//   render(tripEventsElement, createDaysListElement());
+//   renderTripEvents(events);
+//   newEventButtonElement.addEventListener(`click`, addNewEventHandler);
+// }
