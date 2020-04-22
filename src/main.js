@@ -116,32 +116,6 @@ const saveEventHandler = (evt) => {
   closeFormHandler();
 };
 
-const deleteEditEventHandler = () => {
-  const hiddenEvent = document.querySelector(`#hidden-event`);
-  hiddenEvent.remove();
-
-  const formElement = document.querySelector(`.event--edit`).closest(`li`);
-  formElement.remove();
-};
-
-const closeEditFormHandler = () => {
-  const formElement = document.querySelector(`.event--edit`).closest(`li`);
-  formElement.remove();
-  const hiddenEvent = document.querySelector(`#hidden-event`);
-  hiddenEvent.style = ``;
-  hiddenEvent.id = ``;
-};
-
-const saveEditedEventHandler = (evt) => {
-  evt.preventDefault();
-  const {formData, newEventObject} = createDataObject(evt.target);
-  getOffersArray(formData, newEventObject);
-  const {index} = findEventObject(compareEventObject.object, events);
-  events.splice(index, 1, newEventObject);
-  renderTripEvents([newEventObject]);
-  deleteEditEventHandler();
-};
-
 const changeTypeIconHandler = (evt) => {
   if (evt.target.tagName === `INPUT`) {
     const typeIcon = document.querySelector(`.event__type-btn`).querySelector(`img`);
@@ -181,30 +155,6 @@ const addNewEventHandler = () => {
   newEventButtonElement.disabled = `true`;
 };
 
-const formHandlers = {
-  create: (formElement) => {
-    formElement.remove();
-    newEventButtonElement.disabled = false;
-    newEventButtonElement.addEventListener(`click`, addNewEventHandler);
-    document.removeEventListener(`keydown`, closeFormOnEscHandler);
-  },
-  edit: () => {
-    closeEditFormHandler();
-  }
-};
-
-const closeIfExistEditFormElement = () => {
-  const formElement = document.querySelector(`.event--edit`);
-  if (!formElement) {
-    return;
-  }
-
-  const handler = formHandlers[formElement.id];
-  if (typeof handler === `function`) {
-    handler(formElement);
-  }
-};
-
 const addFirstEventHandler = () => {
   const firstEventEditFormComponent = new EventEditFormComponent(`first`);
   render(tripEventsElement, firstEventEditFormComponent.getElement(), RenderPosition.AFTERBEGIN);
@@ -222,30 +172,69 @@ const findDataObjectFromListItem = (listItem) => {
   return findEventObject(formData, events);
 };
 
+const formHandlers = {
+  create: (formElement) => {
+    formElement.remove();
+    newEventButtonElement.disabled = false;
+    newEventButtonElement.addEventListener(`click`, addNewEventHandler);
+    document.removeEventListener(`keydown`, closeFormOnEscHandler);
+  },
+  edit: () => {
+    // closeEditFormHandler();
+  }
+};
+
+const closeIfExistEditFormElement = () => {
+  const formElement = document.querySelector(`.event--edit`);
+  if (!formElement) {
+    return;
+  }
+
+  const handler = formHandlers[formElement.id];
+  if (typeof handler === `function`) {
+    handler(formElement);
+  }
+};
 const openEditFormHandler = (evt) => {
+
+  const saveEditedEventHandler = (event) => {
+    event.preventDefault();
+    const {formData, newEventObject} = createDataObject(event.target);
+    getOffersArray(formData, newEventObject);
+    const {index} = findEventObject(compareEventObject.object, events);
+    events.splice(index, 1, newEventObject);
+    renderTripEvents([newEventObject]);
+    deleteEditEventHandler();
+  };
+
+  const deleteEditEventHandler = () => {
+    listElement.getElement().parentNode.removeChild(listElement.getElement());
+  };
+
+  const closeEditFormHandler = () => {
+    listElement.getElement().parentNode.replaceChild(listItemEventElement, listElement.getElement());
+  };
+
   closeIfExistEditFormElement();
 
-  const parentListItemElement = evt.target.closest(`li`);
-
-  const {foundedEvent, index} = findDataObjectFromListItem(parentListItemElement);
-
+  const listItemEventElement = evt.target.closest(`li`);
+  listItemEventElement.id = `edit`;
+  const {foundedEvent, index} = findDataObjectFromListItem(listItemEventElement);
   compareEventObject = {
     object: foundedEvent,
     index
   };
 
-  parentListItemElement.style = `display: none;`;
-  parentListItemElement.id = `hidden-event`;
-
   const eventEditFormComponent = new EventEditFormComponent(`edit`, foundedEvent);
   const listElement = new EventListItemComponent();
   render(listElement.getElement(), eventEditFormComponent.getElement(), RenderPosition.BEFOREEND);
 
-  render(parentListItemElement.nextSibling, listElement.getElement());
-  addEventListenerBySelector(`.event--edit`, saveEditedEventHandler, `submit`);
-  addEventListenerBySelector(`.event__reset-btn`, deleteEditEventHandler);
-  addEventListenerBySelector(`.event__rollup-btn`, closeEditFormHandler, `click`, document.querySelector(`.event--edit`));
-  addEventListenerBySelector(`.event__type-list`, changeTypeIconHandler);
+  addEventListenerBySelector(`form`, saveEditedEventHandler, `submit`, listElement.getElement());
+  addEventListenerBySelector(`.event__reset-btn`, deleteEditEventHandler, `click`, listElement.getElement());
+  addEventListenerBySelector(`.event__rollup-btn`, closeEditFormHandler, `click`, listElement.getElement());
+  addEventListenerBySelector(`.event__type-list`, changeTypeIconHandler, `click`, listElement.getElement());
+
+  listItemEventElement.parentNode.replaceChild(listElement.getElement(), listItemEventElement);
 };
 
 const headerMainElement = document.querySelector(`.trip-main`);

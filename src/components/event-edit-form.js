@@ -135,7 +135,7 @@ const createEventFormElement = (mode, object) => { // check destructuring
 
       <div class="event__field-group  event__field-group--destination">
         <label class="event__label  event__type-output" for="event-destination-1">
-          ${mode === `first` ? `Flight to` : getTitleByType(eventObject.type, eventObject.place)}
+          ${mode === `first` ? `Flight to` : getTitleByType(eventObject.type, (mode === `edit` ? `` : eventObject.place))}
         </label>
         <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${mode === `edit` ? eventObject.place : ``}" list="destination-list-1">
         <datalist id="destination-list-1">
