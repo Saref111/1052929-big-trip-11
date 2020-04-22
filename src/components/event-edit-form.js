@@ -1,7 +1,7 @@
 import {getTitleByType, createElement} from "../util.js";
 
 const createEventDetails = (offers) => {
-  if (offers === undefined) {
+  if (!offers) {
     offers = [
       {name: `luggage`, active: true, text: `Add luggage`, price: 30},
       {name: `comfort`, active: true, text: `Switch to comfort class`, price: 100},
@@ -39,9 +39,24 @@ const createEventDetails = (offers) => {
   );
 };
 
+const buttonFavoriteTemplate = () => {
+  return (
+    `<input id="event-favorite-1" class="event__favorite-checkbox  visually-hidden" type="checkbox" name="event-favorite" checked="">
+    <label class="event__favorite-btn" for="event-favorite-1">
+      <span class="visually-hidden">Add to favorite</span>
+      <svg class="event__favorite-icon" width="28" height="28" viewBox="0 0 28 28">
+        <path d="M14 21l-8.22899 4.3262 1.57159-9.1631L.685209 9.67376 9.8855 8.33688 14 0l4.1145 8.33688 9.2003 1.33688-6.6574 6.48934 1.5716 9.1631L14 21z"></path>
+      </svg>
+    </label>
+    <button class="event__rollup-btn" type="button">
+      <span class="visually-hidden">Open event</span>
+    </button>`
+  );
+};
+
 const createEventFormElement = (mode, object) => { // check destructuring
   const eventObject = {
-    type: object.type ? object.type : `flight`,
+    type: object.type,
     place: object.place,
     price: object.price,
     offers: object.offers,
@@ -120,9 +135,9 @@ const createEventFormElement = (mode, object) => { // check destructuring
 
       <div class="event__field-group  event__field-group--destination">
         <label class="event__label  event__type-output" for="event-destination-1">
-          ${eventObject.type ? getTitleByType(eventObject.type, ``) : `Flight to`}
+          ${mode === `first` ? `Flight to` : getTitleByType(eventObject.type, eventObject.place)}
         </label>
-        <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${mode === `create` ? `` : eventObject.place}" list="destination-list-1">
+        <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${mode === `edit` ? eventObject.place : ``}" list="destination-list-1">
         <datalist id="destination-list-1">
           <option value="Amsterdam"></option>
           <option value="Geneva"></option>
@@ -153,21 +168,21 @@ const createEventFormElement = (mode, object) => { // check destructuring
 
       <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
       <button class="event__reset-btn" type="reset">${mode === `edit` ? `Delete` : `Cancel`}</button>
-      ${mode === `edit` ? `createFavoriteElement(draw Favorite from main.js)` : ``}
+      ${mode === `edit` ? buttonFavoriteTemplate() : ``}
     </header>
-    ${mode === `first` ? `` : createEventDetails(mode, eventObject.offers)}`
+    ${mode === `first` ? `` : createEventDetails(eventObject.offers)}`
   );
 };
 
 export default class EventEditForm {
-  constructor(data) {
-    this._data = data;
-
+  constructor(mode, data) {
+    this._data = data ? data : {type: `flight`, place: ``};
+    this._mode = mode;
     this._element = null;
   }
 
   getTemplate() {
-    return createEventFormElement(this._data);
+    return createEventFormElement(this._mode, this._data);
   }
 
   getElement() {
