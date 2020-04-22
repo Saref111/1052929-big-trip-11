@@ -1,6 +1,4 @@
-const capitalize = (string) => `${string[0].toUpperCase()}${string.slice(1)}`;
-const getPreposition = (type) => [`sightseeing`, `restaurant`, `check-in`].includes(type) ? ` in ` : ` to `;
-export const getTitleByType = (type, place) => `${capitalize(type)}${getPreposition(type)}${place}`;
+import {createElement, getTitleByType} from "../util.js";
 
 const getOffers = (arr) => {
   const activeOffers = arr.filter((it) => it.active).slice(0, 3);
@@ -53,3 +51,26 @@ export const createEventElement = (data) => {
   );
 };
 
+export default class Event {
+  constructor(data) {
+    this._data = data;
+
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createEventElement(this._data);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

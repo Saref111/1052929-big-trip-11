@@ -1,46 +1,6 @@
-import {getTitleByType} from "./event.js";
+import {getTitleByType, createElement} from "../util.js";
 
-const createFavoriteElement = () => {
-  return (
-    `<input id="event-favorite-1" class="event__favorite-checkbox  visually-hidden" type="checkbox" name="event-favorite" checked="">
-      <label class="event__favorite-btn" for="event-favorite-1">
-        <span class="visually-hidden">Add to favorite</span>
-        <svg class="event__favorite-icon" width="28" height="28" viewBox="0 0 28 28">
-          <path d="M14 21l-8.22899 4.3262 1.57159-9.1631L.685209 9.67376 9.8855 8.33688 14 0l4.1145 8.33688 9.2003 1.33688-6.6574 6.48934 1.5716 9.1631L14 21z"></path>
-        </svg>
-      </label>
-      <button class="event__rollup-btn" type="button">
-        <span class="visually-hidden">Open event</span>
-      </button>`
-  );
-};
-
-const createPicElements = (src, imgAmount) => {
-  let pics = ``;
-
-  for (let i = 0; i < imgAmount; i++) {
-    pics += `<img class="event__photo" src="${src}${Math.random()}" alt="Event photo">\n`;
-  }
-
-  return pics;
-};
-
-export const createDescriptionElement = (info, src, imgAmount) => {
-  return (
-    `<section class="event__section  event__section--destination">
-      <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-      <p class="event__destination-description">${info}</p>
-
-      <div class="event__photos-container">
-        <div class="event__photos-tape">
-          ${createPicElements(src, imgAmount)}
-        </div>
-      </div>
-    </section>`
-  );
-};
-
-const createEventDetails = (mode, offers) => {
+const createEventDetails = (offers) => {
   if (offers === undefined) {
     offers = [
       {name: `luggage`, active: true, text: `Add luggage`, price: 30},
@@ -79,13 +39,14 @@ const createEventDetails = (mode, offers) => {
   );
 };
 
-export const createEventFormElement = (mode, object) => {
+const createEventFormElement = (mode, object) => { // check destructuring
   const eventObject = {
     type: object.type ? object.type : `flight`,
     place: object.place,
     price: object.price,
     offers: object.offers,
   };
+
   return (
     `<form class="trip-events__item  event  event--edit" action="#" method="post" id="${mode}">
     <header class="event__header">
@@ -192,19 +153,34 @@ export const createEventFormElement = (mode, object) => {
 
       <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
       <button class="event__reset-btn" type="reset">${mode === `edit` ? `Delete` : `Cancel`}</button>
-      ${mode === `edit` ? createFavoriteElement() : ``}
+      ${mode === `edit` ? `createFavoriteElement(draw Favorite from main.js)` : ``}
     </header>
     ${mode === `first` ? `` : createEventDetails(mode, eventObject.offers)}`
   );
 };
 
-export const createNoPointsText = () => {
-  return `<p class="trip-events__msg">Click New Event to create your first point</p>`;
-};
+export default class EventEditForm {
+  constructor(data) {
+    this._data = data;
+
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createEventFormElement(this._data);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
 
 
-export const createListItemForFormElement = (mode, currentData) => {
-  return (
-    `<li class="trip-events__item">${createEventFormElement(mode, currentData)}</li>`
-  );
-};

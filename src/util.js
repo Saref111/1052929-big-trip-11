@@ -27,6 +27,10 @@ const createElement = (template) => {
   return newElement.firstChild;
 };
 
+const capitalize = (string) => `${string[0].toUpperCase()}${string.slice(1)}`;
+const getPreposition = (type) => [`sightseeing`, `restaurant`, `check-in`].includes(type) ? ` in ` : ` to `;
+const getTitleByType = (type, place) => `${capitalize(type)}${getPreposition(type)}${place}`;
+
 export {
   getRandomArrayElement,
   getRandomInt,
@@ -34,4 +38,5 @@ export {
   removeEventListenerBySelector,
   findEventObject,
   createElement,
+  getTitleByType,
 };

@@ -2,7 +2,7 @@ import {getEventObjects} from "./mock/event.js";
 import {createTripInfoElement} from "./components/trip-info.js";
 import {createMenuElement} from "./components/menu.js";
 import {createFilterElement} from "./components/filter.js";
-import {createSortingElement} from "./components/sorting.js";
+import {createSortingElement} from "./components/sort.js";
 import {createDaysListElement} from "./components/day-list.js";
 import {createDayElement} from "./components/day.js";
 import {createEventElement, getTitleByType} from "./components/event.js";
