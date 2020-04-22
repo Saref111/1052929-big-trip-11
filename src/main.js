@@ -1,14 +1,24 @@
 import {getEventObjects} from "./mock/event.js";
-import {createTripInfoElement} from "./components/trip-info.js";
-import {createMenuElement} from "./components/menu.js";
-import {createFilterElement} from "./components/filter.js";
-import {createSortingElement} from "./components/sort.js";
-import {createDaysListElement} from "./components/day-list.js";
-import {createDayElement} from "./components/day.js";
-import {createEventElement, getTitleByType} from "./components/event.js";
-import {createEventFormElement, createNoPointsText, createDescriptionElement, createListItemForFormElement} from "./components/event-edit-form.js";
+import {TripInfoComponent} from "./components/trip-info.js";
+import {MenuComponent} from "./components/menu.js";
+import {FilterComponent} from "./components/filter.js";
+import {FavoriteComponent} from "./components/favorite.js";
+import {SortComponent} from "./components/sort.js";
+import {DescriptionComponent} from "./components/description.js";
+import {DaysListComponent} from "./components/day-list.js";
+import {DayComponent} from "./components/day.js";
+import {EventComponent} from "./components/event.js";
+import {EventListItemComponent} from "./components/event-list-item.js";
+import {EventEditFormComponent} from "./components/event-edit-form.js";
 import {getInfo, CITIES, PICTURE} from "./const.js";
-import {addEventListenerBySelector, removeEventListenerBySelector, getRandomInt, findEventObject} from "./util.js";
+import {
+  addEventListenerBySelector,
+  removeEventListenerBySelector,
+  getRandomInt,
+  findEventObject,
+  render,
+  RenderPosition,
+} from "./util.js";
 
 const events = getEventObjects(20);
 
@@ -16,10 +26,6 @@ let compareEventObject = {
   object: {},
   index: -1,
 };
-
-// const render = (container, component, place = `beforeend`) => {
-//   container.insertAdjacentHTML(place, component);
-// };
 
 const renderTripEvents = (arr) => {
   let daysListElement = tripEventsElement.querySelector(`.trip-days`);
