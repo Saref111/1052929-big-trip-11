@@ -1,14 +1,25 @@
 import {getEventObjects} from "./mock/event.js";
-import {createTripInfoElement} from "./components/trip-info.js";
-import {createMenuElement} from "./components/menu.js";
-import {createFilterElement} from "./components/filter.js";
-import {createSortingElement} from "./components/sorting.js";
-import {createDaysListElement} from "./components/day-list.js";
-import {createDayElement} from "./components/day.js";
-import {createEventElement, getTitleByType} from "./components/event.js";
-import {createEventFormElement, createNoPointsText, createDescriptionElement, createListItemForFormElement} from "./components/event-edit-form.js";
+import TripInfoComponent from "./components/trip-info.js";
+import MenuComponent from "./components/menu.js";
+import FilterComponent from "./components/filter.js";
+import SortComponent from "./components/sort.js";
+import DescriptionComponent from "./components/description.js";
+import DaysListComponent from "./components/day-list.js";
+import DayComponent from "./components/day.js";
+import EventComponent from "./components/event.js";
+import EventListItemComponent from "./components/event-list-item.js";
+import EventEditFormComponent from "./components/event-edit-form.js";
+import NoEventsComponent from "./components/no-events.js";
 import {getInfo, CITIES, PICTURE} from "./const.js";
-import {addEventListenerBySelector, removeEventListenerBySelector, getRandomInt, findEventObject} from "./util.js";
+import {
+  addEventListenerBySelector,
+  removeEventListenerBySelector,
+  getRandomInt,
+  findEventObject,
+  render,
+  RenderPosition,
+  getTitleByType,
+} from "./util.js";
 
 const events = getEventObjects(20);
 
@@ -17,29 +28,29 @@ let compareEventObject = {
   index: -1,
 };
 
-const render = (container, component, place = `beforeend`) => {
-  container.insertAdjacentHTML(place, component);
-};
-
 const renderTripEvents = (arr) => {
   let daysListElement = tripEventsElement.querySelector(`.trip-days`);
 
   if (!daysListElement) {
     document.querySelector(`.trip-events__msg`).remove();
 
-    render(tripEventsElement, createSortingElement());
-    render(tripEventsElement, createDaysListElement());
+    const sortComponent = new SortComponent();
+    const daysListComponent = new DaysListComponent();
+    render(tripEventsElement, sortComponent.getElement(), RenderPosition.BEFOREEND);
+    render(tripEventsElement, daysListComponent.getElement(), RenderPosition.BEFOREEND);
 
-    daysListElement = tripEventsElement.querySelector(`.trip-days`);
+    daysListElement = daysListComponent.getElement();
     newEventButtonElement.removeEventListener(`click`, addFirstEventHandler);
   }
 
-  render(daysListElement, createDayElement());
+  const dayComponent = new DayComponent();
+  render(daysListElement, dayComponent.getElement(), RenderPosition.BEFOREEND);
   const eventListElements = daysListElement.querySelectorAll(`.trip-events__list`);
   const lastEventListElement = eventListElements[eventListElements.length - 1]; // temporary. need to find the day element
 
   arr.forEach((eventData) => {
-    render(lastEventListElement, createEventElement(eventData));
+    const eventComponent = new EventComponent(eventData);
+    render(lastEventListElement, eventComponent.getElement(), RenderPosition.BEFOREEND);
     addEventListenerBySelector(`.event__rollup-btn`, openEditFormHandler);
   });
 };
@@ -99,38 +110,10 @@ const saveEventHandler = (evt) => {
   evt.preventDefault();
 
   const {formData, newEventObject} = createDataObject(evt.target);
-
   getOffersArray(formData, newEventObject);
-
   renderTripEvents([newEventObject]);
 
   closeFormHandler();
-};
-
-const deleteEditEventHandler = () => {
-  const hiddenEvent = document.querySelector(`#hidden-event`);
-  hiddenEvent.remove();
-
-  const formElement = document.querySelector(`.event--edit`).closest(`li`);
-  formElement.remove();
-};
-
-const closeEditFormHandler = () => {
-  const formElement = document.querySelector(`.event--edit`).closest(`li`);
-  formElement.remove();
-  const hiddenEvent = document.querySelector(`#hidden-event`);
-  hiddenEvent.style = ``;
-  hiddenEvent.id = ``;
-};
-
-const saveEditedEventHandler = (evt) => {
-  evt.preventDefault();
-  const {formData, newEventObject} = createDataObject(evt.target);
-  getOffersArray(formData, newEventObject);
-  const {index} = findEventObject(compareEventObject.object, events);
-  events.splice(index, 1, newEventObject);
-  renderTripEvents([newEventObject]);
-  deleteEditEventHandler();
 };
 
 const changeTypeIconHandler = (evt) => {
@@ -149,7 +132,8 @@ const getInfoHandler = (evt) => {
 
   if (CITIES.includes(evt.target.value)) {
     const eventFormElement = document.querySelector(`.event--edit`);
-    render(eventFormElement, createDescriptionElement(getInfo(), PICTURE, getRandomInt(5))); // 5 is a max amount of pictures
+    const descriptionComponent = new DescriptionComponent(getInfo(), PICTURE, getRandomInt(5));
+    render(eventFormElement, descriptionComponent.getElement(), RenderPosition.BEFOREEND);
   }
 };
 
@@ -157,7 +141,8 @@ const addNewEventHandler = () => {
   closeIfExistEditFormElement();
 
   const sortingFormElement = document.querySelector(`.trip-sort`);
-  render(sortingFormElement, createEventFormElement(`create`, {}), `afterend`);
+  const eventEditFormComponent = new EventEditFormComponent(`create`, undefined);
+  render(sortingFormElement, eventEditFormComponent.getElement(), `afterend`);
   document.addEventListener(`keydown`, closeFormOnEscHandler);
 
   addEventListenerBySelector(`.event--edit`, saveEventHandler, `submit`);
@@ -170,34 +155,9 @@ const addNewEventHandler = () => {
   newEventButtonElement.disabled = `true`;
 };
 
-const formHandlers = {
-  create: (formElement) => {
-    formElement.remove();
-    newEventButtonElement.disabled = false;
-    newEventButtonElement.addEventListener(`click`, addNewEventHandler);
-    document.removeEventListener(`keydown`, closeFormOnEscHandler);
-  },
-  edit: () => {
-    closeEditFormHandler();
-  }
-};
-
-const closeIfExistEditFormElement = () => {
-  const formElement = document.querySelector(`.event--edit`);
-
-  if (!formElement) {
-    return;
-  }
-
-  const handler = formHandlers[formElement.id];
-
-  if (typeof handler === `function`) {
-    handler(formElement);
-  }
-};
-
 const addFirstEventHandler = () => {
-  render(tripEventsElement, createEventFormElement(`first`), `afterbegin`);
+  const firstEventEditFormComponent = new EventEditFormComponent(`first`);
+  render(tripEventsElement, firstEventEditFormComponent.getElement(), RenderPosition.AFTERBEGIN);
   newEventButtonElement.disabled = true;
   addEventListenerBySelector(`.event--edit`, saveEventHandler, `submit`);
   addEventListenerBySelector(`.event__reset-btn`, closeFormHandler);
@@ -212,25 +172,69 @@ const findDataObjectFromListItem = (listItem) => {
   return findEventObject(formData, events);
 };
 
+const formHandlers = {
+  create: (formElement) => {
+    formElement.remove();
+    newEventButtonElement.disabled = false;
+    newEventButtonElement.addEventListener(`click`, addNewEventHandler);
+    document.removeEventListener(`keydown`, closeFormOnEscHandler);
+  },
+  edit: () => {
+    // closeEditFormHandler();
+  }
+};
+
+const closeIfExistEditFormElement = () => {
+  const formElement = document.querySelector(`.event--edit`);
+  if (!formElement) {
+    return;
+  }
+
+  const handler = formHandlers[formElement.id];
+  if (typeof handler === `function`) {
+    handler(formElement);
+  }
+};
 const openEditFormHandler = (evt) => {
+
+  const saveEditedEventHandler = (event) => {
+    event.preventDefault();
+    const {formData, newEventObject} = createDataObject(event.target);
+    getOffersArray(formData, newEventObject);
+    const {index} = findEventObject(compareEventObject.object, events);
+    events.splice(index, 1, newEventObject);
+    renderTripEvents([newEventObject]);
+    deleteEditEventHandler();
+  };
+
+  const deleteEditEventHandler = () => {
+    listElement.getElement().parentNode.removeChild(listElement.getElement());
+  };
+
+  const closeEditFormHandler = () => {
+    listElement.getElement().parentNode.replaceChild(listItemEventElement, listElement.getElement());
+  };
+
   closeIfExistEditFormElement();
 
-  const parentListItemElement = evt.target.closest(`li`);
-
-  const {foundedEvent, index} = findDataObjectFromListItem(parentListItemElement);
-
+  const listItemEventElement = evt.target.closest(`li`);
+  listItemEventElement.id = `edit`;
+  const {foundedEvent, index} = findDataObjectFromListItem(listItemEventElement);
   compareEventObject = {
     object: foundedEvent,
     index
   };
 
-  parentListItemElement.style = `display: none;`;
-  parentListItemElement.id = `hidden-event`;
-  render(parentListItemElement, createListItemForFormElement(`edit`, foundedEvent), `afterend`);
-  addEventListenerBySelector(`.event--edit`, saveEditedEventHandler, `submit`);
-  addEventListenerBySelector(`.event__reset-btn`, deleteEditEventHandler);
-  addEventListenerBySelector(`.event__rollup-btn`, closeEditFormHandler, `click`, document.querySelector(`.event--edit`));
-  addEventListenerBySelector(`.event__type-list`, changeTypeIconHandler);
+  const eventEditFormComponent = new EventEditFormComponent(`edit`, foundedEvent);
+  const listElement = new EventListItemComponent();
+  render(listElement.getElement(), eventEditFormComponent.getElement(), RenderPosition.BEFOREEND);
+
+  addEventListenerBySelector(`form`, saveEditedEventHandler, `submit`, listElement.getElement());
+  addEventListenerBySelector(`.event__reset-btn`, deleteEditEventHandler, `click`, listElement.getElement());
+  addEventListenerBySelector(`.event__rollup-btn`, closeEditFormHandler, `click`, listElement.getElement());
+  addEventListenerBySelector(`.event__type-list`, changeTypeIconHandler, `click`, listElement.getElement());
+
+  listItemEventElement.parentNode.replaceChild(listElement.getElement(), listItemEventElement);
 };
 
 const headerMainElement = document.querySelector(`.trip-main`);
@@ -239,16 +243,23 @@ const menuHeaderElement = tripControlsElement.querySelector(`h2`);
 const tripEventsElement = document.querySelector(`.trip-events`);
 const newEventButtonElement = headerMainElement.querySelector(`.btn`);
 
-render(headerMainElement, createTripInfoElement(), `afterbegin`);
-render(menuHeaderElement, createMenuElement(), `afterend`);
-render(tripControlsElement, createFilterElement());
+const tripInfoComponent = new TripInfoComponent();
+const menuComponent = new MenuComponent();
+const filterComponent = new FilterComponent();
+
+render(headerMainElement, tripInfoComponent.getElement(), RenderPosition.AFTERBEGIN);
+render(menuHeaderElement.nextSibling, menuComponent.getElement(), `afterend`);
+render(tripControlsElement, filterComponent.getElement(), RenderPosition.BEFOREEND);
 
 if (!events) {
-  render(tripEventsElement, createNoPointsText());
+  const noEventsComponent = new NoEventsComponent();
+  render(tripEventsElement, noEventsComponent.getElement(), RenderPosition.BEFOREEND);
   newEventButtonElement.addEventListener(`click`, addFirstEventHandler);
 } else {
-  render(tripEventsElement, createSortingElement());
-  render(tripEventsElement, createDaysListElement());
+  const sortComponent = new SortComponent();
+  const daysListComponent = new DaysListComponent();
+  render(tripEventsElement, sortComponent.getElement(), RenderPosition.BEFOREEND);
+  render(tripEventsElement, daysListComponent.getElement(), RenderPosition.BEFOREEND);
   renderTripEvents(events);
   newEventButtonElement.addEventListener(`click`, addNewEventHandler);
 }
