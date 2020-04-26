@@ -1,4 +1,4 @@
-import {getTitleByType} from "../util.js";
+import {getTitleByType} from "../utils/util.js";
 import AbstractComponent from "./abstract-component.js";
 
 const createEventDetails = (offers) => {

@@ -20,35 +20,9 @@ const removeEventListenerBySelector = (selector, handler, type = `click`, ctx = 
   }
 };
 
-const createElement = (template) => {
-  const newElement = document.createElement(`div`);
-  newElement.innerHTML = template;
-
-  return newElement.firstChild;
-};
-
 const capitalize = (string) => `${string[0].toUpperCase()}${string.slice(1)}`;
 const getPreposition = (type) => [`sightseeing`, `restaurant`, `check-in`].includes(type) ? ` in ` : ` to `;
 const getTitleByType = (type, place) => `${capitalize(type)}${getPreposition(type)}${place}`;
-
-const RenderPosition = {
-  AFTERBEGIN: `afterbegin`,
-  BEFOREEND: `beforeend`,
-};
-
-const render = (container, element, place) => {
-  switch (place) {
-    case RenderPosition.AFTERBEGIN:
-      container.prepend(element);
-      break;
-    case RenderPosition.BEFOREEND:
-      container.append(element);
-      break;
-    default:
-      container.parentNode.insertBefore(element, container);
-      break;
-  }
-};
 
 export {
   getRandomArrayElement,
@@ -56,8 +30,5 @@ export {
   addEventListenerBySelector,
   removeEventListenerBySelector,
   findEventObject,
-  createElement,
   getTitleByType,
-  render,
-  RenderPosition,
 };

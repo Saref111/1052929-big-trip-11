@@ -11,15 +11,14 @@ import EventListItemComponent from "./components/event-list-item.js";
 import EventEditFormComponent from "./components/event-edit-form.js";
 import NoEventsComponent from "./components/no-events.js";
 import {getInfo, CITIES, PICTURE} from "./const.js";
+import {render, RenderPosition, createElement, remove, replace} from "./utils/render.js";
 import {
   addEventListenerBySelector,
   removeEventListenerBySelector,
   getRandomInt,
   findEventObject,
-  render,
-  RenderPosition,
   getTitleByType,
-} from "./util.js";
+} from "./utils/util.js";
 
 const events = getEventObjects(20);
 
@@ -44,13 +43,13 @@ const renderTripEvents = (arr) => {
   }
 
   const dayComponent = new DayComponent();
-  render(daysListElement, dayComponent.getElement(), RenderPosition.BEFOREEND);
+  render(daysListElement, dayComponent, RenderPosition.BEFOREEND);
   const eventListElements = daysListElement.querySelectorAll(`.trip-events__list`);
   const lastEventListElement = eventListElements[eventListElements.length - 1]; // temporary. need to find the day element
 
   arr.forEach((eventData) => {
     const eventComponent = new EventComponent(eventData);
-    render(lastEventListElement, eventComponent.getElement(), RenderPosition.BEFOREEND);
+    render(lastEventListElement, eventComponent, RenderPosition.BEFOREEND);
     addEventListenerBySelector(`.event__rollup-btn`, openEditFormHandler);
   });
 };
@@ -157,7 +156,7 @@ const addNewEventHandler = () => {
 
 const addFirstEventHandler = () => {
   const firstEventEditFormComponent = new EventEditFormComponent(`first`);
-  render(tripEventsElement, firstEventEditFormComponent.getElement(), RenderPosition.AFTERBEGIN);
+  render(tripEventsElement, firstEventEditFormComponent, RenderPosition.AFTERBEGIN);
   newEventButtonElement.disabled = true;
   addEventListenerBySelector(`.event--edit`, saveEventHandler, `submit`);
   addEventListenerBySelector(`.event__reset-btn`, closeFormHandler);
@@ -247,19 +246,19 @@ const tripInfoComponent = new TripInfoComponent();
 const menuComponent = new MenuComponent();
 const filterComponent = new FilterComponent();
 
-render(headerMainElement, tripInfoComponent.getElement(), RenderPosition.AFTERBEGIN);
-render(menuHeaderElement.nextSibling, menuComponent.getElement(), `afterend`);
-render(tripControlsElement, filterComponent.getElement(), RenderPosition.BEFOREEND);
+render(headerMainElement, tripInfoComponent, RenderPosition.AFTERBEGIN);
+render(menuHeaderElement.nextSibling, menuComponent, `afterend`);
+render(tripControlsElement, filterComponent, RenderPosition.BEFOREEND);
 
 if (!events) {
   const noEventsComponent = new NoEventsComponent();
-  render(tripEventsElement, noEventsComponent.getElement(), RenderPosition.BEFOREEND);
+  render(tripEventsElement, noEventsComponent, RenderPosition.BEFOREEND);
   newEventButtonElement.addEventListener(`click`, addFirstEventHandler);
 } else {
   const sortComponent = new SortComponent();
   const daysListComponent = new DaysListComponent();
-  render(tripEventsElement, sortComponent.getElement(), RenderPosition.BEFOREEND);
-  render(tripEventsElement, daysListComponent.getElement(), RenderPosition.BEFOREEND);
+  render(tripEventsElement, sortComponent, RenderPosition.BEFOREEND);
+  render(tripEventsElement, daysListComponent, RenderPosition.BEFOREEND);
   renderTripEvents(events);
   newEventButtonElement.addEventListener(`click`, addNewEventHandler);
 }

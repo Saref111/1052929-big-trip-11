@@ -1,5 +1,5 @@
 import {TYPES, CITIES, getOffers, getInfo, PICTURE} from "../const.js";
-import {getRandomArrayElement, getRandomInt} from "../util.js";
+import {getRandomArrayElement, getRandomInt} from "../utils/util.js";
 
 export const getEventObjects = (count) => {
   const arr = [];
