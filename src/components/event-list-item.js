@@ -1,4 +1,4 @@
-import {createElement} from "../util.js";
+import AbstractComponent from "./abstract-component.js";
 
 const createListItemForFormElement = () => {
   return (
@@ -6,24 +6,8 @@ const createListItemForFormElement = () => {
   );
 };
 
-export default class EventListItem {
-  constructor() {
-    this._element = null;
-  }
-
+export default class EventListItem extends AbstractComponent {
   getTemplate() {
     return createListItemForFormElement();
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }

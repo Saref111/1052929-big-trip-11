@@ -1,4 +1,5 @@
-import {getTitleByType, createElement} from "../util.js";
+import {getTitleByType} from "../util.js";
+import AbstractComponent from "./abstract-component.js";
 
 const createEventDetails = (offers) => {
   if (!offers) {
@@ -174,27 +175,16 @@ const createEventFormElement = (mode, object) => { // check destructuring
   );
 };
 
-export default class EventEditForm {
+export default class EventEditForm extends AbstractComponent {
   constructor(mode, data) {
+    super();
+
     this._data = data ? data : {type: `flight`, place: ``};
     this._mode = mode;
-    this._element = null;
   }
 
   getTemplate() {
     return createEventFormElement(this._mode, this._data);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }
 

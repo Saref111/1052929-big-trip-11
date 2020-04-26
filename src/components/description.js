@@ -1,4 +1,4 @@
-import {createElement} from "../util.js";
+import AbstractComponent from "./abstract-component.js";
 
 const createPicElements = (src, imgAmount) => {
   let pics = ``;
@@ -25,26 +25,14 @@ const createDescriptionElement = ({info, src, imgAmount}) => {
   );
 };
 
-export default class Description {
+export default class Description extends AbstractComponent {
   constructor({info, src, imgAmount}) {
-    this._data = {info, src, imgAmount};
+    super();
 
-    this._element = null;
+    this._data = {info, src, imgAmount};
   }
 
   getTemplate() {
     return createDescriptionElement(this._data);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }
