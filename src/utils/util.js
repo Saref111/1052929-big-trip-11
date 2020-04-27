@@ -47,6 +47,10 @@ const stringifyDate = (date) => {
   return `${date.getFullYear()}-${date.getMonth().length === 1 ? `0${date.getMonth()}` : date.getMonth()}-${date.getDate()}`;
 };
 
+const stringifyTime = (time) => {
+  return `${time.getHours()}:${time.getMinutes()}`;
+};
+
 export {
   getRandomArrayElement,
   getRandomInt,
@@ -55,5 +59,6 @@ export {
   getTitleByType,
   getRandomDate,
   stringifyDate,
+  stringifyTime,
   MONTHS,
 };
