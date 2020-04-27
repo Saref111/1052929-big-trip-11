@@ -7,11 +7,10 @@ import DescriptionComponent from "./components/description.js";
 import DaysListComponent from "./components/day-list.js";
 import DayComponent from "./components/day.js";
 import EventComponent from "./components/event.js";
-import EventListItemComponent from "./components/event-list-item.js";
 import EventEditFormComponent from "./components/event-edit-form.js";
 import NoEventsComponent from "./components/no-events.js";
 import {getInfo, CITIES, PICTURE} from "./const.js";
-import {render, RenderPosition, createElement, remove, replace} from "./utils/render.js";
+import {render, RenderPosition, remove, replace} from "./utils/render.js";
 import {
   addEventListenerBySelector,
   removeEventListenerBySelector,
@@ -141,7 +140,7 @@ const addNewEventHandler = () => {
 
   const sortingFormElement = document.querySelector(`.trip-sort`);
   const eventEditFormComponent = new EventEditFormComponent(`create`, undefined);
-  render(sortingFormElement, eventEditFormComponent.getElement(), `afterend`);
+  render(sortingFormElement, eventEditFormComponent, `afterend`);
   document.addEventListener(`keydown`, closeFormOnEscHandler);
 
   addEventListenerBySelector(`.event--edit`, saveEventHandler, `submit`);
@@ -207,14 +206,14 @@ const openEditFormHandler = (evt) => {
   };
 
   const deleteEditEventHandler = () => {
-    listElement.getElement().parentNode.removeChild(listElement.getElement());
+    remove(eventEditFormComponent);
   };
 
   const closeEditFormHandler = () => {
-    listElement.getElement().parentNode.replaceChild(listItemEventElement, listElement.getElement());
+    replace(listItemEventElement, eventEditFormComponent);
   };
 
-  closeIfExistEditFormElement();
+  // closeIfExistEditFormElement();
 
   const listItemEventElement = evt.target.closest(`li`);
   listItemEventElement.id = `edit`;
@@ -225,15 +224,13 @@ const openEditFormHandler = (evt) => {
   };
 
   const eventEditFormComponent = new EventEditFormComponent(`edit`, foundedEvent);
-  const listElement = new EventListItemComponent();
-  render(listElement.getElement(), eventEditFormComponent.getElement(), RenderPosition.BEFOREEND);
 
-  addEventListenerBySelector(`form`, saveEditedEventHandler, `submit`, listElement.getElement());
-  addEventListenerBySelector(`.event__reset-btn`, deleteEditEventHandler, `click`, listElement.getElement());
-  addEventListenerBySelector(`.event__rollup-btn`, closeEditFormHandler, `click`, listElement.getElement());
-  addEventListenerBySelector(`.event__type-list`, changeTypeIconHandler, `click`, listElement.getElement());
+  addEventListenerBySelector(`form`, saveEditedEventHandler, `submit`, eventEditFormComponent.getElement());
+  addEventListenerBySelector(`.event__reset-btn`, deleteEditEventHandler, `click`, eventEditFormComponent.getElement());
+  addEventListenerBySelector(`.event__rollup-btn`, closeEditFormHandler, `click`, eventEditFormComponent.getElement());
+  addEventListenerBySelector(`.event__type-list`, changeTypeIconHandler, `click`, eventEditFormComponent.getElement());
 
-  listItemEventElement.parentNode.replaceChild(listElement.getElement(), listItemEventElement);
+  replace(eventEditFormComponent, listItemEventElement);
 };
 
 const headerMainElement = document.querySelector(`.trip-main`);

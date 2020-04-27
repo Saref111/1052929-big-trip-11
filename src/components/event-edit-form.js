@@ -64,7 +64,7 @@ const createEventFormElement = (mode, object) => { // check destructuring
   };
 
   return (
-    `<form class="trip-events__item  event  event--edit" action="#" method="post" id="${mode}">
+    `${mode === `edit` ? `<li class="trip-events__item">` : ``}<form class="trip-events__item  event  event--edit" action="#" method="post" id="${mode}">
     <header class="event__header">
       <div class="event__type-wrapper">
         <label class="event__type  event__type-btn" for="event-type-toggle-1">
@@ -171,7 +171,8 @@ const createEventFormElement = (mode, object) => { // check destructuring
       <button class="event__reset-btn" type="reset">${mode === `edit` ? `Delete` : `Cancel`}</button>
       ${mode === `edit` ? buttonFavoriteTemplate() : ``}
     </header>
-    ${mode === `first` ? `` : createEventDetails(eventObject.offers)}`
+    ${mode === `first` ? `` : createEventDetails(eventObject.offers)}
+    ${mode === `edit` ? `</li>` : ``}`
   );
 };
 
