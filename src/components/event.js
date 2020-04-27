@@ -62,4 +62,8 @@ export default class Event extends AbstractComponent {
   getTemplate() {
     return createEventElement(this._data);
   }
+
+  setOpenEditHandler(handler) {
+    this.getElement().addEventListener(`click`, handler);
+  }
 }

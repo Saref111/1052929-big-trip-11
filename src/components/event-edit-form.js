@@ -50,7 +50,7 @@ const buttonFavoriteTemplate = () => {
       </svg>
     </label>
     <button class="event__rollup-btn" type="button">
-      <span class="visually-hidden">Open event</span>
+      <span class="visually-hidden">Close event</span>
     </button>`
   );
 };
@@ -186,6 +186,24 @@ export default class EventEditForm extends AbstractComponent {
 
   getTemplate() {
     return createEventFormElement(this._mode, this._data);
+  }
+
+  setCloseFormHandler(handler) {
+    this.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, handler);
+  }
+
+  setSubmitHandler(handler) {
+    this.getElement().querySelector(`form`).addEventListener(`submit`, handler);
+  }
+
+  setDeleteHandler(handler) {
+    this.getElement().querySelector(`.event__reset-btn`).addEventListener(`click`, handler);
+  }
+
+  setEditFormHandlers(closeHandler, saveHandler, deleteHandler) {
+    this.setCloseFormHandler(closeHandler);
+    this.setSubmitHandler(saveHandler);
+    this.setDeleteHandler(deleteHandler);
   }
 }
 

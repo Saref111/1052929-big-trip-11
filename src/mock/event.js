@@ -1,5 +1,5 @@
 import {TYPES, CITIES, getOffers} from "../const.js";
-import {getRandomArrayElement, getRandomInt} from "../utils/util.js";
+import {getRandomArrayElement, getRandomInt, getRandomDate} from "../utils/util.js";
 
 export const getEventObjects = (count) => {
   const arr = [];
@@ -10,10 +10,13 @@ export const getEventObjects = (count) => {
     object.type = getRandomArrayElement(TYPES);
     object.place = getRandomArrayElement(CITIES);
     object.offers = getOffers();
-
+    object.startTime = getRandomDate();
+    object.endTime = getRandomDate();
     object.price = getRandomInt(200) + object.offers.filter((offer) => offer.active).reduce((total, current) => {
       return total + current.price;
     }, 0);
+
+    // console.log(object.startTime);
 
     arr.push(object);
   }

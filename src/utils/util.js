@@ -6,6 +6,17 @@ const findEventObject = (currentEvent, events) => {
   return {foundedEvent, index};
 };
 
+const getRandomDate = () => {
+  const targetDate = new Date();
+  const sign = Math.random() > 0.5 ? 1 : -1;
+
+  const diffValue = sign * getRandomInt(8);
+
+  targetDate.setDate(targetDate.getDate() + diffValue);
+
+  return targetDate;
+};
+
 const addEventListenerBySelector = (selector, handler, type = `click`, ctx = document) => {
   const elements = ctx.querySelectorAll(selector);
   if (elements) {
@@ -13,22 +24,36 @@ const addEventListenerBySelector = (selector, handler, type = `click`, ctx = doc
   }
 };
 
-const removeEventListenerBySelector = (selector, handler, type = `click`, ctx = document) => {
-  const elements = ctx.querySelectorAll(selector);
-  if (elements) {
-    elements.forEach((it) => it.removeEventListener(type, handler));
-  }
-};
-
 const capitalize = (string) => `${string[0].toUpperCase()}${string.slice(1)}`;
 const getPreposition = (type) => [`sightseeing`, `restaurant`, `check-in`].includes(type) ? ` in ` : ` to `;
 const getTitleByType = (type, place) => `${capitalize(type)}${getPreposition(type)}${place}`;
+
+const MONTHS = {
+  0: `JAN`,
+  1: `FEB`,
+  2: `MAR`,
+  3: `APR`,
+  4: `MAY`,
+  5: `JUN`,
+  6: `JUL`,
+  7: `AUG`,
+  8: `SEP`,
+  9: `OCT`,
+  10: `NOV`,
+  11: `DEC`
+};
+
+const stringifyDate = (date) => {
+  return `${date.getFullYear()}-${date.getMonth().length === 1 ? `0${date.getMonth()}` : date.getMonth()}-${date.getDate()}`;
+};
 
 export {
   getRandomArrayElement,
   getRandomInt,
   addEventListenerBySelector,
-  removeEventListenerBySelector,
   findEventObject,
   getTitleByType,
+  getRandomDate,
+  stringifyDate,
+  MONTHS,
 };
