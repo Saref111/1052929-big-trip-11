@@ -3,11 +3,32 @@ import TripInfoComponent from "../components/trip-info.js";
 import MenuComponent from "../components/menu.js";
 import FilterComponent from "../components/filter.js";
 import EventComponent from "../components/event.js";
-import SortComponent from "../components/sort.js";
+import SortComponent, {SortType} from "../components/sort.js";
 import DayComponent from "../components/day.js";
 import EventEditComponent from "../components/event-edit-form.js";
 import {render, replace, RenderPosition, remove} from "../utils/render.js";
 import {stringifyDate} from "../utils/util.js";
+
+const getEventDuration = (start, end) => end - start;
+
+const getSortedEvents = (events, sortType) => {
+  const currentEvents = events.slice();
+  let sortedEvents = [];
+
+  switch (sortType) {
+    case SortType.PRICE:
+      sortedEvents = currentEvents.sort((a, b) => b.price - a.price);
+      break;
+    case SortType.TIME:
+      sortedEvents = currentEvents.sort((a, b) => getEventDuration(b.startTime, b.endTime) + getEventDuration(a.startTime, a.endTime));
+      break;
+    case SortType.DEFAULT:
+      sortedEvents = currentEvents;
+      break;
+  }
+
+  return sortedEvents;
+};
 
 const createDayComponents = (events) => {
   let uniqueDates = [];
@@ -83,7 +104,10 @@ export default class TripController {
     const tripControlsElement = headerMainElement.querySelector(`.trip-controls`);
     const menuHeaderElement = tripControlsElement.querySelector(`h2`);
     const tripEventsElement = document.querySelector(`.trip-events`);
-    // const newEventButtonElement = headerMainElement.querySelector(`.btn`);
+
+    this._sortComponent.setSortTypeChangeHandler((currentSortType) => {
+      getSortedEvents(events, currentSortType);
+    });
 
     render(headerMainElement, this._tripInfoComponent, RenderPosition.AFTERBEGIN);
     render(menuHeaderElement.nextSibling, this._menuComponent, `afterend`);
