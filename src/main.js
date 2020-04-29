@@ -4,6 +4,7 @@ import TripController from "./controllers/days-list.js";
 
 const events = getEventObjects(20);
 
+
 // const closeFormHandler = () => {
 //   const form = document.querySelector(`.trip-events__item`);
 //   form.remove();
@@ -203,3 +204,4 @@ const events = getEventObjects(20);
 const daysListComponent = new DaysListComponent();
 const tripController = new TripController(daysListComponent);
 tripController.render(events);
+
