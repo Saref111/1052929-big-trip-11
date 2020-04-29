@@ -16,7 +16,9 @@ export const getEventObjects = (count) => {
       return total + current.price;
     }, 0);
 
-    // console.log(object.startTime);
+    while(object.startTime >= object.endTime) {
+      object.endTime = getRandomDate();
+    }
 
     arr.push(object);
   }

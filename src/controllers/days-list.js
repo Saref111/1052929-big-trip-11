@@ -45,8 +45,13 @@ const createDayComponents = (events, isSorting) => {
   return uniqueDates.map((event) => new DayComponent(event));
 };
 
-const renderTripEvents = (arr, container, isSorting = false) => {
+const renderTripEvents = (events, container, isSorting = false) => {
+  let arr = events.slice();
   const dayComponentsArray = createDayComponents(arr, isSorting);
+
+  if (!isSorting) {
+    arr = arr.sort((a, b) => a.startTime - b.startTime);
+  }
 
   arr.forEach((event) => {
     const eventComponent = new EventComponent(event);
@@ -83,7 +88,7 @@ const renderTripEvents = (arr, container, isSorting = false) => {
     render(dayComponent.getElement().querySelector(`ul`), eventComponent, RenderPosition.BEFOREEND);
   });
 
-  dayComponentsArray.forEach((dayComponent) => render(container, dayComponent, RenderPosition.BEFOREEND));
+  dayComponentsArray.sort((a, b) => a.date.startTime - b.date.startTime).forEach((dayComponent) => render(container, dayComponent, RenderPosition.BEFOREEND));
 };
 
 export default class TripController {
