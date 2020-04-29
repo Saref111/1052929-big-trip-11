@@ -81,8 +81,9 @@ const renderTripEvents = (arr, container, isSorting = false) => {
     );
 
     render(dayComponent.getElement().querySelector(`ul`), eventComponent, RenderPosition.BEFOREEND);
-    render(container, dayComponent, RenderPosition.BEFOREEND);
   });
+
+  dayComponentsArray.forEach((dayComponent) => render(container, dayComponent, RenderPosition.BEFOREEND));
 };
 
 export default class TripController {

@@ -8,7 +8,7 @@ const createDayElement = (date, isSorting) => {
         ${isSorting ? `` : `<span class="day__counter">${date.getDate()}</span>
         <time class="day__date"
         datetime="${stringifyDate(date)}">
-        ${MONTHS[date.getMonth()]} ${date.getYear()}</time>`}
+        ${MONTHS[date.getMonth()]} ${stringifyDate(date).slice(2, 4)}</time>`}
       </div>
 
       <ul class="trip-events__list">
