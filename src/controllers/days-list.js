@@ -20,7 +20,7 @@ const getSortedEvents = (events, sortType) => {
       sortedEvents = currentEvents.sort((a, b) => b.price - a.price);
       break;
     case SortType.TIME:
-      sortedEvents = currentEvents.sort((a, b) => getEventDuration(b.startTime, b.endTime) + getEventDuration(a.startTime, a.endTime));
+      sortedEvents = currentEvents.sort((a, b) => getEventDuration(b.startTime, b.endTime) - getEventDuration(a.startTime, a.endTime));
       break;
     case SortType.DEFAULT:
       sortedEvents = currentEvents;
@@ -106,7 +106,7 @@ export default class TripController {
     const tripEventsElement = document.querySelector(`.trip-events`);
 
     this._sortComponent.setSortTypeChangeHandler((currentSortType) => {
-      getSortedEvents(events, currentSortType);
+      console.log(getSortedEvents(events, currentSortType), currentSortType)
     });
 
     render(headerMainElement, this._tripInfoComponent, RenderPosition.AFTERBEGIN);
