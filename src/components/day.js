@@ -1,11 +1,14 @@
-import {createElement} from "../util.js";
+import AbstractComponent from "./abstract-component.js";
+import {MONTHS, stringifyDate} from "../utils/util.js";
 
-const createDayElement = () => {
+const createDayElement = (date) => {
   return (
     `<li class="trip-days__item  day">
       <div class="day__info">
-        <span class="day__counter">1</span>
-        <time class="day__date" datetime="2019-03-18">MAR 18</time>
+        <span class="day__counter">${date.getDate()}</span>
+        <time class="day__date"
+        datetime="${stringifyDate(date)}">
+        ${MONTHS[date.getMonth()]} ${date.getYear()}</time>
       </div>
 
       <ul class="trip-events__list">
@@ -15,24 +18,21 @@ const createDayElement = () => {
   );
 };
 
-export default class Day {
-  constructor() {
-    this._element = null;
-  }
+export default class Day extends AbstractComponent { // DATE
+  constructor(date) {
+    super();
 
+    this._date = date;
+  }
   getTemplate() {
-    return createDayElement();
+    return createDayElement(this._date.startTime);
   }
 
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
+  set date(date) {
+    this._date = date;
   }
 
-  removeElement() {
-    this._element = null;
+  get date() {
+    return this._date;
   }
 }
