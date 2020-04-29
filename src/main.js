@@ -195,8 +195,8 @@ const closeIfExistEditFormElement = () => {
     handler(formElement);
   }
 };
-const openEditFormHandler = (evt) => {
 
+const openEditFormHandler = (evt) => {
   const saveEditedEventHandler = (event) => {
     event.preventDefault();
     const {formData, newEventObject} = createDataObject(event.target);
@@ -209,10 +209,19 @@ const openEditFormHandler = (evt) => {
 
   const deleteEditEventHandler = () => {
     listElement.getElement().parentNode.removeChild(listElement.getElement());
+    document.removeEventListener(`keydown`, onEscHandler);
   };
 
   const closeEditFormHandler = () => {
     listElement.getElement().parentNode.replaceChild(listItemEventElement, listElement.getElement());
+    document.removeEventListener(`keydown`, onEscHandler);
+  };
+
+  const onEscHandler = (keyEvt) => {
+    if (keyEvt.key === `Escape` || keyEvt.key === `Esc`) {
+      closeEditFormHandler();
+      document.removeEventListener(`keydown`, onEscHandler);
+    }
   };
 
   closeIfExistEditFormElement();
@@ -233,6 +242,7 @@ const openEditFormHandler = (evt) => {
   addEventListenerBySelector(`.event__reset-btn`, deleteEditEventHandler, `click`, listElement.getElement());
   addEventListenerBySelector(`.event__rollup-btn`, closeEditFormHandler, `click`, listElement.getElement());
   addEventListenerBySelector(`.event__type-list`, changeTypeIconHandler, `click`, listElement.getElement());
+  document.addEventListener(`keydown`, onEscHandler);
 
   listItemEventElement.parentNode.replaceChild(listElement.getElement(), listItemEventElement);
 };
