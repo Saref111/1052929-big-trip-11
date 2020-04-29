@@ -30,7 +30,11 @@ const getSortedEvents = (events, sortType) => {
   return sortedEvents;
 };
 
-const createDayComponents = (events) => {
+const createDayComponents = (events, isSorting) => {
+  if (isSorting) {
+    return [new DayComponent(new Date(), true)];
+  }
+
   let uniqueDates = [];
   events.forEach((event) => {
     if (uniqueDates.every((it) => stringifyDate(event.startTime) !== stringifyDate(it.startTime))) {
@@ -41,13 +45,13 @@ const createDayComponents = (events) => {
   return uniqueDates.map((event) => new DayComponent(event));
 };
 
-const renderTripEvents = (arr, container) => {
-  const dayComponentsArray = createDayComponents(arr);
+const renderTripEvents = (arr, container, isSorting = false) => {
+  const dayComponentsArray = createDayComponents(arr, isSorting);
 
   arr.forEach((event) => {
     const eventComponent = new EventComponent(event);
     const eventEditComponent = new EventEditComponent(`edit`, event);
-    const dayComponent = dayComponentsArray.find((day) => stringifyDate(day.date.startTime) === stringifyDate(event.startTime));
+    const dayComponent = isSorting ? dayComponentsArray[0] : dayComponentsArray.find((day) => stringifyDate(day.date.startTime) === stringifyDate(event.startTime));
 
     const eventToEditHandler = () => {
       replace(eventEditComponent, eventComponent);
@@ -106,7 +110,11 @@ export default class TripController {
     const tripEventsElement = document.querySelector(`.trip-events`);
 
     this._sortComponent.setSortTypeChangeHandler((currentSortType) => {
-      console.log(getSortedEvents(events, currentSortType), currentSortType)
+      const sortedEvents = getSortedEvents(events, currentSortType);
+
+      containerElement.innerHTML = ``;
+
+      renderTripEvents(sortedEvents, containerElement, currentSortType === SortType.DEFAULT ? false : true);
     });
 
     render(headerMainElement, this._tripInfoComponent, RenderPosition.AFTERBEGIN);
