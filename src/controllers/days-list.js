@@ -3,13 +3,38 @@ import TripInfoComponent from "../components/trip-info.js";
 import MenuComponent from "../components/menu.js";
 import FilterComponent from "../components/filter.js";
 import EventComponent from "../components/event.js";
-import SortComponent from "../components/sort.js";
+import SortComponent, {SortType} from "../components/sort.js";
 import DayComponent from "../components/day.js";
 import EventEditComponent from "../components/event-edit-form.js";
 import {render, replace, RenderPosition, remove} from "../utils/render.js";
 import {stringifyDate} from "../utils/util.js";
 
-const createDayComponents = (events) => {
+const getEventDuration = (start, end) => end - start;
+
+const getSortedEvents = (events, sortType) => {
+  const currentEvents = events.slice();
+  let sortedEvents = [];
+
+  switch (sortType) {
+    case SortType.PRICE:
+      sortedEvents = currentEvents.sort((a, b) => b.price - a.price);
+      break;
+    case SortType.TIME:
+      sortedEvents = currentEvents.sort((a, b) => getEventDuration(b.startTime, b.endTime) - getEventDuration(a.startTime, a.endTime));
+      break;
+    case SortType.DEFAULT:
+      sortedEvents = currentEvents;
+      break;
+  }
+
+  return sortedEvents;
+};
+
+const createDayComponents = (events, isSorting) => {
+  if (isSorting) {
+    return [new DayComponent(new Date(), true)];
+  }
+
   let uniqueDates = [];
   events.forEach((event) => {
     if (uniqueDates.every((it) => stringifyDate(event.startTime) !== stringifyDate(it.startTime))) {
@@ -20,13 +45,18 @@ const createDayComponents = (events) => {
   return uniqueDates.map((event) => new DayComponent(event));
 };
 
-const renderTripEvents = (arr, container) => {
-  const dayComponentsArray = createDayComponents(arr);
+const renderTripEvents = (events, container, isSorting = false) => {
+  let arr = events.slice();
+  const dayComponentsArray = createDayComponents(arr, isSorting);
+
+  if (!isSorting) {
+    arr = arr.sort((a, b) => a.startTime - b.startTime);
+  }
 
   arr.forEach((event) => {
     const eventComponent = new EventComponent(event);
     const eventEditComponent = new EventEditComponent(`edit`, event);
-    const dayComponent = dayComponentsArray.find((day) => stringifyDate(day.date.startTime) === stringifyDate(event.startTime));
+    const dayComponent = isSorting ? dayComponentsArray[0] : dayComponentsArray.find((day) => stringifyDate(day.date.startTime) === stringifyDate(event.startTime));
 
     const eventToEditHandler = () => {
       replace(eventEditComponent, eventComponent);
@@ -56,8 +86,9 @@ const renderTripEvents = (arr, container) => {
     );
 
     render(dayComponent.getElement().querySelector(`ul`), eventComponent, RenderPosition.BEFOREEND);
-    render(container, dayComponent, RenderPosition.BEFOREEND);
   });
+
+  dayComponentsArray.sort((a, b) => a.date.startTime - b.date.startTime).forEach((dayComponent) => render(container, dayComponent, RenderPosition.BEFOREEND));
 };
 
 export default class TripController {
@@ -83,7 +114,14 @@ export default class TripController {
     const tripControlsElement = headerMainElement.querySelector(`.trip-controls`);
     const menuHeaderElement = tripControlsElement.querySelector(`h2`);
     const tripEventsElement = document.querySelector(`.trip-events`);
-    // const newEventButtonElement = headerMainElement.querySelector(`.btn`);
+
+    this._sortComponent.setSortTypeChangeHandler((currentSortType) => {
+      const sortedEvents = getSortedEvents(events, currentSortType);
+
+      containerElement.innerHTML = ``;
+
+      renderTripEvents(sortedEvents, containerElement, currentSortType === SortType.DEFAULT ? false : true);
+    });
 
     render(headerMainElement, this._tripInfoComponent, RenderPosition.AFTERBEGIN);
     render(menuHeaderElement.nextSibling, this._menuComponent, `afterend`);

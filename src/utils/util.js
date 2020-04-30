@@ -13,6 +13,8 @@ const getRandomDate = () => {
   const diffValue = sign * getRandomInt(8);
 
   targetDate.setDate(targetDate.getDate() + diffValue);
+  targetDate.setHours(targetDate.getHours() + diffValue);
+  targetDate.setMinutes(targetDate.getMinutes() + (getRandomInt(10)));
 
   return targetDate;
 };
@@ -43,12 +45,25 @@ const MONTHS = {
   12: `DEC`
 };
 
+const addZeroByAmount = (str) => {
+  let string = str;
+  if (typeof string !== `string`) {
+    string = String(string);
+  }
+
+  if (string.length < 2) {
+    string = `0${string}`;
+  }
+
+  return string;
+};
+
 const stringifyDate = (date, sign) => {
-  return `${date.getFullYear()}${sign ? sign : `-`}${date.getMonth().length === 1 ? `0${date.getMonth()}` : date.getMonth()}${sign ? sign : `-`}${date.getDate()}`;
+  return `${date.getFullYear()}${sign ? sign : `-`}${addZeroByAmount(date.getMonth())}${sign ? sign : `-`}${date.getDate()}`;
 };
 
 const stringifyTime = (time) => {
-  return `${time.getHours()}:${time.getMinutes()}`;
+  return `${addZeroByAmount(time.getHours())}:${addZeroByAmount(time.getMinutes())}`;
 };
 
 export {
