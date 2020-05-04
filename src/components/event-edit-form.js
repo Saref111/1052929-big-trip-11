@@ -55,13 +55,7 @@ const buttonFavoriteTemplate = () => {
   );
 };
 
-const createEventFormElement = (mode, {type, place, price, offers, startTime, endTime}) => { // check destructuring
-  // const eventObject = {
-  //   type: object.type,
-  //   place: object.place,
-  //   price: object.price,
-  //   offers: object.offers,
-  // };
+const createEventFormElement = (mode, {type, place, price, offers, startTime, endTime}) => {
 
   return (
     `${mode === `edit` ? `<li class="trip-events__item">` : ``}<form class="trip-events__item  event  event--edit" action="#" method="post" id="${mode}">
@@ -200,10 +194,15 @@ export default class EventEditForm extends AbstractComponent {
     this.getElement().querySelector(`.event__reset-btn`).addEventListener(`click`, handler);
   }
 
-  setEditFormHandlers(closeHandler, saveHandler, deleteHandler) {
+  setAddFavoriteHandler(handler) {
+    this.getElement().querySelector(`#event-favorite-1`).addEventListener(`click`, handler);
+  }
+
+  setEditFormHandlers(closeHandler, saveHandler, deleteHandler, favoriteHandler) {
     this.setCloseFormHandler(closeHandler);
     this.setSubmitHandler(saveHandler);
     this.setDeleteHandler(deleteHandler);
+    this.setAddFavoriteHandler(favoriteHandler);
   }
 }
 

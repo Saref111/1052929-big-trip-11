@@ -1,15 +1,19 @@
-
 import EventEditComponent from "../components/event-edit-form.js";
 import EventComponent from "../components/event.js";
 import {render, replace, RenderPosition, remove} from "../utils/render.js";
 import {stringifyDate} from "../utils/util.js";
 
 export default class PointController {
-  constructor(containerElement) {
+  constructor(containerElement, onDataChange) {
     this._container = containerElement;
+    this._onDataChange = onDataChange;
 
     this._eventComponent = null;
     this._eventEditComponent = null;
+  }
+
+  getContainerElement() {
+    return this._container;
   }
 
   render(event, dayComponentsArray, isSorting) {
@@ -41,7 +45,8 @@ export default class PointController {
           evt.preventDefault();
           editToEventHandler();
         },
-        deleteEventHandler
+        deleteEventHandler,
+        this._onDataChange
     );
 
     render(dayComponent.getElement().querySelector(`ul`), eventComponent, RenderPosition.BEFOREEND);
