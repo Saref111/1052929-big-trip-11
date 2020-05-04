@@ -3,9 +3,9 @@ import TripInfoComponent from "../components/trip-info.js";
 import MenuComponent from "../components/menu.js";
 import FilterComponent from "../components/filter.js";
 import SortComponent, {SortType} from "../components/sort.js";
-import PointController from "./point-controller.js";
+import PointController from "./point.js";
 import DayComponent from "../components/day.js";
-import {render, replace, RenderPosition, remove} from "../utils/render.js";
+import {render, RenderPosition, remove} from "../utils/render.js";
 import {stringifyDate} from "../utils/util.js";
 
 const getEventDuration = (start, end) => end - start;
@@ -83,12 +83,19 @@ export default class TripController {
     this._sortComponent = new SortComponent();
 
     this._onSortTypeChange = this._onSortTypeChange.bind(this);
+    this._onDataChange = this._onDataChange.bind(this);
 
     this._sortComponent.setSortTypeChangeHandler(this._onSortTypeChange);
   }
 
   _onDataChange(oldData, newData) {
+    const index = this._events.findIndex((it) => it === oldData);
 
+    if (index === -1) {
+      return;
+    }
+
+    this._events = [].concat(this._events.slice(0, index), newData, this._events.slice(index + 1));
   }
 
   _onSortTypeChange(currentSortType) {

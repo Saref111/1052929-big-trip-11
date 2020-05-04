@@ -7,16 +7,18 @@ export const getEventObjects = (count) => {
   for (let i = 0; i < count; i++) {
     let object = {};
 
+    object.id = getRandomInt(1000);
     object.type = getRandomArrayElement(TYPES);
     object.place = getRandomArrayElement(CITIES);
     object.offers = getOffers();
     object.startTime = getRandomDate();
     object.endTime = getRandomDate();
+    object.isFavorite = false; // Math.random() > 0.5;
     object.price = getRandomInt(200) + object.offers.filter((offer) => offer.active).reduce((total, current) => {
       return total + current.price;
     }, 0);
 
-    while(object.startTime >= object.endTime) {
+    while (object.startTime >= object.endTime) {
       object.endTime = getRandomDate();
     }
 

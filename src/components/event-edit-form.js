@@ -40,9 +40,9 @@ const createEventDetails = (offers) => {
   );
 };
 
-const buttonFavoriteTemplate = () => {
+const buttonFavoriteTemplate = (isFavorite) => {
   return (
-    `<input id="event-favorite-1" class="event__favorite-checkbox  visually-hidden" type="checkbox" name="event-favorite" checked="">
+    `<input id="event-favorite-1" class="event__favorite-checkbox  visually-hidden" type="checkbox" name="event-favorite" ${isFavorite ? `checked` : ``}>
     <label class="event__favorite-btn" for="event-favorite-1">
       <span class="visually-hidden">Add to favorite</span>
       <svg class="event__favorite-icon" width="28" height="28" viewBox="0 0 28 28">
@@ -55,7 +55,7 @@ const buttonFavoriteTemplate = () => {
   );
 };
 
-const createEventFormElement = (mode, {type, place, price, offers, startTime, endTime}) => {
+const createEventFormElement = (mode, {type, place, price, offers, startTime, endTime, isFavorite}) => {
 
   return (
     `${mode === `edit` ? `<li class="trip-events__item">` : ``}<form class="trip-events__item  event  event--edit" action="#" method="post" id="${mode}">
@@ -163,7 +163,7 @@ const createEventFormElement = (mode, {type, place, price, offers, startTime, en
 
       <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
       <button class="event__reset-btn" type="reset">${mode === `edit` ? `Delete` : `Cancel`}</button>
-      ${mode === `edit` ? buttonFavoriteTemplate() : ``}
+      ${mode === `edit` ? buttonFavoriteTemplate(isFavorite) : ``}
     </header>
     ${mode === `first` ? `` : createEventDetails(offers)}
     ${mode === `edit` ? `</li>` : ``}`
