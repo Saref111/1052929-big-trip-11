@@ -1,18 +1,7 @@
 import {getTitleByType, stringifyTime, stringifyDate} from "../utils/util.js";
-import AbstractComponent from "./abstract-component.js";
+import AbstractSmartComponent from "./abstract-smart-component.js";
 
 const createEventDetails = (offers) => {
-  if (!offers) {
-    offers = [
-      {name: `luggage`, active: true, text: `Add luggage`, price: 30},
-      {name: `comfort`, active: true, text: `Switch to comfort class`, price: 100},
-      {name: `meal`, active: false, text: `Add meal`, price: 15},
-      {name: `seats`, active: false, text: `Choose seats`, price: 5},
-      {name: `train`, active: false, text: `Travel by train`, price: 40},
-      {name: `uber`, active: false, text: `Order Uber`, price: 20},
-    ];
-  }
-
   const activeOffers = offers.reduce((total, offer) => {
     total += `<div class="event__offer-selector">
                 <input class="event__offer-checkbox  visually-hidden" id="event-offer-${offer.name}-1" type="checkbox" name="event-offer-${offer.name}" ${offer.active ? `checked` : ``}>
@@ -170,12 +159,19 @@ const createEventFormElement = (mode, {type, place, price, offers, startTime, en
   );
 };
 
-export default class EventEditForm extends AbstractComponent {
+export default class EventEditForm extends AbstractSmartComponent {
   constructor(mode, data) {
     super();
 
-    this._data = data ? data : {type: `flight`, place: ``};
+    this._data = data;
     this._mode = mode;
+
+    this._closeFormHandler = null;
+    this._submitHandler = null;
+    this._deleteHandler = null;
+    this._addFavoriteHandler = null;
+    this._closeFormHandler = null;
+    this._typeChangeHandler = null;
   }
 
   getTemplate() {
@@ -184,26 +180,52 @@ export default class EventEditForm extends AbstractComponent {
 
   setCloseFormHandler(handler) {
     this.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, handler);
+    this._closeFormHandler = handler;
   }
 
   setSubmitHandler(handler) {
     this.getElement().querySelector(`form`).addEventListener(`submit`, handler);
+    this._submitHandler = handler;
   }
 
   setDeleteHandler(handler) {
     this.getElement().querySelector(`.event__reset-btn`).addEventListener(`click`, handler);
+    this._deleteHandler = handler;
   }
 
   setAddFavoriteHandler(handler) {
     this.getElement().querySelector(`#event-favorite-1`).addEventListener(`click`, handler);
+    this._addFavoriteHandler = handler;
   }
 
-  setEditFormHandlers(closeHandler, saveHandler, deleteHandler, favoriteHandler) {
+  setChangeTypeHandler(handler) {
+    this.getElement().querySelector(`.event__type-list`).addEventListener(`change`, handler);
+    this._typeChangeHandler = handler;
+  }
+
+  setEditFormHandlers(closeHandler, saveHandler, deleteHandler, favoriteHandler, typeHandler) {
     this.setCloseFormHandler(closeHandler);
     this.setSubmitHandler(saveHandler);
     this.setDeleteHandler(deleteHandler);
     this.setAddFavoriteHandler(favoriteHandler);
+    this.setChangeTypeHandler(typeHandler);
   }
+
+  recoveryListeners() {
+    this.setEditFormHandlers(
+        this._closeFormHandler,
+        this._submitHandler,
+        this._deleteHandler,
+        this._addFavoriteHandler,
+        this._typeChangeHandler
+    );
+  }
+
+  rerender() {
+    super.rerender();
+  }
+
+
 }
 
 

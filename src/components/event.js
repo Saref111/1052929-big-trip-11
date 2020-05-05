@@ -32,7 +32,7 @@ export const createEventElement = (data) => {
             &mdash;
             <time class="event__end-time" datetime="${stringifyDate(endTime)}T${stringifyTime(endTime)}">${stringifyTime(endTime)}</time>
           </p>
-          <p class="event__duration">${(endTime - startTime) / 60000}M</p>
+          <p class="event__duration">${Math.round((endTime - startTime) / 60000)}M</p>
         </div>
 
         <p class="event__price">
