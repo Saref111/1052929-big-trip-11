@@ -14,9 +14,7 @@ export const getEventObjects = (count) => {
     object.startTime = getRandomDate();
     object.endTime = getRandomDate();
     object.isFavorite = false; // Math.random() > 0.5;
-    object.price = getRandomInt(200) + object.offers.filter((offer) => offer.active).reduce((total, current) => {
-      return total + current.price;
-    }, 0);
+    object.price = getRandomInt(200);
 
     while (object.startTime >= object.endTime) {
       object.endTime = getRandomDate();

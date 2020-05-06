@@ -172,6 +172,8 @@ export default class EventEditForm extends AbstractSmartComponent {
     this._addFavoriteHandler = null;
     this._closeFormHandler = null;
     this._typeChangeHandler = null;
+
+    this._subscribeOnEvents();
   }
 
   getTemplate() {
@@ -219,13 +221,24 @@ export default class EventEditForm extends AbstractSmartComponent {
         this._addFavoriteHandler,
         this._typeChangeHandler
     );
+    this._subscribeOnEvents();
   }
 
   rerender() {
     super.rerender();
   }
 
+  _subscribeOnEvents() {
+    const element = this.getElement();
 
+    element.querySelector(`.event__type-list`).addEventListener(`click`, (evt) => {
+      if (evt.target.tagName === `INPUT`) {
+        this._data.type = evt.target.value;
+
+        this.rerender();
+      }
+    });
+  }
 }
 
 
