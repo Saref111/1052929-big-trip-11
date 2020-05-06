@@ -49,7 +49,7 @@ const sortDaysAndEventsByDefault = (days, container) => {
   .forEach((dayComponent) => render(container, dayComponent, RenderPosition.BEFOREEND));
 };
 
-const renderTripEvents = (events, container, isSorting = false, onDataChange) => {
+const renderTripEvents = (events, container, isSorting = false, onDataChange, onViewChange) => {
   let arr = events.slice();
   const dayComponentsArray = createDayComponents(arr, isSorting);
 
@@ -58,7 +58,7 @@ const renderTripEvents = (events, container, isSorting = false, onDataChange) =>
   }
 
   const controllers = arr.map((event) => {
-    const pointController = new PointController(container, onDataChange);
+    const pointController = new PointController(container, onDataChange, onViewChange);
 
     pointController.render(event, dayComponentsArray, isSorting);
 
@@ -84,6 +84,7 @@ export default class TripController {
 
     this._onSortTypeChange = this._onSortTypeChange.bind(this);
     this._onDataChange = this._onDataChange.bind(this);
+    this._onViewChange = this._onViewChange.bind(this);
 
     this._sortComponent.setSortTypeChangeHandler(this._onSortTypeChange);
   }
@@ -106,7 +107,11 @@ export default class TripController {
         sortedEvents,
         this._container.getElement(),
         currentSortType === SortType.DEFAULT ? false : true,
-        this._onDataChange);
+        this._onDataChange, this._onViewChange);
+  }
+
+  _onViewChange() {
+    this._controllers.forEach((controller) => controller.setDefaultView());
   }
 
   render(events) {
@@ -128,6 +133,6 @@ export default class TripController {
     render(tripControlsElement, this._filterComponent, RenderPosition.BEFOREEND);
     render(tripEventsElement, this._sortComponent, RenderPosition.BEFOREEND);
     render(tripEventsElement, this._container, RenderPosition.BEFOREEND);
-    this._controllers = renderTripEvents(events, containerElement, false, this._onDataChange);
+    this._controllers = renderTripEvents(events, containerElement, false, this._onDataChange, this._onViewChange);
   }
 }

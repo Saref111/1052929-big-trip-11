@@ -3,14 +3,21 @@ import EventComponent from "../components/event.js";
 import {render, replace, RenderPosition, remove} from "../utils/render.js";
 import {stringifyDate} from "../utils/util.js";
 
+const Mode = {
+  DEFAULT: `default`,
+  EDIT: `edit`,
+};
+
 export default class PointController {
-  constructor(containerElement, onDataChange) {
+  constructor(containerElement, onDataChange, onViewChange) {
     this._container = containerElement;
     this._dayComponents = null;
 
     this._eventComponent = null;
     this._eventEditComponent = null;
+    this._mode = Mode.DEFAULT;
 
+    this._onViewChange = onViewChange;
     this._onDataChange = onDataChange;
     this._onEscHandler = this._onEscHandler.bind(this);
     this._eventToEditHandler = this._eventToEditHandler.bind(this);
@@ -23,6 +30,9 @@ export default class PointController {
     if (dayComponentsArray) {
       this._dayComponents = dayComponentsArray;
     }
+
+    const oldEventComponent = this._eventComponent;
+    const oldEventEditComponent = this._eventEditComponent;
 
     this._eventComponent = new EventComponent(event);
     this._eventEditComponent = new EventEditComponent(`edit`, event);
@@ -45,15 +55,25 @@ export default class PointController {
         }
     );
 
-    render(this._dayComponent.getElement().querySelector(`ul`), this._eventComponent, RenderPosition.BEFOREEND);
+    if (oldEventEditComponent && oldEventComponent) {
+      replace(this._eventComponent, oldEventComponent);
+      replace(this._eventEditComponent, oldEventEditComponent);
+    } else {
+      render(this._dayComponent.getElement().querySelector(`ul`), this._eventComponent, RenderPosition.BEFOREEND);
+    }
   }
 
   _eventToEditHandler() {
+    this._onViewChange();
     replace(this._eventEditComponent, this._eventComponent);
+    this._mode = Mode.EDIT;
   }
 
   _editToEventHandler() {
+    document.addEventListener(`keydown`, this._onEscHandler);
+    // this._eventEditComponent.rerender();  зачем нам тут ререндер? Он был в примере, а код пока работает и без него
     replace(this._eventComponent, this._eventEditComponent);
+    this._mode = Mode.DEFAULT;
   }
 
   _deleteEventHandler() {
@@ -67,6 +87,12 @@ export default class PointController {
 
   _onEscHandler(evt) {
     if (evt.keyCode === 27) {
+      this._editToEventHandler();
+    }
+  }
+
+  setDefaultView() {
+    if (this._mode === Mode.EDIT) {
       this._editToEventHandler();
     }
   }
