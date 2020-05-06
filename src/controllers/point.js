@@ -66,7 +66,7 @@ export default class PointController {
   }
 
   _onEscHandler(evt) {
-    if (evt.key === `Escape` || `Esc`) {
+    if (evt.keyCode === 27) {
       this._editToEventHandler();
     }
   }

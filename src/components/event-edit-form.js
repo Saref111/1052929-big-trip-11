@@ -1,5 +1,8 @@
-import {getTitleByType, stringifyTime, stringifyDate} from "../utils/util.js";
+import {getTitleByType, stringifyTime, stringifyDate, getRandomInt} from "../utils/util.js";
+import {remove, render, RenderPosition} from "../utils/render.js";
+import {CITIES, PICTURE, getInfo} from "../const.js";
 import AbstractSmartComponent from "./abstract-smart-component.js";
+import DescriptionComponent from "./description.js";
 
 const createEventDetails = (offers) => {
   const activeOffers = offers.reduce((total, offer) => {
@@ -45,7 +48,6 @@ const buttonFavoriteTemplate = (isFavorite) => {
 };
 
 const createEventFormElement = (mode, {type, place, price, offers, startTime, endTime, isFavorite}) => {
-
   return (
     `${mode === `edit` ? `<li class="trip-events__item">` : ``}<form class="trip-events__item  event  event--edit" action="#" method="post" id="${mode}">
     <header class="event__header">
@@ -166,6 +168,8 @@ export default class EventEditForm extends AbstractSmartComponent {
     this._data = data;
     this._mode = mode;
 
+    this._descriptionComponent = null;
+
     this._closeFormHandler = null;
     this._submitHandler = null;
     this._deleteHandler = null;
@@ -226,6 +230,10 @@ export default class EventEditForm extends AbstractSmartComponent {
 
   rerender() {
     super.rerender();
+
+    if (this._descriptionComponent) {
+      render(this.getElement().querySelector(`.event__details`), this._descriptionComponent, RenderPosition.BEFOREEND);
+    }
   }
 
   _subscribeOnEvents() {
@@ -236,6 +244,21 @@ export default class EventEditForm extends AbstractSmartComponent {
         this._data.type = evt.target.value;
 
         this.rerender();
+      }
+    });
+
+    element.querySelector(`#event-destination-1`).addEventListener(`input`, (evt) => {
+      if (this._descriptionComponent) {
+        remove(this._descriptionComponent);
+      }
+
+      if (CITIES.includes(evt.target.value)) {
+        const info = getInfo();
+        const picAmount = getRandomInt(5);
+
+        this._descriptionComponent = new DescriptionComponent(info, PICTURE, picAmount);
+
+        render(element.querySelector(`.event__details`), this._descriptionComponent, RenderPosition.BEFOREEND);
       }
     });
   }

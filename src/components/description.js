@@ -10,7 +10,8 @@ const createPicElements = (src, imgAmount) => {
   return pics;
 };
 
-const createDescriptionElement = ({info, src, imgAmount}) => {
+const createDescriptionElement = (info, src, imgAmount) => {
+
   return (
     `<section class="event__section  event__section--destination">
       <h3 class="event__section-title  event__section-title--destination">Destination</h3>
@@ -26,13 +27,15 @@ const createDescriptionElement = ({info, src, imgAmount}) => {
 };
 
 export default class Description extends AbstractComponent {
-  constructor({info, src, imgAmount}) {
+  constructor(info, src, imgAmount) {
     super();
 
-    this._data = {info, src, imgAmount};
+    this._info = info;
+    this._src = src;
+    this._imgAmount = imgAmount;
   }
 
   getTemplate() {
-    return createDescriptionElement(this._data);
+    return createDescriptionElement(this._info, this._src, this._imgAmount);
   }
 }

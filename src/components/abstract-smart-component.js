@@ -1,5 +1,4 @@
 import AbstractComponent from "./abstract-component.js";
-import {remove} from "../utils/render.js";
 
 export default class AbstractSmartComponent extends AbstractComponent {
   recoveryListeners() {
