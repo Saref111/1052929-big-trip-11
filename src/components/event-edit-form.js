@@ -3,6 +3,9 @@ import {remove, render, RenderPosition} from "../utils/render.js";
 import {CITIES, PICTURE, getInfo} from "../const.js";
 import AbstractSmartComponent from "./abstract-smart-component.js";
 import DescriptionComponent from "./description.js";
+import flatpickr from "flatpickr";
+
+import "flatpickr/dist/flatpickr.min.css";
 
 const createEventDetails = (offers) => {
   const activeOffers = offers.reduce((total, offer) => {
@@ -167,6 +170,8 @@ export default class EventEditForm extends AbstractSmartComponent {
 
     this._data = data;
     this._mode = mode;
+    this._flatrickrStart = null;
+    this._flatrickrEnd = null;
 
     this._descriptionComponent = null;
 
@@ -177,6 +182,7 @@ export default class EventEditForm extends AbstractSmartComponent {
     this._closeFormHandler = null;
     this._typeChangeHandler = null;
 
+    this._applyFlatrickr();
     this._subscribeOnEvents();
   }
 
@@ -230,6 +236,7 @@ export default class EventEditForm extends AbstractSmartComponent {
 
   rerender() {
     super.rerender();
+    this._applyFlatrickr();
 
     if (this._descriptionComponent) {
       render(this.getElement().querySelector(`.event__details`), this._descriptionComponent, RenderPosition.BEFOREEND);
@@ -260,6 +267,32 @@ export default class EventEditForm extends AbstractSmartComponent {
 
         render(element.querySelector(`.event__details`), this._descriptionComponent, RenderPosition.BEFOREEND);
       }
+    });
+  }
+
+  _applyFlatrickr() {
+    if (this._flatpickr) {
+      this._flatpickr.destroy();
+      this._flatpickr = null;
+    }
+
+    const startTimeInputElement = this.getElement().querySelector(`#event-start-time-1`);
+    const endTimeInputElement = this.getElement().querySelector(`#event-end-time-1`);
+
+    this._flatpickrStart = flatpickr(startTimeInputElement, {
+      altInput: true,
+      allowInput: true,
+      enableTime: true,
+      altFormat: `d/m/Y H:i`,
+      defaultDate: this._data.startTime || `today`,
+    });
+
+    this._flatpickrEnd = flatpickr(endTimeInputElement, {
+      altInput: true,
+      allowInput: true,
+      enableTime: true,
+      altFormat: `d/m/Y H:i`,
+      defaultDate: this._data.endTime || `today`,
     });
   }
 }

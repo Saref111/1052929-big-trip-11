@@ -1,3 +1,5 @@
+const moment = require(`moment`);
+
 const getRandomInt = (max) => Math.floor(Math.random() * max);
 const getRandomArrayElement = (arr) => arr[getRandomInt(arr.length)];
 const findEventObject = (currentEvent, events) => {
@@ -45,26 +47,17 @@ const MONTHS = {
   12: `DEC`
 };
 
-const addZeroByAmount = (str) => {
-  let string = str;
-  if (typeof string !== `string`) {
-    string = String(string);
-  }
-
-  if (string.length < 2) {
-    string = `0${string}`;
-  }
-
-  return string;
-};
-
 const stringifyDate = (date, sign) => {
-  return `${date.getFullYear()}${sign ? sign : `-`}${addZeroByAmount(date.getMonth())}${sign ? sign : `-`}${date.getDate()}`;
+  return moment(date).format(`YYYY${sign ? sign : `-`}mm${sign ? sign : `-`}dd`);
 };
 
 const stringifyTime = (time) => {
-  return `${addZeroByAmount(time.getHours())}:${addZeroByAmount(time.getMinutes())}`;
+  return moment(time).format(`hh:mm`);
 };
+
+const getDuration = (ms) => {
+  return moment.duration(ms, `milliseconds`).humanize();
+}
 
 export {
   getRandomArrayElement,
@@ -75,5 +68,6 @@ export {
   getRandomDate,
   stringifyDate,
   stringifyTime,
+  getDuration,
   MONTHS,
 };
