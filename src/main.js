@@ -1,6 +1,6 @@
 import {getEventObjects} from "./mock/event.js";
 import DaysListComponent from "./components/days-list.js";
-import TripController from "./controllers/days-list.js";
+import TripController from "./controllers/trip.js";
 
 const events = getEventObjects(20);
 

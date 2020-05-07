@@ -1,18 +1,13 @@
-import {getTitleByType, stringifyTime, stringifyDate} from "../utils/util.js";
-import AbstractComponent from "./abstract-component.js";
+import {getTitleByType, stringifyTime, stringifyDate, getRandomInt} from "../utils/util.js";
+import {remove, render, RenderPosition} from "../utils/render.js";
+import {CITIES, PICTURE, getInfo} from "../const.js";
+import AbstractSmartComponent from "./abstract-smart-component.js";
+import DescriptionComponent from "./description.js";
+import flatpickr from "flatpickr";
+
+import "flatpickr/dist/flatpickr.min.css";
 
 const createEventDetails = (offers) => {
-  if (!offers) {
-    offers = [
-      {name: `luggage`, active: true, text: `Add luggage`, price: 30},
-      {name: `comfort`, active: true, text: `Switch to comfort class`, price: 100},
-      {name: `meal`, active: false, text: `Add meal`, price: 15},
-      {name: `seats`, active: false, text: `Choose seats`, price: 5},
-      {name: `train`, active: false, text: `Travel by train`, price: 40},
-      {name: `uber`, active: false, text: `Order Uber`, price: 20},
-    ];
-  }
-
   const activeOffers = offers.reduce((total, offer) => {
     total += `<div class="event__offer-selector">
                 <input class="event__offer-checkbox  visually-hidden" id="event-offer-${offer.name}-1" type="checkbox" name="event-offer-${offer.name}" ${offer.active ? `checked` : ``}>
@@ -40,9 +35,9 @@ const createEventDetails = (offers) => {
   );
 };
 
-const buttonFavoriteTemplate = () => {
+const buttonFavoriteTemplate = (isFavorite) => {
   return (
-    `<input id="event-favorite-1" class="event__favorite-checkbox  visually-hidden" type="checkbox" name="event-favorite" checked="">
+    `<input id="event-favorite-1" class="event__favorite-checkbox  visually-hidden" type="checkbox" name="event-favorite" ${isFavorite ? `checked` : ``}>
     <label class="event__favorite-btn" for="event-favorite-1">
       <span class="visually-hidden">Add to favorite</span>
       <svg class="event__favorite-icon" width="28" height="28" viewBox="0 0 28 28">
@@ -55,14 +50,7 @@ const buttonFavoriteTemplate = () => {
   );
 };
 
-const createEventFormElement = (mode, {type, place, price, offers, startTime, endTime}) => { // check destructuring
-  // const eventObject = {
-  //   type: object.type,
-  //   place: object.place,
-  //   price: object.price,
-  //   offers: object.offers,
-  // };
-
+const createEventFormElement = (mode, {type, place, price, offers, startTime, endTime, isFavorite}) => {
   return (
     `${mode === `edit` ? `<li class="trip-events__item">` : ``}<form class="trip-events__item  event  event--edit" action="#" method="post" id="${mode}">
     <header class="event__header">
@@ -169,19 +157,33 @@ const createEventFormElement = (mode, {type, place, price, offers, startTime, en
 
       <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
       <button class="event__reset-btn" type="reset">${mode === `edit` ? `Delete` : `Cancel`}</button>
-      ${mode === `edit` ? buttonFavoriteTemplate() : ``}
+      ${mode === `edit` ? buttonFavoriteTemplate(isFavorite) : ``}
     </header>
     ${mode === `first` ? `` : createEventDetails(offers)}
     ${mode === `edit` ? `</li>` : ``}`
   );
 };
 
-export default class EventEditForm extends AbstractComponent {
+export default class EventEditForm extends AbstractSmartComponent {
   constructor(mode, data) {
     super();
 
-    this._data = data ? data : {type: `flight`, place: ``};
+    this._data = data;
     this._mode = mode;
+    this._flatrickrStart = null;
+    this._flatrickrEnd = null;
+
+    this._descriptionComponent = null;
+
+    this._closeFormHandler = null;
+    this._submitHandler = null;
+    this._deleteHandler = null;
+    this._addFavoriteHandler = null;
+    this._closeFormHandler = null;
+    this._typeChangeHandler = null;
+
+    this._applyFlatrickr();
+    this._subscribeOnEvents();
   }
 
   getTemplate() {
@@ -190,20 +192,108 @@ export default class EventEditForm extends AbstractComponent {
 
   setCloseFormHandler(handler) {
     this.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, handler);
+    this._closeFormHandler = handler;
   }
 
   setSubmitHandler(handler) {
     this.getElement().querySelector(`form`).addEventListener(`submit`, handler);
+    this._submitHandler = handler;
   }
 
   setDeleteHandler(handler) {
     this.getElement().querySelector(`.event__reset-btn`).addEventListener(`click`, handler);
+    this._deleteHandler = handler;
   }
 
-  setEditFormHandlers(closeHandler, saveHandler, deleteHandler) {
+  setAddFavoriteHandler(handler) {
+    this.getElement().querySelector(`#event-favorite-1`).addEventListener(`click`, handler);
+    this._addFavoriteHandler = handler;
+  }
+
+  setChangeTypeHandler(handler) {
+    this.getElement().querySelector(`.event__type-list`).addEventListener(`change`, handler);
+    this._typeChangeHandler = handler;
+  }
+
+  setEditFormHandlers(closeHandler, saveHandler, deleteHandler, favoriteHandler, typeHandler) {
     this.setCloseFormHandler(closeHandler);
     this.setSubmitHandler(saveHandler);
     this.setDeleteHandler(deleteHandler);
+    this.setAddFavoriteHandler(favoriteHandler);
+    this.setChangeTypeHandler(typeHandler);
+  }
+
+  recoveryListeners() {
+    this.setEditFormHandlers(
+        this._closeFormHandler,
+        this._submitHandler,
+        this._deleteHandler,
+        this._addFavoriteHandler,
+        this._typeChangeHandler
+    );
+    this._subscribeOnEvents();
+  }
+
+  rerender() {
+    super.rerender();
+    this._applyFlatrickr();
+
+    if (this._descriptionComponent) {
+      render(this.getElement().querySelector(`.event__details`), this._descriptionComponent, RenderPosition.BEFOREEND);
+    }
+  }
+
+  _subscribeOnEvents() {
+    const element = this.getElement();
+
+    element.querySelector(`.event__type-list`).addEventListener(`click`, (evt) => {
+      if (evt.target.tagName === `INPUT`) {
+        this._data.type = evt.target.value;
+
+        this.rerender();
+      }
+    });
+
+    element.querySelector(`#event-destination-1`).addEventListener(`input`, (evt) => {
+      if (this._descriptionComponent) {
+        remove(this._descriptionComponent);
+      }
+
+      if (CITIES.includes(evt.target.value)) {
+        const info = getInfo();
+        const picAmount = getRandomInt(5);
+
+        this._descriptionComponent = new DescriptionComponent(info, PICTURE, picAmount);
+
+        render(element.querySelector(`.event__details`), this._descriptionComponent, RenderPosition.BEFOREEND);
+      }
+    });
+  }
+
+  _applyFlatrickr() {
+    if (this._flatpickr) {
+      this._flatpickr.destroy();
+      this._flatpickr = null;
+    }
+
+    const startTimeInputElement = this.getElement().querySelector(`#event-start-time-1`);
+    const endTimeInputElement = this.getElement().querySelector(`#event-end-time-1`);
+
+    this._flatpickrStart = flatpickr(startTimeInputElement, {
+      altInput: true,
+      allowInput: true,
+      enableTime: true,
+      altFormat: `d/m/Y H:i`,
+      defaultDate: this._data.startTime || `today`,
+    });
+
+    this._flatpickrEnd = flatpickr(endTimeInputElement, {
+      altInput: true,
+      allowInput: true,
+      enableTime: true,
+      altFormat: `d/m/Y H:i`,
+      defaultDate: this._data.endTime || `today`,
+    });
   }
 }
 

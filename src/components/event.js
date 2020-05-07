@@ -1,4 +1,4 @@
-import {getTitleByType, stringifyDate, stringifyTime} from "../utils/util.js";
+import {getTitleByType, stringifyDate, stringifyTime, getDuration} from "../utils/util.js";
 import AbstractComponent from "./abstract-component.js";
 
 const getOffers = (arr) => {
@@ -32,7 +32,7 @@ export const createEventElement = (data) => {
             &mdash;
             <time class="event__end-time" datetime="${stringifyDate(endTime)}T${stringifyTime(endTime)}">${stringifyTime(endTime)}</time>
           </p>
-          <p class="event__duration">${(endTime - startTime) / 60000}M</p>
+          <p class="event__duration">${getDuration(endTime - startTime)}</p>
         </div>
 
         <p class="event__price">
@@ -64,6 +64,6 @@ export default class Event extends AbstractComponent {
   }
 
   setOpenEditHandler(handler) {
-    this.getElement().addEventListener(`click`, handler);
+    this.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, handler);
   }
 }
