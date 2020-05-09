@@ -1,6 +1,6 @@
 import {getTitleByType, stringifyTime, stringifyDate, getRandomInt} from "../utils/util.js";
 import {remove, render, RenderPosition} from "../utils/render.js";
-import {CITIES, PICTURE, getInfo} from "../const.js";
+import {CITIES, PICTURE, getTripInfo} from "../const.js";
 import AbstractSmartComponent from "./abstract-smart-component.js";
 import DescriptionComponent from "./description.js";
 import flatpickr from "flatpickr";
@@ -175,11 +175,10 @@ export default class EventEditForm extends AbstractSmartComponent {
 
     this._descriptionComponent = null;
 
-    this._closeFormHandler = null;
     this._submitHandler = null;
     this._deleteHandler = null;
     this._addFavoriteHandler = null;
-    this._closeFormHandler = null;
+    this._closeHandler = null;
     this._typeChangeHandler = null;
 
     this._applyFlatrickr();
@@ -190,9 +189,9 @@ export default class EventEditForm extends AbstractSmartComponent {
     return createEventFormElement(this._mode, this._data);
   }
 
-  setCloseFormHandler(handler) {
+  setCloseHandler(handler) {
     this.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, handler);
-    this._closeFormHandler = handler;
+    this._closeHandler = handler;
   }
 
   setSubmitHandler(handler) {
@@ -216,7 +215,7 @@ export default class EventEditForm extends AbstractSmartComponent {
   }
 
   setEditFormHandlers(closeHandler, saveHandler, deleteHandler, favoriteHandler, typeHandler) {
-    this.setCloseFormHandler(closeHandler);
+    this.setCloseHandler(closeHandler);
     this.setSubmitHandler(saveHandler);
     this.setDeleteHandler(deleteHandler);
     this.setAddFavoriteHandler(favoriteHandler);
@@ -225,7 +224,7 @@ export default class EventEditForm extends AbstractSmartComponent {
 
   recoveryListeners() {
     this.setEditFormHandlers(
-        this._closeFormHandler,
+        this._closeHandler,
         this._submitHandler,
         this._deleteHandler,
         this._addFavoriteHandler,
@@ -260,7 +259,7 @@ export default class EventEditForm extends AbstractSmartComponent {
       }
 
       if (CITIES.includes(evt.target.value)) {
-        const info = getInfo();
+        const info = getTripInfo();
         const picAmount = getRandomInt(5);
 
         this._descriptionComponent = new DescriptionComponent(info, PICTURE, picAmount);

@@ -2,25 +2,25 @@ import {TYPES, CITIES, getOffers} from "../const.js";
 import {getRandomArrayElement, getRandomInt, getRandomDate} from "../utils/util.js";
 
 export const getEventObjects = (count) => {
-  const arr = [];
+  const events = [];
 
   for (let i = 0; i < count; i++) {
-    let object = {};
+    const event = {};
 
-    object.type = getRandomArrayElement(TYPES);
-    object.place = getRandomArrayElement(CITIES);
-    object.offers = getOffers();
-    object.startTime = getRandomDate();
-    object.endTime = getRandomDate();
-    object.isFavorite = false; // Math.random() > 0.5;
-    object.price = getRandomInt(200);
+    event.type = getRandomArrayElement(TYPES);
+    event.place = getRandomArrayElement(CITIES);
+    event.offers = getOffers();
+    event.startTime = getRandomDate();
+    event.endTime = getRandomDate();
+    event.isFavorite = false; // Math.random() > 0.5;
+    event.price = getRandomInt(200);
 
-    while (object.startTime >= object.endTime) {
-      object.endTime = getRandomDate();
+    while (event.startTime >= event.endTime) {
+      event.endTime = getRandomDate();
     }
 
-    arr.push(object);
+    events.push(event);
   }
 
-  return arr;
+  return events;
 };

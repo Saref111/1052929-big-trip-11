@@ -1,8 +1,8 @@
 import {getTitleByType, stringifyDate, stringifyTime, getDuration} from "../utils/util.js";
 import AbstractComponent from "./abstract-component.js";
 
-const getOffers = (arr) => {
-  const activeOffers = arr.filter((it) => it.active).slice(0, 3);
+const getOffers = (offers) => {
+  const activeOffers = offers.filter((it) => it.active).slice(0, 3);
 
   return activeOffers.map((it) => {
     return (
@@ -15,7 +15,7 @@ const getOffers = (arr) => {
   }).join(`\n`);
 };
 
-export const createEventElement = (data) => {
+const createEventElement = (data) => {
   let {type, place, offers, startTime, endTime, price} = data;
 
   return (

@@ -26,9 +26,9 @@ export default class PointController {
     this._deleteEventHandler = this._deleteEventHandler.bind(this);
   }
 
-  render(event, dayComponentsArray, isSorting) {
-    if (dayComponentsArray) {
-      this._dayComponents = dayComponentsArray;
+  render(event, dayComponents, isSorting) {
+    if (dayComponents) {
+      this._dayComponents = dayComponents;
     }
 
     const oldEventComponent = this._eventComponent;
@@ -71,7 +71,7 @@ export default class PointController {
 
   _editToEventHandler() {
     document.addEventListener(`keydown`, this._onEscHandler);
-    // this._eventEditComponent.rerender();  зачем нам тут ререндер? Он был в примере, а код пока работает и без него
+    this._eventEditComponent.rerender();
     replace(this._eventComponent, this._eventEditComponent);
     this._mode = Mode.DEFAULT;
   }

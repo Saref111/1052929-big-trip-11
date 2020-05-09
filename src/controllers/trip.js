@@ -34,7 +34,7 @@ const createDayComponents = (events, isSorting) => {
     return [new DayComponent(new Date(), true)];
   }
 
-  let uniqueDates = [];
+  const uniqueDates = [];
   events.forEach((event) => {
     if (uniqueDates.every((it) => stringifyDate(event.startTime) !== stringifyDate(it.startTime))) {
       uniqueDates.push(event);
@@ -50,22 +50,22 @@ const sortDaysAndEventsByDefault = (days, container) => {
 };
 
 const renderTripEvents = (events, container, isSorting = false, onDataChange, onViewChange) => {
-  let arr = events.slice();
-  const dayComponentsArray = createDayComponents(arr, isSorting);
+  let eventsCopy = events.slice();
+  const dayComponents = createDayComponents(eventsCopy, isSorting);
 
   if (!isSorting) {
-    arr = arr.sort((a, b) => a.startTime - b.startTime);
+    eventsCopy = eventsCopy.sort((a, b) => a.startTime - b.startTime);
   }
 
-  const controllers = arr.map((event) => {
+  const controllers = eventsCopy.map((event) => {
     const pointController = new PointController(container, onDataChange, onViewChange);
 
-    pointController.render(event, dayComponentsArray, isSorting);
+    pointController.render(event, dayComponents, isSorting);
 
     return pointController;
   });
 
-  sortDaysAndEventsByDefault(dayComponentsArray, container);
+  sortDaysAndEventsByDefault(dayComponents, container);
 
   return controllers;
 };
