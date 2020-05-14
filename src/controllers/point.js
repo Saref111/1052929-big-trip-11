@@ -51,7 +51,7 @@ export default class PointController {
         },
         this._deleteEventHandler,
         () => {
-          this._onDataChange(this, event, Object.assign({}, event, {isFavorite: !event.isFavorite}));
+          this._onDataChange(event.id, Object.assign({}, event, {isFavorite: !event.isFavorite}));
         }
     );
 

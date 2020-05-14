@@ -71,11 +71,12 @@ const renderTripEvents = (events, container, isSorting = false, onDataChange, on
 };
 
 export default class TripController {
-  constructor(containerComponent) {
+  constructor(containerComponent, eventsModel) {
     this._container = containerComponent;
 
     this._events = [];
     this._controllers = [];
+    this._model = eventsModel;
     this._noEventsComponent = new NoEventsComponent();
     this._tripInfoComponent = new TripInfoComponent();
     this._menuComponent = new MenuComponent();
@@ -83,24 +84,13 @@ export default class TripController {
     this._sortComponent = new SortComponent();
 
     this._onSortTypeChange = this._onSortTypeChange.bind(this);
-    this._onDataChange = this._onDataChange.bind(this);
     this._onViewChange = this._onViewChange.bind(this);
 
     this._sortComponent.setSortTypeChangeHandler(this._onSortTypeChange);
   }
 
-  _onDataChange(oldData, newData) {
-    const index = this._events.findIndex((it) => it === oldData);
-
-    if (index === -1) {
-      return;
-    }
-
-    this._events = [].concat(this._events.slice(0, index), newData, this._events.slice(index + 1));
-  }
-
   _onSortTypeChange(currentSortType) {
-    const sortedEvents = getSortedEvents(this._events, currentSortType);
+    const sortedEvents = getSortedEvents(this._model.getEvents(), currentSortType);
 
     this._container.getElement().innerHTML = ``;
     this._controllers = renderTripEvents(
@@ -114,11 +104,11 @@ export default class TripController {
     this._controllers.forEach((controller) => controller.setDefaultView());
   }
 
-  render(events) {
-    this._events = events;
+  render() {
+    this._events = this._model.getEvents();
     const containerElement = this._container.getElement();
 
-    if (!events) {
+    if (!this._events) {
       render(containerElement, this._noEventsComponent, RenderPosition.BEFOREEND);
       return;
     }
@@ -133,6 +123,6 @@ export default class TripController {
     render(tripControlsElement, this._filterComponent, RenderPosition.BEFOREEND);
     render(tripEventsElement, this._sortComponent, RenderPosition.BEFOREEND);
     render(tripEventsElement, this._container, RenderPosition.BEFOREEND);
-    this._controllers = renderTripEvents(events, containerElement, false, this._onDataChange, this._onViewChange);
+    this._controllers = renderTripEvents(this._events, containerElement, false, this._model.updateEvent, this._onViewChange);
   }
 }

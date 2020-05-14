@@ -1,17 +1,19 @@
 export default class Points {
   constructor() {
-    this._points = [];
+    this._events = [];
+
+    this.updateEvent = this.updateEvent.bind(this);
   }
 
-  getPoints() {
-    return this._points;
+  getEvents() {
+    return this._events;
   }
 
-  setPoints(points) {
-    this._points = [].concat(this._points, points);
+  setEvents(events) {
+    this._events = [].concat(this._events, events);
   }
 
-  updatePoint(id, newData) {
+  updateEvent(id, newData) {
     const index = this._events.findIndex((it) => it.id === id);
 
     if (index === -1) {
