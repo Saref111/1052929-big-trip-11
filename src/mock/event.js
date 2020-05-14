@@ -7,6 +7,7 @@ export const getEventObjects = (count) => {
   for (let i = 0; i < count; i++) {
     const event = {};
 
+    event.id = `${getRandomInt(999999)}`;
     event.type = getRandomArrayElement(TYPES);
     event.place = getRandomArrayElement(CITIES);
     event.offers = getOffers();
