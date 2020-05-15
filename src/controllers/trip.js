@@ -74,7 +74,6 @@ export default class TripController {
   constructor(containerComponent, eventsModel) {
     this._container = containerComponent;
 
-    this._events = [];
     this._controllers = [];
     this._model = eventsModel;
     this._noEventsComponent = new NoEventsComponent();
@@ -85,8 +84,17 @@ export default class TripController {
 
     this._onSortTypeChange = this._onSortTypeChange.bind(this);
     this._onViewChange = this._onViewChange.bind(this);
+    this._onDataChange = this._onDataChange.bind(this);
 
     this._sortComponent.setSortTypeChangeHandler(this._onSortTypeChange);
+  }
+
+  _onDataChange(pointController, oldData, newData) {
+    const isSuccess = this._model.updateEvent(oldData.id, newData);
+
+    if (isSuccess) {
+      pointController.render(newData);
+    }
   }
 
   _onSortTypeChange(currentSortType) {
@@ -123,6 +131,6 @@ export default class TripController {
     render(tripControlsElement, this._filterComponent, RenderPosition.BEFOREEND);
     render(tripEventsElement, this._sortComponent, RenderPosition.BEFOREEND);
     render(tripEventsElement, this._container, RenderPosition.BEFOREEND);
-    this._controllers = renderTripEvents(this._events, containerElement, false, this._model.updateEvent, this._onViewChange);
+    this._controllers = renderTripEvents(this._events, containerElement, false, this._onDataChange, this._onViewChange);
   }
 }
