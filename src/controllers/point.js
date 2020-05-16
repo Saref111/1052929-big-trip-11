@@ -50,7 +50,11 @@ export default class PointController {
           evt.preventDefault();
           this._editToEventHandler();
         },
-        this._deleteEventHandler,
+        () => {
+          this._onDataChange(this, event, null);
+
+          this._deleteEventHandler();
+        },
         () => {
           this._onDataChange(this, event, Object.assign({}, event, {isFavorite: !event.isFavorite}));
         }

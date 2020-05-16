@@ -1,7 +1,6 @@
 import NoEventsComponent from "../components/no-events.js";
 import TripInfoComponent from "../components/trip-info.js";
 import MenuComponent from "../components/menu.js";
-import FilterComponent from "../components/filter.js";
 import SortComponent, {SortType} from "../components/sort.js";
 import PointController from "./point.js";
 import DayComponent from "../components/day.js";
@@ -79,7 +78,6 @@ export default class TripController {
     this._noEventsComponent = new NoEventsComponent();
     this._tripInfoComponent = new TripInfoComponent();
     this._menuComponent = new MenuComponent();
-    this._filterComponent = new FilterComponent();
     this._sortComponent = new SortComponent();
 
     this._onSortTypeChange = this._onSortTypeChange.bind(this);
@@ -92,6 +90,16 @@ export default class TripController {
   }
 
   _onDataChange(pointController, oldData, newData) {
+    if (!newData) {
+      pointController.destroy();
+      this._model.removeEvent(oldData.id);
+      this._updateEvents();
+      return;
+    } else if (!oldData) {
+      this._model.addEvent(newData);
+      this._updateEvents();
+    }
+
     const isSuccess = this._model.updateEvent(oldData.id, newData);
 
     if (isSuccess) {
@@ -130,7 +138,6 @@ export default class TripController {
 
     render(headerMainElement, this._tripInfoComponent, RenderPosition.AFTERBEGIN);
     render(menuHeaderElement.nextSibling, this._menuComponent, `afterend`);
-    // render(tripControlsElement, this._filterComponent, RenderPosition.BEFOREEND);
     render(tripEventsElement, this._sortComponent, RenderPosition.BEFOREEND);
     render(tripEventsElement, this._container, RenderPosition.BEFOREEND);
 
