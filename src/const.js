@@ -60,4 +60,10 @@ const getOffers = () => {
   return OFFERS;
 };
 
-export {TYPES, CITIES, getOffers, getTripInfo, PICTURE};
+const FilterType = {
+  EVERYTHING: `everything`,
+  PAST: `past`,
+  FUTURE: `future`,
+};
+
+export {TYPES, CITIES, getOffers, getTripInfo, PICTURE, FilterType};

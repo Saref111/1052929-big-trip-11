@@ -2,6 +2,8 @@ export default class Points {
   constructor() {
     this._events = [];
 
+    this._dataChangeHandlers = [];
+
     this.updateEvent = this.updateEvent.bind(this);
   }
 
@@ -22,6 +24,16 @@ export default class Points {
 
     this._events = [].concat(this._events.slice(0, index), newData, this._events.slice(index + 1));
 
+    this._callHandlers(this._dataChangeHandlers);
+
     return true;
+  }
+
+  setDataChangeHandler(handler) {
+    this._dataChangeHandlers.push(handler);
+  }
+
+  _callHandlers(handlers) {
+    handlers.forEach((handler) => handler());
   }
 }
