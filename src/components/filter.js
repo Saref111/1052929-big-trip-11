@@ -29,7 +29,9 @@ export default class Filter extends AbstractComponent {
   }
 
   setFilterChangeHandler(handler) {
-    this.getElement().querySelector(`form`).addEventListener(`change`, (evt) => {
+    const form = this.getElement();
+
+    form.addEventListener(`change`, (evt) => {
       evt.preventDefault();
 
       const filterName = evt.target.id;

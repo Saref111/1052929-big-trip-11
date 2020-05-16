@@ -51,4 +51,8 @@ export default class Points {
   _callHandlers(handlers) {
     handlers.forEach((handler) => handler());
   }
+
+  setFilterChangeHandler(handler) {
+    this._filterChangeHandlers.push(handler);
+  }
 }

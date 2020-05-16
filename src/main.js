@@ -9,9 +9,12 @@ const events = getEventObjects(20);
 const eventsModel = new EventsModel();
 eventsModel.setEvents(events);
 
+const tripControlsElement = document.querySelector(`.trip-controls`);
+
+const filterController = new FilterController(tripControlsElement, eventsModel);
+filterController.render();
 
 const daysListComponent = new DaysListComponent();
 const tripController = new TripController(daysListComponent, eventsModel);
 tripController.render();
 
-const filterController = new FilterController()

@@ -96,4 +96,10 @@ export default class PointController {
       this._editToEventHandler();
     }
   }
+
+  destroy() {
+    remove(this._eventEditComponent);
+    remove(this._eventComponent);
+    document.removeEventListener(`keydown`, this._onEscHandler);
+  }
 }
