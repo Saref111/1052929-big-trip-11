@@ -128,7 +128,7 @@ export default class TripController {
 
     render(headerMainElement, this._tripInfoComponent, RenderPosition.AFTERBEGIN);
     render(menuHeaderElement.nextSibling, this._menuComponent, `afterend`);
-    render(tripControlsElement, this._filterComponent, RenderPosition.BEFOREEND);
+    // render(tripControlsElement, this._filterComponent, RenderPosition.BEFOREEND);
     render(tripEventsElement, this._sortComponent, RenderPosition.BEFOREEND);
     render(tripEventsElement, this._container, RenderPosition.BEFOREEND);
     this._controllers = renderTripEvents(this._events, containerElement, false, this._onDataChange, this._onViewChange);

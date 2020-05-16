@@ -1,13 +1,23 @@
+import {FilterType} from "../const.js";
+import {getEventsByFilter} from "../utils/filter.js";
+
+
 export default class Points {
   constructor() {
     this._events = [];
+    this._activeFilterType = FilterType.EVERYTHING;
 
     this._dataChangeHandlers = [];
+    this._filterChangeHandlers = [];
 
     this.updateEvent = this.updateEvent.bind(this);
   }
 
   getEvents() {
+    return getEventsByFilter(this._events);
+  }
+
+  getAllEvents() {
     return this._events;
   }
 
@@ -31,6 +41,11 @@ export default class Points {
 
   setDataChangeHandler(handler) {
     this._dataChangeHandlers.push(handler);
+  }
+
+  setFilter(filterType) {
+    this._activeFilterType = filterType;
+    this._callHandlers(this._filterChangeHandlers);
   }
 
   _callHandlers(handlers) {

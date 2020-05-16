@@ -1,7 +1,7 @@
-import {FilterComponent} from "../components/filter.js";
-import {render, replace} from "../utils/render.js";
+import FilterComponent from "../components/filter.js";
+import {render, replace, RenderPosition} from "../utils/render.js";
 import {getEventsByFilter} from "../utils/filter.js";
-import {FilterType, RenderPosition} from "../const.js";
+import {FilterType} from "../const.js";
 
 export default class FilterController {
   constructor(container, model) {
@@ -17,7 +17,7 @@ export default class FilterController {
 
   render() {
     const container = this._container;
-    const allEvents = this._model.getEvents();
+    const allEvents = this._model.getAllEvents();
     const filters = Object.values(FilterType).map((filterType) => {
       return {
         name: filterType,
