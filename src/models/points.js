@@ -14,7 +14,7 @@ export default class Points {
   }
 
   getEvents() {
-    return getEventsByFilter(this._events);
+    return getEventsByFilter(this._events, this._activeFilterType);
   }
 
   getAllEvents() {
