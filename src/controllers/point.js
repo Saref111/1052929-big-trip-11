@@ -12,6 +12,7 @@ export default class PointController {
   constructor(containerElement, onDataChange, onViewChange) {
     this._container = containerElement;
     this._dayComponents = null;
+    this._dayComponent = null;
 
     this._eventComponent = null;
     this._eventEditComponent = null;

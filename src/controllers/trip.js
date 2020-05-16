@@ -145,6 +145,7 @@ export default class TripController {
   _removeEvents() {
     this._controllers.forEach((it) => it.destroy());
     this._controllers = [];
+    this._container.getElement().innerHTML = ``;
   }
 
   _updateEvents() {
