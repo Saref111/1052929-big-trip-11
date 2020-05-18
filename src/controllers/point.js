@@ -63,7 +63,7 @@ export default class PointController {
     if (oldEventEditComponent && oldEventComponent) {
       replace(this._eventComponent, oldEventComponent);
       replace(this._eventEditComponent, oldEventEditComponent);
-      this._edit
+      this._editToEventHandler();
     } else {
       render(this._dayComponent.getElement().querySelector(`ul`), this._eventComponent, RenderPosition.BEFOREEND);
     }
