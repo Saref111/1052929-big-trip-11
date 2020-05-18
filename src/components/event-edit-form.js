@@ -1,6 +1,6 @@
 import {getTitleByType, stringifyTime, stringifyDate, getRandomInt} from "../utils/util.js";
 import {remove, render, RenderPosition} from "../utils/render.js";
-import {CITIES, PICTURE, getTripInfo, EditFormMode} from "../const.js";
+import {CITIES, PICTURE, getTripInfo, EditFormMode, getOffers} from "../const.js";
 import AbstractSmartComponent from "./abstract-smart-component.js";
 import DescriptionComponent from "./description.js";
 import flatpickr from "flatpickr";
@@ -8,9 +8,17 @@ import flatpickr from "flatpickr";
 import "flatpickr/dist/flatpickr.min.css";
 
 const getOffersArray = (formData) => {
-  const keys = formData.getAll(/event-offer-\w/gi);
-  debugger;
-  return ;
+  const offers = getOffers();
+  const activeOffers = Array.from(formData.keys()).filter((it) => it.startsWith(`event-offer-`));
+  offers.forEach((offer) => {
+    const isActive = activeOffers.includes(`event-offer-${offer.name}`);
+    if (isActive) {
+      offer.active = true;
+    } else {
+      offer.active = false;
+    }
+  });
+  return offers;
 };
 
 const parseFormData = (formData) => {
@@ -276,7 +284,6 @@ export default class EventEditForm extends AbstractSmartComponent {
   }
 
   getData() {
-    debugger
     // const form = this.getElement().querySelector(`form`);
     const formData = new FormData(this.getElement().querySelector(`form`));
 
