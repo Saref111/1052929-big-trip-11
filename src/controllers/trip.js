@@ -1,4 +1,5 @@
 import NoEventsComponent from "../components/no-events.js";
+import EventEditComponent from "../components/event-edit-form.js";
 import TripInfoComponent from "../components/trip-info.js";
 import MenuComponent from "../components/menu.js";
 import SortComponent, {SortType} from "../components/sort.js";
@@ -6,6 +7,7 @@ import PointController from "./point.js";
 import DayComponent from "../components/day.js";
 import {render, RenderPosition, remove} from "../utils/render.js";
 import {stringifyDate} from "../utils/util.js";
+import {EditFormMode} from "../const.js";
 
 const getEventDuration = (start, end) => end - start;
 
@@ -59,7 +61,7 @@ const renderTripEvents = (events, container, isSorting = false, onDataChange, on
   const controllers = eventsCopy.map((event) => {
     const pointController = new PointController(container, onDataChange, onViewChange);
 
-    pointController.render(event, dayComponents, isSorting);
+    pointController.render(event, dayComponents, isSorting, EditFormMode.DEFAULT);
 
     return pointController;
   });
@@ -90,6 +92,7 @@ export default class TripController {
   }
 
   _onDataChange(pointController, oldData, newData) {
+    debugger
     if (!newData) {
       pointController.destroy();
       this._model.removeEvent(oldData.id);
@@ -98,13 +101,16 @@ export default class TripController {
     } else if (!oldData) {
       this._model.addEvent(newData);
       this._updateEvents();
+      return;
+    } else {
+      const isSuccess = this._model.updateEvent(oldData.id, newData);
+
+      if (isSuccess) {
+        pointController.render(newData);
+      }
     }
 
-    const isSuccess = this._model.updateEvent(oldData.id, newData);
 
-    if (isSuccess) {
-      pointController.render(newData);
-    }
   }
 
   _onSortTypeChange(currentSortType) {
@@ -135,6 +141,14 @@ export default class TripController {
     const tripControlsElement = headerMainElement.querySelector(`.trip-controls`);
     const menuHeaderElement = tripControlsElement.querySelector(`h2`);
     const tripEventsElement = document.querySelector(`.trip-events`);
+    const newEventButton = headerMainElement.querySelector(`.trip-main__event-add-btn`);
+    newEventButton.addEventListener(`click`, () => {
+
+      // нваесить на форму обработчики
+      // показать форму
+
+      this._onDataChange(null, null, newData);
+    });
 
     render(headerMainElement, this._tripInfoComponent, RenderPosition.AFTERBEGIN);
     render(menuHeaderElement.nextSibling, this._menuComponent, `afterend`);

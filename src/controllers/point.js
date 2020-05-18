@@ -27,10 +27,11 @@ export default class PointController {
     this._deleteEventHandler = this._deleteEventHandler.bind(this);
   }
 
-  render(event, dayComponents, isSorting) {
+  render(event, dayComponents, isSorting, mode) {
     if (dayComponents) {
       this._dayComponents = dayComponents;
     }
+    this._mode = mode;
 
     const oldEventComponent = this._eventComponent;
     const oldEventEditComponent = this._eventEditComponent;
@@ -48,12 +49,11 @@ export default class PointController {
         this._editToEventHandler,
         (evt) => {
           evt.preventDefault();
-          this._editToEventHandler();
+          const data = this._eventEditComponent.getData();
+          this._onDataChange(this, event, data);
         },
         () => {
           this._onDataChange(this, event, null);
-
-          this._deleteEventHandler();
         },
         () => {
           this._onDataChange(this, event, Object.assign({}, event, {isFavorite: !event.isFavorite}));
@@ -63,6 +63,7 @@ export default class PointController {
     if (oldEventEditComponent && oldEventComponent) {
       replace(this._eventComponent, oldEventComponent);
       replace(this._eventEditComponent, oldEventEditComponent);
+      this._edit
     } else {
       render(this._dayComponent.getElement().querySelector(`ul`), this._eventComponent, RenderPosition.BEFOREEND);
     }
@@ -75,10 +76,12 @@ export default class PointController {
   }
 
   _editToEventHandler() {
-    document.addEventListener(`keydown`, this._onEscHandler);
+    document.removeEventListener(`keydown`, this._onEscHandler);
     this._eventEditComponent.rerender();
-    replace(this._eventComponent, this._eventEditComponent);
-    this._mode = Mode.DEFAULT;
+
+    if (document.contains(this._eventEditComponent.getElement())) {
+      replace(this._eventComponent, this._eventEditComponent);
+    }
   }
 
   _deleteEventHandler() {

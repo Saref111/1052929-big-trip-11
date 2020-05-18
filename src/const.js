@@ -66,4 +66,10 @@ const FilterType = {
   FUTURE: `future`,
 };
 
-export {TYPES, CITIES, getOffers, getTripInfo, PICTURE, FilterType};
+const EditFormMode = {
+  EDIT: `edit`,
+  FIRST: `first`,
+  CREATE: `create`,
+};
+
+export {TYPES, CITIES, getOffers, getTripInfo, PICTURE, FilterType, EditFormMode};
