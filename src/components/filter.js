@@ -27,4 +27,19 @@ export default class Filter extends AbstractComponent {
   getTemplate() {
     return createFilterElement();
   }
+
+  setFilterChangeHandler(handler) {
+    const form = this.getElement();
+
+    form.addEventListener(`change`, (evt) => {
+      evt.preventDefault();
+
+      const filterName = evt.target.id;
+      if (!filterName.startsWith(`filter-`)) {
+        return;
+      }
+
+      handler(filterName.substring(`filter-`.length));
+    });
+  }
 }

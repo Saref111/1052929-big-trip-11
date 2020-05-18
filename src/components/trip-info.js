@@ -16,7 +16,7 @@ const createTripInfoElement = () => {
   );
 };
 
-export default class Info extends AbstractComponent {
+export default class TripInfo extends AbstractComponent {
   getTemplate() {
     return createTripInfoElement();
   }

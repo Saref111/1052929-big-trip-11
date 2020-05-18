@@ -12,6 +12,7 @@ export default class PointController {
   constructor(containerElement, onDataChange, onViewChange) {
     this._container = containerElement;
     this._dayComponents = null;
+    this._dayComponent = null;
 
     this._eventComponent = null;
     this._eventEditComponent = null;
@@ -26,10 +27,11 @@ export default class PointController {
     this._deleteEventHandler = this._deleteEventHandler.bind(this);
   }
 
-  render(event, dayComponentsArray, isSorting) {
-    if (dayComponentsArray) {
-      this._dayComponents = dayComponentsArray;
+  render(event, dayComponents, isSorting, mode) {
+    if (dayComponents) {
+      this._dayComponents = dayComponents;
     }
+    this._mode = mode;
 
     const oldEventComponent = this._eventComponent;
     const oldEventEditComponent = this._eventEditComponent;
@@ -47,9 +49,12 @@ export default class PointController {
         this._editToEventHandler,
         (evt) => {
           evt.preventDefault();
-          this._editToEventHandler();
+          const data = this._eventEditComponent.getData();
+          this._onDataChange(this, event, data);
         },
-        this._deleteEventHandler,
+        () => {
+          this._onDataChange(this, event, null);
+        },
         () => {
           this._onDataChange(this, event, Object.assign({}, event, {isFavorite: !event.isFavorite}));
         }
@@ -58,6 +63,7 @@ export default class PointController {
     if (oldEventEditComponent && oldEventComponent) {
       replace(this._eventComponent, oldEventComponent);
       replace(this._eventEditComponent, oldEventEditComponent);
+      this._edit
     } else {
       render(this._dayComponent.getElement().querySelector(`ul`), this._eventComponent, RenderPosition.BEFOREEND);
     }
@@ -70,10 +76,12 @@ export default class PointController {
   }
 
   _editToEventHandler() {
-    document.addEventListener(`keydown`, this._onEscHandler);
-    // this._eventEditComponent.rerender();  зачем нам тут ререндер? Он был в примере, а код пока работает и без него
-    replace(this._eventComponent, this._eventEditComponent);
-    this._mode = Mode.DEFAULT;
+    document.removeEventListener(`keydown`, this._onEscHandler);
+    this._eventEditComponent.rerender();
+
+    if (document.contains(this._eventEditComponent.getElement())) {
+      replace(this._eventComponent, this._eventEditComponent);
+    }
   }
 
   _deleteEventHandler() {
@@ -95,5 +103,11 @@ export default class PointController {
     if (this._mode === Mode.EDIT) {
       this._editToEventHandler();
     }
+  }
+
+  destroy() {
+    remove(this._eventEditComponent);
+    remove(this._eventComponent);
+    document.removeEventListener(`keydown`, this._onEscHandler);
   }
 }

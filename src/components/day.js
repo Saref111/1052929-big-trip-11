@@ -1,5 +1,7 @@
 import AbstractComponent from "./abstract-component.js";
-import {MONTHS, stringifyDate} from "../utils/util.js";
+import {stringifyDate} from "../utils/util.js";
+
+const moment = require(`moment`);
 
 const createDayElement = (date, isSorting) => {
   return (
@@ -8,7 +10,7 @@ const createDayElement = (date, isSorting) => {
         ${isSorting ? `` : `<span class="day__counter">${date.getDate()}</span>
         <time class="day__date"
         datetime="${stringifyDate(date)}">
-        ${MONTHS[date.getMonth()]} ${stringifyDate(date).slice(2, 4)}</time>`}
+        ${moment(date).format(`MMMM`)} ${moment(date).format(`YY`)}</time>`}
       </div>
 
       <ul class="trip-events__list">

@@ -32,23 +32,8 @@ const capitalize = (string) => `${string[0].toUpperCase()}${string.slice(1)}`;
 const getPreposition = (type) => [`sightseeing`, `restaurant`, `check-in`].includes(type) ? ` in ` : ` to `;
 const getTitleByType = (type, place) => `${capitalize(type)}${getPreposition(type)}${place}`;
 
-const MONTHS = {
-  1: `JAN`,
-  2: `FEB`,
-  3: `MAR`,
-  4: `APR`,
-  5: `MAY`,
-  6: `JUN`,
-  7: `JUL`,
-  8: `AUG`,
-  9: `SEP`,
-  10: `OCT`,
-  11: `NOV`,
-  12: `DEC`
-};
-
 const stringifyDate = (date, sign) => {
-  return moment(date).format(`YYYY${sign ? sign : `-`}mm${sign ? sign : `-`}dd`);
+  return moment(date).format(`YYYY${sign ? sign : `-`}MMMM${sign ? sign : `-`}DD`);
 };
 
 const stringifyTime = (time) => {
@@ -57,7 +42,7 @@ const stringifyTime = (time) => {
 
 const getDuration = (ms) => {
   return moment.duration(ms, `milliseconds`).humanize();
-}
+};
 
 export {
   getRandomArrayElement,
@@ -69,5 +54,4 @@ export {
   stringifyDate,
   stringifyTime,
   getDuration,
-  MONTHS,
 };

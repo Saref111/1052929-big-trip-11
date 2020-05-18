@@ -1,10 +1,9 @@
 const TYPES = [`taxi`, `bus`, `train`, `ship`, `transport`, `drive`, `flight`, `check-in`, `sightseeing`, `restaurant`];
 const CITIES = [`Amsterdam`, `Chamonix`, `Geneva`];
 
-
 const PICTURE = `http://picsum.photos/248/152?r=`;
 
-const getInfo = () => {
+const getTripInfo = () => {
   return [
     `Lorem ipsum dolor sit amet, consectetur adipiscing elit. `,
     `Cras aliquet varius magna, non porta ligula feugiat eget. Fusce tristique felis at fermentum pharetra. `,
@@ -61,4 +60,16 @@ const getOffers = () => {
   return OFFERS;
 };
 
-export {TYPES, CITIES, getOffers, getInfo, PICTURE};
+const FilterType = {
+  EVERYTHING: `everything`,
+  PAST: `past`,
+  FUTURE: `future`,
+};
+
+const EditFormMode = {
+  EDIT: `edit`,
+  FIRST: `first`,
+  CREATE: `create`,
+};
+
+export {TYPES, CITIES, getOffers, getTripInfo, PICTURE, FilterType, EditFormMode};
