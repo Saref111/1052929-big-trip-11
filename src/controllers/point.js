@@ -57,12 +57,40 @@ export default class PointController {
         }
     );
 
-    if (oldEventEditComponent && oldEventComponent) {
-      replace(this._eventComponent, oldEventComponent);
-      replace(this._eventEditComponent, oldEventEditComponent);
-      this._editToEventHandler();
-    } else {
-      render(this._dayComponent.getElement().querySelector(`ul`), this._eventComponent, RenderPosition.BEFOREEND);
+    switch (this._mode) {
+      case EditFormMode.CREATE:
+        this._eventEditComponent.setSubmitHandlers((evt) => {
+          evt.preventDefault();
+          const data = this._eventEditComponent.getData();
+          this._onDataChange(this, event, data);
+        });
+
+
+        render(this._dayComponent.getElement().parentElement, this._eventEditComponent);
+        break;
+      default:
+        this._eventEditComponent.setEditFormHandlers(
+            this._editToEventHandler,
+            (evt) => {
+              evt.preventDefault();
+              const data = this._eventEditComponent.getData();
+              this._onDataChange(this, event, data);
+            },
+            () => {
+              this._onDataChange(this, event, null);
+            },
+            () => {
+              this._onDataChange(this, event, Object.assign({}, event, {isFavorite: !event.isFavorite}));
+            }
+        );
+
+        if (oldEventEditComponent && oldEventComponent) {
+          replace(this._eventComponent, oldEventComponent);
+          replace(this._eventEditComponent, oldEventEditComponent);
+          this._editToEventHandler();
+        } else {
+          render(this._dayComponent.getElement().querySelector(`ul`), this._eventComponent, RenderPosition.BEFOREEND);
+        }
     }
   }
 
