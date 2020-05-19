@@ -72,4 +72,15 @@ const EditFormMode = {
   CREATE: `create`,
 };
 
-export {TYPES, CITIES, getOffers, getTripInfo, PICTURE, FilterType, EditFormMode};
+const DefaultEvent = {
+  id: 111,
+  type: TYPES[0],
+  place: CITIES[0],
+  offers: getOffers(),
+  startTime: new Date(),
+  endTime: new Date(),
+  isFavorite: false,
+  price: 150,
+};
+
+export {TYPES, CITIES, getOffers, getTripInfo, PICTURE, FilterType, EditFormMode, DefaultEvent};
