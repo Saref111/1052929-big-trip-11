@@ -216,8 +216,10 @@ export default class EventEditForm extends AbstractSmartComponent {
   }
 
   setCloseHandler(handler) {
-    this.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, handler);
-    this._closeHandler = handler;
+    if (handler) {
+      this.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, handler);
+      this._closeHandler = handler;
+    }
   }
 
   setSubmitHandler(handler) {
@@ -231,8 +233,10 @@ export default class EventEditForm extends AbstractSmartComponent {
   }
 
   setAddFavoriteHandler(handler) {
-    this.getElement().querySelector(`#event-favorite-1`).addEventListener(`click`, handler);
-    this._addFavoriteHandler = handler;
+    if (handler) {
+      this.getElement().querySelector(`#event-favorite-1`).addEventListener(`click`, handler);
+      this._addFavoriteHandler = handler;
+    }
   }
 
   setChangeTypeHandler(handler) {
