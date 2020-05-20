@@ -35,40 +35,24 @@ export default class PointController {
 
     this._eventComponent = new EventComponent(event);
     this._eventEditComponent = new EventEditComponent(this._mode, event);
-    this._dayComponent = isSorting ? this._dayComponents[0] : this._dayComponents.find((day) => stringifyDate(day.date.startTime) === stringifyDate(event.startTime));
-
-    this._eventComponent.setOpenEditHandler(() => {
-      this._eventToEditHandler();
-      document.addEventListener(`keydown`, this._onEscHandler);
-    });
-
-    this._eventEditComponent.setEditFormHandlers(
-        this._editToEventHandler,
-        (evt) => {
-          evt.preventDefault();
-          const data = this._eventEditComponent.getData();
-          this._onDataChange(this, event, data);
-        },
-        () => {
-          this._onDataChange(this, event, null);
-        },
-        () => {
-          this._onDataChange(this, event, Object.assign({}, event, {isFavorite: !event.isFavorite}));
-        }
-    );
+    this._dayComponent = isSorting ? this._dayComponents[0] : this._dayComponents.find((day) => stringifyDate(day.date.startTime) === stringifyDate(event.startTime));  
 
     switch (this._mode) {
       case EditFormMode.CREATE:
-        this._eventEditComponent.setSubmitHandlers((evt) => {
+        this._eventEditComponent.setSubmitHandler((evt) => {
           evt.preventDefault();
           const data = this._eventEditComponent.getData();
           this._onDataChange(this, event, data);
         });
-
-
         render(this._dayComponent.getElement().parentElement, this._eventEditComponent);
         break;
-      default:
+
+      case EditFormMode.EDIT:
+        this._eventComponent.setOpenEditHandler(() => {
+          this._eventToEditHandler();
+          document.addEventListener(`keydown`, this._onEscHandler);
+        });
+
         this._eventEditComponent.setEditFormHandlers(
             this._editToEventHandler,
             (evt) => {

@@ -125,7 +125,7 @@ export default class TripController {
       const newPointController = new PointController(this._container.getElement(), this._onDataChange, this._onViewChange);
 
       this._dayComponents.push(new DayComponent(DefaultEvent));
-      newPointController.render(DefaultEvent, this._dayComponents, false, EditFormMode.CREATE);
+      newPointController.render(DefaultEvent, this._dayComponents, null, EditFormMode.CREATE);
 
       // создать форму
       //   показать форму

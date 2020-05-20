@@ -223,7 +223,12 @@ export default class EventEditForm extends AbstractSmartComponent {
   }
 
   setSubmitHandler(handler) {
-    this.getElement().querySelector(`form`).addEventListener(`submit`, handler);
+    if (this.getElement().querySelector(`form`)) {
+      this.getElement().querySelector(`form`).addEventListener(`submit`, handler);
+    } else {
+      this.getElement().addEventListener(`submit`, handler);
+    }
+
     this._submitHandler = handler;
   }
 
