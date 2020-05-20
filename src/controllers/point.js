@@ -35,7 +35,7 @@ export default class PointController {
 
     this._eventComponent = new EventComponent(event);
     this._eventEditComponent = new EventEditComponent(this._mode, event);
-    this._dayComponent = isSorting ? this._dayComponents[0] : this._dayComponents.find((day) => stringifyDate(day.date.startTime) === stringifyDate(event.startTime));  
+    this._dayComponent = isSorting ? this._dayComponents[0] : this._dayComponents.find((day) => stringifyDate(day.date.startTime) === stringifyDate(event.startTime));
 
     switch (this._mode) {
       case EditFormMode.CREATE:
@@ -43,6 +43,10 @@ export default class PointController {
           evt.preventDefault();
           const data = this._eventEditComponent.getData();
           this._onDataChange(this, event, data);
+        });
+        this._eventEditComponent.setDeleteHandler(() => {
+          this._onViewChange();
+          this.destroy();
         });
         render(this._dayComponent.getElement().parentElement, this._eventEditComponent);
         break;
