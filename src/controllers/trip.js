@@ -1,6 +1,6 @@
 import NoEventsComponent from "../components/no-events.js";
 import TripInfoComponent from "../components/trip-info.js";
-import MenuComponent from "../components/menu.js";
+
 import SortComponent, {SortType} from "../components/sort.js";
 import PointController from "./point.js";
 import DayComponent from "../components/day.js";
@@ -59,7 +59,6 @@ export default class TripController {
     this._newButtonComponent = new NewButtonComponent();
     this._noEventsComponent = new NoEventsComponent();
     this._tripInfoComponent = new TripInfoComponent();
-    this._menuComponent = new MenuComponent();
     this._sortComponent = new SortComponent();
 
     this._onSortTypeChange = this._onSortTypeChange.bind(this);
@@ -115,8 +114,8 @@ export default class TripController {
     }
 
     const headerMainElement = document.querySelector(`.trip-main`);
-    const tripControlsElement = headerMainElement.querySelector(`.trip-controls`);
-    const menuHeaderElement = tripControlsElement.querySelector(`h2`);
+    // const tripControlsElement = headerMainElement.querySelector(`.trip-controls`);
+    // const menuHeaderElement = tripControlsElement.querySelector(`h2`);
     const tripEventsElement = document.querySelector(`.trip-events`);
 
     this._newButtonComponent.setButtonHandler(() => {
@@ -129,7 +128,7 @@ export default class TripController {
 
     render(headerMainElement, this._tripInfoComponent, RenderPosition.AFTERBEGIN);
     render(headerMainElement, this._newButtonComponent, RenderPosition.BEFOREEND);
-    render(menuHeaderElement.nextSibling, this._menuComponent, `afterend`);
+
     render(tripEventsElement, this._sortComponent, RenderPosition.BEFOREEND);
     render(tripEventsElement, this._container, RenderPosition.BEFOREEND);
 
@@ -181,4 +180,13 @@ export default class TripController {
 
     return controllers;
   }
+
+  hide() {
+    this._container.hide();
+  }
+
+  show() {
+    this._container.show();
+  }
+
 }
