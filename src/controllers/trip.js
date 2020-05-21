@@ -136,6 +136,10 @@ export default class TripController {
     this._renderEvents(this._events);
   }
 
+  getSortComponent() {
+    return this._sortComponent;
+  }
+
   _renderEvents(events) {
     const containerElement = this._container.getElement();
     this._controllers = this._renderTripEvents(events, containerElement, false, this._onDataChange, this._onViewChange);

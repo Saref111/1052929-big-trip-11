@@ -1,5 +1,6 @@
 import {getEventObjects} from "./mock/event.js";
 import DaysListComponent from "./components/days-list.js";
+import StatisticComponent from "./components/statistic.js";
 import TripController from "./controllers/trip.js";
 import FilterController from "./controllers/filter.js";
 import EventsModel from "./models/points.js";
@@ -17,4 +18,9 @@ filterController.render();
 const daysListComponent = new DaysListComponent();
 const tripController = new TripController(daysListComponent, eventsModel);
 tripController.render();
+
+filterController.joinSort(tripController.getSortComponent());
+
+const statisticComponent = new StatisticComponent(eventsModel);
+statisticComponent.render();
 

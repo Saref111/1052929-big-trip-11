@@ -13,7 +13,15 @@ export default class FilterController {
 
     this._onDataChange = this._onDataChange.bind(this);
     this._onFilterChange = this._onFilterChange.bind(this);
+
+    this._sortComponent = null;
   }
+
+
+  joinSort(sortComponent) {
+    this._sortComponent = sortComponent;
+  }
+
 
   render() {
     const container = this._container;
@@ -45,5 +53,6 @@ export default class FilterController {
   _onFilterChange(filterType) {
     this._model.setFilter(filterType);
     this._activeFilterType = filterType;
+    this._sortComponent.rerender();
   }
 }
