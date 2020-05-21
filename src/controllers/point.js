@@ -39,6 +39,7 @@ export default class PointController {
 
     switch (this._mode) {
       case EditFormMode.CREATE:
+        this._onViewChange();
         this._eventEditComponent.setSubmitHandler((evt) => {
           evt.preventDefault();
           const data = this._eventEditComponent.getData();
@@ -53,12 +54,12 @@ export default class PointController {
         document.addEventListener(`keydown`, this._onEscHandler);
         break;
 
+
       case EditFormMode.EDIT:
         this._eventComponent.setOpenEditHandler(() => {
           this._eventToEditHandler();
           document.addEventListener(`keydown`, this._onEscHandler);
         });
-
         this._eventEditComponent.setEditFormHandlers(
             this._editToEventHandler,
             (evt) => {
@@ -73,6 +74,7 @@ export default class PointController {
               this._onDataChange(this, event, Object.assign({}, event, {isFavorite: !event.isFavorite}));
             }
         );
+
 
         if (oldEventEditComponent && oldEventComponent) {
           replace(this._eventComponent, oldEventComponent);

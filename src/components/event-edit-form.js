@@ -8,6 +8,32 @@ import flatpickr from "flatpickr";
 
 import "flatpickr/dist/flatpickr.min.css";
 
+const checkDestinationHandler = (evt) => {
+
+  const target = evt.target;
+  const datalist = document.querySelector(`#destination-list-1`);
+
+  const options = Array.from(datalist.children).map((it) => it.value);
+
+  if (!options.includes(target.value)) {
+    target.setCustomValidity(`Please, choose the destination place from the list`);
+  } else {
+    target.setCustomValidity(``);
+  }
+};
+
+const checkPrice = (evt) => {
+
+  const target = evt.target;
+  const value = Number(target.value);
+
+  if (isNaN(value)) {
+    target.setCustomValidity(`Please, write the price using digits.`);
+  } else {
+    target.setCustomValidity(``);
+  }
+};
+
 const getOffersArray = (formData) => {
   const offers = getOffers();
   const activeOffers = Array.from(formData.keys()).filter((it) => it.startsWith(`event-offer-`));
@@ -161,7 +187,7 @@ const createEventFormElement = (mode, {type, place, price, offers, startTime, en
         <label class="event__label  event__type-output" for="event-destination-1">
           ${mode === EditFormMode.EDIT ? `Flight to` : getTitleByType(type, (mode !== EditFormMode.EDIT ? `` : place))}
         </label>
-        <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${mode === EditFormMode.EDIT ? place : ``}" list="destination-list-1">
+        <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${mode === EditFormMode.EDIT ? place : ``}" list="destination-list-1" required>
         <datalist id="destination-list-1">
           ${getPlacesList()}
         </datalist>
@@ -184,7 +210,7 @@ const createEventFormElement = (mode, {type, place, price, offers, startTime, en
           <span class="visually-hidden">Price</span>
           €
         </label>
-        <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${price ? price : ``}">
+        <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${price ? price : ``}" required>
       </div>
 
       <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
@@ -263,6 +289,14 @@ export default class EventEditForm extends AbstractSmartComponent {
     this.setChangeTypeHandler(typeHandler);
   }
 
+  _setValidationHandlers(placeInputHandler, priceInputHandler) {
+    const placeInputElement = this.getElement().querySelector(`#event-destination-1`);
+    placeInputElement.addEventListener(`input`, placeInputHandler);
+
+    const priceInputElement = this.getElement().querySelector(`#event-price-1`);
+    priceInputElement.addEventListener(`input`, priceInputHandler);
+  }
+
   recoveryListeners() {
     this.setEditFormHandlers(
         this._closeHandler,
@@ -311,6 +345,8 @@ export default class EventEditForm extends AbstractSmartComponent {
         this.rerender();
       }
     });
+
+    this._setValidationHandlers(checkDestinationHandler, checkPrice);
 
     element.querySelector(`#event-destination-1`).addEventListener(`input`, (evt) => {
       if (this._descriptionComponent) {
