@@ -9,6 +9,8 @@ export default class NewButtonComponent extends AbstractComponent {
     super();
 
     this._handler = null;
+
+    this.enabled = this.enabled.bind(this);
   }
 
   getTemplate() {
@@ -19,15 +21,17 @@ export default class NewButtonComponent extends AbstractComponent {
     this.getElement().addEventListener(`click`, () => {
       this._handler = handler;
       handler();
-      this.disable();
+      this.disabled();
+      document.addEventListener(`keydown`, this.enabled);
     });
   }
 
-  disable() {
-    this.getElement().disable = true;
+  disabled() {
+    this.getElement().disabled = true;
   }
 
-  enable() {
-    this.getElement().disable = false;
+  enabled() {
+    this.getElement().disabled = false;
+    document.removeEventListener(`keydown`, this.enabled);
   }
 }

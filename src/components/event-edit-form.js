@@ -1,6 +1,7 @@
 import {getTitleByType, stringifyTime, stringifyDate, getRandomInt} from "../utils/util.js";
 import {remove, render, RenderPosition} from "../utils/render.js";
 import {CITIES, PICTURE, getTripInfo, EditFormMode, getOffers} from "../const.js";
+import {getDestinations} from "../mock/destination.js";
 import AbstractSmartComponent from "./abstract-smart-component.js";
 import DescriptionComponent from "./description.js";
 import flatpickr from "flatpickr";
@@ -27,10 +28,18 @@ const parseFormData = (formData) => {
     place: formData.get(`event-destination`),
     price: formData.get(`event-price`),
     offers: getOffersArray(formData),
-    startTime: formData.get(`event-start-time`),
-    endTime: formData.get(`event-end-time`),
+    startTime: new Date(formData.get(`event-start-time`)),
+    endTime: new Date(formData.get(`event-end-time`)),
     isFavorite: formData.get(`event-isFavorite`),
   };
+};
+
+const getPlacesList = () => {
+  const places = getDestinations();
+  return places.reduce((acc, it) => {
+    acc += `<option value="${it}"></option>`;
+    return acc;
+  }, ``);
 };
 
 const createEventDetails = (offers) => {
@@ -150,14 +159,11 @@ const createEventFormElement = (mode, {type, place, price, offers, startTime, en
 
       <div class="event__field-group  event__field-group--destination">
         <label class="event__label  event__type-output" for="event-destination-1">
-          ${mode === EditFormMode.FIRST ? `Flight to` : getTitleByType(type, (mode === EditFormMode.EDIT ? `` : place))}
+          ${mode === EditFormMode.EDIT ? `Flight to` : getTitleByType(type, (mode !== EditFormMode.EDIT ? `` : place))}
         </label>
-        <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${mode === `edit` ? place : ``}" list="destination-list-1">
+        <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${mode === EditFormMode.EDIT ? place : ``}" list="destination-list-1">
         <datalist id="destination-list-1">
-          <option value="Amsterdam"></option>
-          <option value="Geneva"></option>
-          <option value="Chamonix"></option>
-          <option value="Saint Petersburg"></option>
+          ${getPlacesList()}
         </datalist>
       </div>
 
@@ -196,8 +202,8 @@ export default class EventEditForm extends AbstractSmartComponent {
 
     this._data = data;
     this._mode = mode;
-    this._flatrickrStart = null;
-    this._flatrickrEnd = null;
+    this._flatpickrStart = null;
+    this._flatpickrEnd = null;
 
     this._descriptionComponent = null;
 
@@ -207,7 +213,7 @@ export default class EventEditForm extends AbstractSmartComponent {
     this._closeHandler = null;
     this._typeChangeHandler = null;
 
-    this._applyFlatrickr();
+    this._applyFlatpickr();
     this._subscribeOnEvents();
   }
 
@@ -270,7 +276,7 @@ export default class EventEditForm extends AbstractSmartComponent {
 
   rerender() {
     super.rerender();
-    this._applyFlatrickr();
+    this._applyFlatpickr();
 
     if (this._descriptionComponent) {
       render(this.getElement().querySelector(`.event__details`), this._descriptionComponent, RenderPosition.BEFOREEND);
@@ -289,8 +295,8 @@ export default class EventEditForm extends AbstractSmartComponent {
   }
 
   getData() {
-    // const form = this.getElement().querySelector(`form`);
-    const formData = new FormData(this.getElement().querySelector(`form`));
+    const form = this.getElement().querySelector(`form`) ? this.getElement().querySelector(`form`) : this.getElement();
+    const formData = new FormData(form);
 
     return parseFormData(formData);
   }
@@ -322,7 +328,7 @@ export default class EventEditForm extends AbstractSmartComponent {
     });
   }
 
-  _applyFlatrickr() {
+  _applyFlatpickr() {
     if (this._flatpickr) {
       this._flatpickr.destroy();
       this._flatpickr = null;

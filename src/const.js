@@ -1,5 +1,5 @@
 const TYPES = [`taxi`, `bus`, `train`, `ship`, `transport`, `drive`, `flight`, `check-in`, `sightseeing`, `restaurant`];
-const CITIES = [`Amsterdam`, `Chamonix`, `Geneva`];
+const CITIES = [`Amsterdam`, `Chamonix`, `Geneva`, `Saint Petersburg`, `Kiev`, `Prague`, `New York`, `Beijing`, `Hongkong`, `Dubai`];
 
 const PICTURE = `http://picsum.photos/248/152?r=`;
 

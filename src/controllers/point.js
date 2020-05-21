@@ -42,13 +42,15 @@ export default class PointController {
         this._eventEditComponent.setSubmitHandler((evt) => {
           evt.preventDefault();
           const data = this._eventEditComponent.getData();
-          this._onDataChange(this, event, data);
+          this._onDataChange(this, null, data);
+          remove(this._eventEditComponent);
         });
         this._eventEditComponent.setDeleteHandler(() => {
           this._onViewChange();
           this.destroy();
         });
         render(this._dayComponent.getElement().parentElement, this._eventEditComponent);
+        document.addEventListener(`keydown`, this._onEscHandler);
         break;
 
       case EditFormMode.EDIT:
@@ -79,6 +81,7 @@ export default class PointController {
         } else {
           render(this._dayComponent.getElement().querySelector(`ul`), this._eventComponent, RenderPosition.BEFOREEND);
         }
+        break;
     }
   }
 
@@ -108,7 +111,12 @@ export default class PointController {
 
   _onEscHandler(evt) {
     if (evt.keyCode === 27) {
-      this._editToEventHandler();
+      if (this._mode === EditFormMode.EDIT) {
+        this._editToEventHandler();
+      } else {
+        document.removeEventListener(`keydown`, this._onEscHandler);
+        this.destroy();
+      }
     }
   }
 

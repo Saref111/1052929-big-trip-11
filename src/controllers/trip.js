@@ -88,8 +88,6 @@ export default class TripController {
         pointController.render(newData);
       }
     }
-
-
   }
 
   _onSortTypeChange(currentSortType) {
@@ -126,13 +124,7 @@ export default class TripController {
 
       this._dayComponents.push(new DayComponent(DefaultEvent));
       newPointController.render(DefaultEvent, this._dayComponents, null, EditFormMode.CREATE);
-
-      // создать форму
-      //   показать форму
-      //    создаем обработчики
-      //   нваесить на форму обработчики
-
-      // this._onDataChange(null, null, newData);
+      this._newButtonComponent.disabled();
     });
 
     render(headerMainElement, this._tripInfoComponent, RenderPosition.AFTERBEGIN);
