@@ -71,6 +71,8 @@ export default class TripController {
   }
 
   _onDataChange(pointController, oldData, newData) {
+    console.log({pointController, oldData, newData});
+
     if (!newData) {
       pointController.destroy();
       this._model.removeEvent(oldData.id);
@@ -84,7 +86,7 @@ export default class TripController {
       const isSuccess = this._model.updateEvent(oldData.id, newData);
 
       if (isSuccess) {
-        pointController.render(newData);
+        pointController.render(newData, null, null, EditFormMode.EDIT);
       }
     }
   }

@@ -64,6 +64,7 @@ export default class PointController {
             this._editToEventHandler,
             (evt) => {
               evt.preventDefault();
+
               const data = this._eventEditComponent.getData();
               this._onDataChange(this, event, data);
             },
@@ -72,6 +73,10 @@ export default class PointController {
             },
             () => {
               this._onDataChange(this, event, Object.assign({}, event, {isFavorite: !event.isFavorite}));
+            },
+            () => {
+              const data = this._eventEditComponent.getData();
+              this._onDataChange(this, event, data);
             }
         );
 

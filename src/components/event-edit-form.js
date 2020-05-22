@@ -48,8 +48,9 @@ const getOffersArray = (formData) => {
   return offers;
 };
 
-const parseFormData = (formData) => {
+const parseFormData = (formData, id) => {
   return {
+    id,
     type: formData.get(`event-type`),
     place: formData.get(`event-destination`),
     price: formData.get(`event-price`),
@@ -111,9 +112,12 @@ const buttonFavoriteTemplate = (isFavorite) => {
   );
 };
 
-const createEventFormElement = (mode, {type, place, price, offers, startTime, endTime, isFavorite}) => {
+const createEventFormElement = (mode, {type, place, price, offers, startTime, endTime, isFavorite, id}) => {
+  if (!id) {
+    id = Math.floor(Math.random() * 999999);
+  }
   return (
-    `${mode === EditFormMode.EDIT ? `<li class="trip-events__item">` : ``}<form class="trip-events__item  event  event--edit" action="#" method="post" id="${mode}">
+    `${mode === EditFormMode.EDIT ? `<li class="trip-events__item">` : ``}<form class="trip-events__item  event  event--edit" action="#" method="post" id="${id}">
     <header class="event__header">
       <div class="event__type-wrapper">
         <label class="event__type  event__type-btn" for="event-type-toggle-1">
@@ -332,7 +336,7 @@ export default class EventEditForm extends AbstractSmartComponent {
     const form = this.getElement().querySelector(`form`) ? this.getElement().querySelector(`form`) : this.getElement();
     const formData = new FormData(form);
 
-    return parseFormData(formData);
+    return parseFormData(formData, form.id);
   }
 
   _subscribeOnEvents() {

@@ -30,6 +30,7 @@ const menuComponent = new MenuComponent();
 const menuHeaderElement = tripControlsElement.querySelector(`h2`);
 menuComponent.setShowStatsHandler(() => {
   tripController.hide();
+  statisticComponent.update();
   statisticComponent.show();
 
   const sortComponent = tripController.getSortComponent();
