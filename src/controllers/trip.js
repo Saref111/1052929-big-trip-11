@@ -71,7 +71,6 @@ export default class TripController {
   }
 
   _onDataChange(pointController, oldData, newData) {
-    console.log({pointController, oldData, newData});
 
     if (!newData) {
       pointController.destroy();

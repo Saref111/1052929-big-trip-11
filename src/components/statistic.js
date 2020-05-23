@@ -1,18 +1,9 @@
 import AbstractComponent from "./abstract-component.js";
 import {render, RenderPosition} from "../utils/render.js";
+import {getTransportLabels, getLabels, getTypes, countTransport, countMoney} from "../utils/statistics.js";
 
 import Chart from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
-
-const countMoney = (events) => {
-  const flyMoney = events.slice().reduce((total, it) => it.type === `flight` ? total + it.price : total, 0);
-  const stayMoney = events.slice().reduce((total, it) => it.type === `check-in` ? total + it.price : total, 0);
-  const driveMoney = events.slice().reduce((total, it) => it.type === `drive` ? total + it.price : total, 0);
-  const lookMoney = events.slice().reduce((total, it) => it.type === `sightseeing` ? total + it.price : total, 0);
-  const rideMoney = events.slice().reduce((total, it) => it.type === `taxi` || `bus` || `train` || `transport` ? total + it.price : total, 0);
-
-  return [flyMoney, stayMoney, driveMoney, lookMoney, rideMoney];
-};
 
 const createStatisticTemplate = () => {
   return (`<section class="statistics visually-hidden">
@@ -31,6 +22,7 @@ const createStatisticTemplate = () => {
     </div>
   </section>`);
 };
+
 export default class Statistic extends AbstractComponent {
   constructor(model) {
     super();
@@ -50,20 +42,24 @@ export default class Statistic extends AbstractComponent {
     const timeSpendCtx = statisticsElement.querySelector(`.statistic__time-spend`);
 
     const events = this._model.getAllEvents();
+    const types = getTypes(events);
+    const moneyLabels = getLabels(types);
+    const transportTypes = getTransportLabels(events);
+    const transportLabels = getLabels(transportTypes);
 
     // Рассчитаем высоту канваса в зависимости от того, сколько данных в него будет передаваться
     const BAR_HEIGHT = 55;
-    moneyCtx.height = BAR_HEIGHT * 6;
-    transportCtx.height = BAR_HEIGHT * 4;
-    timeSpendCtx.height = BAR_HEIGHT * 4;
+    moneyCtx.height = BAR_HEIGHT * types.length;
+    transportCtx.height = BAR_HEIGHT * types.length;
+    timeSpendCtx.height = BAR_HEIGHT * types.length;
 
     const moneyChart = new Chart(moneyCtx, {
       plugins: [ChartDataLabels],
       type: `horizontalBar`,
       data: {
-        labels: [`FLY`, `STAY`, `DRIVE`, `LOOK`, `RIDE`], // filter by type
+        labels: moneyLabels,
         datasets: [{
-          data: countMoney(events),
+          data: countMoney(events, types),
           backgroundColor: `#ffffff`,
           hoverBackgroundColor: `#ffffff`,
           anchor: `start`
@@ -122,13 +118,15 @@ export default class Statistic extends AbstractComponent {
       }
     });
 
+    this._moneyChart = moneyChart;
+
     const transportChart = new Chart(transportCtx, {
       plugins: [ChartDataLabels],
       type: `horizontalBar`,
       data: {
-        labels: [`FLY`, `DRIVE`, `RIDE`],
+        labels: transportLabels,
         datasets: [{
-          data: [4, 2, 1],
+          data: countTransport(events, transportTypes),
           backgroundColor: `#ffffff`,
           hoverBackgroundColor: `#ffffff`,
           anchor: `start`
@@ -186,6 +184,8 @@ export default class Statistic extends AbstractComponent {
         }
       }
     });
+
+    this._transportChart = transportChart;
   }
 
   render() {
