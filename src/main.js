@@ -8,14 +8,16 @@ import TripController from "./controllers/trip.js";
 import FilterController from "./controllers/filter.js";
 import EventsModel from "./models/points.js";
 
-const api = new API();
+const AUTHORIZATION_TOKEN = `Basic asasfs88666wge82h33`;
+
+const api = new API(AUTHORIZATION_TOKEN);
 
 const tripControlsElement = document.querySelector(`.trip-controls`);
 
-
-
 api.getEvents()
   .then((events) => {
+    console.log(events);
+
     const eventsModel = new EventsModel();
     eventsModel.setEvents(events);
 
