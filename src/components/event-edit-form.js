@@ -1,7 +1,7 @@
 import {getTitleByType, stringifyTime, stringifyDate, getRandomInt} from "../utils/util.js";
 import {remove, render, RenderPosition} from "../utils/render.js";
 import {CITIES, PICTURE, getTripInfo, EditFormMode, getOffers} from "../const.js";
-import {getDestinations} from "../mock/destination.js";
+// import {getDestinations} from "../mock/destination.js";
 import AbstractSmartComponent from "./abstract-smart-component.js";
 import DescriptionComponent from "./description.js";
 import flatpickr from "flatpickr";
@@ -62,7 +62,7 @@ const parseFormData = (formData, id) => {
 };
 
 const getPlacesList = () => {
-  const places = getDestinations();
+  const places = []; // FIX
   return places.reduce((acc, it) => {
     acc += `<option value="${it}"></option>`;
     return acc;

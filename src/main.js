@@ -16,9 +16,15 @@ const tripControlsElement = document.querySelector(`.trip-controls`);
 api.getEvents()
   .then((events) => {
     console.log(events);
+    const container = document.querySelector(`.trip-events`);
+    container.innerHTML = `<p class="trip-events__msg">Loading...</p>`;
 
     const eventsModel = new EventsModel();
     eventsModel.setEvents(events);
+
+    return {eventsModel, container};
+  }).then(({eventsModel, container}) => {
+    container.innerHTML = ``;
 
     const filterController = new FilterController(tripControlsElement, eventsModel);
     filterController.render();

@@ -109,14 +109,7 @@ export default class TripController {
     this._events = this._model.getEvents();
     const containerElement = this._container.getElement();
 
-    if (!this._events) {
-      render(containerElement, this._noEventsComponent, RenderPosition.BEFOREEND);
-      return;
-    }
-
     const headerMainElement = document.querySelector(`.trip-main`);
-    // const tripControlsElement = headerMainElement.querySelector(`.trip-controls`);
-    // const menuHeaderElement = tripControlsElement.querySelector(`h2`);
     const tripEventsElement = document.querySelector(`.trip-events`);
 
     this._newButtonComponent.setButtonHandler(() => {
@@ -132,6 +125,11 @@ export default class TripController {
 
     render(tripEventsElement, this._sortComponent, RenderPosition.BEFOREEND);
     render(tripEventsElement, this._container, RenderPosition.BEFOREEND);
+
+    if (!this._events || this._events.length === 0) {
+      render(containerElement, this._noEventsComponent, RenderPosition.BEFOREEND);
+      return;
+    }
 
     this._renderEvents(this._events);
   }
