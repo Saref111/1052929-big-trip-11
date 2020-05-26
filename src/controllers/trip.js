@@ -55,7 +55,8 @@ export default class TripController {
     this._container = containerComponent;
 
     this._controllers = [];
-    this._model = eventsModel;
+    this._eventsModel = eventsModel;
+    this._destinationsModel = null;
     this._newButtonComponent = new NewButtonComponent();
     this._noEventsComponent = new NoEventsComponent();
     this._tripInfoComponent = new TripInfoComponent();
@@ -67,22 +68,22 @@ export default class TripController {
     this._onFilterChange = this._onFilterChange.bind(this);
 
     this._sortComponent.setSortTypeChangeHandler(this._onSortTypeChange);
-    this._model.setFilterChangeHandler(this._onFilterChange);
+    this._eventsModel.setFilterChangeHandler(this._onFilterChange);
   }
 
   _onDataChange(pointController, oldData, newData) {
 
     if (!newData) {
       pointController.destroy();
-      this._model.removeEvent(oldData.id);
+      this._eventsModel.removeEvent(oldData.id);
       this._updateEvents();
       return;
     } else if (!oldData) {
-      this._model.addEvent(newData);
+      this._eventsModel.addEvent(newData);
       this._updateEvents();
       return;
     } else {
-      const isSuccess = this._model.updateEvent(oldData.id, newData);
+      const isSuccess = this._eventsModel.updateEvent(oldData.id, newData);
 
       if (isSuccess) {
         pointController.render(newData, null, null, EditFormMode.EDIT);
@@ -91,7 +92,7 @@ export default class TripController {
   }
 
   _onSortTypeChange(currentSortType) {
-    const sortedEvents = getSortedEvents(this._model.getEvents(), currentSortType);
+    const sortedEvents = getSortedEvents(this._eventsModel.getEvents(), currentSortType);
 
     this._container.getElement().innerHTML = ``;
     this._controllers = this._renderTripEvents(
@@ -106,7 +107,7 @@ export default class TripController {
   }
 
   render() {
-    this._events = this._model.getEvents();
+    this._events = this._eventsModel.getEvents();
     const containerElement = this._container.getElement();
 
     const headerMainElement = document.querySelector(`.trip-main`);
@@ -151,7 +152,7 @@ export default class TripController {
 
   _updateEvents() {
     this._removeEvents();
-    this._renderEvents(this._model.getEvents().slice());
+    this._renderEvents(this._eventsModel.getEvents().slice());
   }
 
   _onFilterChange() {
@@ -168,7 +169,7 @@ export default class TripController {
     }
 
     const controllers = eventsCopy.map((event) => {
-      const pointController = new PointController(container, onDataChange, onViewChange);
+      const pointController = new PointController(container, onDataChange, onViewChange, this._destinationsModel);
 
       pointController.render(event, this._dayComponents, isSorting, EditFormMode.EDIT);
 
@@ -178,6 +179,10 @@ export default class TripController {
     sortDaysAndEventsByDefault(this._dayComponents, container);
 
     return controllers;
+  }
+
+  setDestinationsModel(d) {
+    this._destinationsModel = d;
   }
 
   hide() {

@@ -5,11 +5,12 @@ import {stringifyDate} from "../utils/util.js";
 import {EditFormMode} from "../const.js";
 
 export default class PointController {
-  constructor(containerElement, onDataChange, onViewChange) {
+  constructor(containerElement, onDataChange, onViewChange, destinationsModel) {
     this._container = containerElement;
+    this._destinationsModel = destinationsModel;
+
     this._dayComponents = null;
     this._dayComponent = null;
-
     this._eventComponent = null;
     this._eventEditComponent = null;
     this._mode = EditFormMode.EDIT;
@@ -34,7 +35,7 @@ export default class PointController {
     const oldEventEditComponent = this._eventEditComponent;
 
     this._eventComponent = new EventComponent(event);
-    this._eventEditComponent = new EventEditComponent(this._mode, event);
+    this._eventEditComponent = new EventEditComponent(this._mode, event, this._destinationsModel);
     this._dayComponent = isSorting ? this._dayComponents[0] : this._dayComponents.find((day) => stringifyDate(day.date.startTime) === stringifyDate(event.startTime));
 
     switch (this._mode) {

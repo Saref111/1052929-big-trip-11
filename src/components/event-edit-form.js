@@ -227,11 +227,12 @@ const createEventFormElement = (mode, {type, place, price, offers, startTime, en
 };
 
 export default class EventEditForm extends AbstractSmartComponent {
-  constructor(mode, data) {
+  constructor(mode, data, destinationsModel) {
     super();
 
     this._data = data;
     this._mode = mode;
+    this._destinationsModel = destinationsModel;
     this._flatpickrStart = null;
     this._flatpickrEnd = null;
 
@@ -357,11 +358,13 @@ export default class EventEditForm extends AbstractSmartComponent {
         remove(this._descriptionComponent);
       }
 
-      if (CITIES.includes(evt.target.value)) {
-        const info = getTripInfo();
-        const picAmount = getRandomInt(5);
+      const place = evt.target.value;
 
-        this._descriptionComponent = new DescriptionComponent(info, PICTURE, picAmount);
+      if (this._destinationsModel.includesPlace(place)) {
+        const {description, pictures} = this._destinationsModel.getInfo(place);
+        debugger
+
+        this._descriptionComponent = new DescriptionComponent(description, pictures);
 
         render(element.querySelector(`.event__details`), this._descriptionComponent, RenderPosition.BEFOREEND);
       }

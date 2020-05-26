@@ -1,25 +1,26 @@
 import AbstractComponent from "./abstract-component.js";
 
-const createPicElements = (src, imgAmount) => {
+const createPicElements = (pictures) => {
   let pics = ``;
 
-  for (let i = 0; i < imgAmount; i++) {
-    pics += `<img class="event__photo" src="${src}${Math.random()}" alt="Event photo">\n`;
-  }
+  pictures.forEach((pic) => {
+    pics += `<img class="event__photo" src="${pic.src}" alt="${pic.destination}">\n`;
+  });
+
 
   return pics;
 };
 
-const createDescriptionElement = (info, src, imgAmount) => {
+const createDescriptionElement = (description, pictures) => {
 
   return (
     `<section class="event__section  event__section--destination">
       <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-      <p class="event__destination-description">${info}</p>
+      <p class="event__destination-description">${description}</p>
 
       <div class="event__photos-container">
         <div class="event__photos-tape">
-          ${createPicElements(src, imgAmount)}
+          ${createPicElements(pictures)}
         </div>
       </div>
     </section>`
@@ -27,15 +28,14 @@ const createDescriptionElement = (info, src, imgAmount) => {
 };
 
 export default class Description extends AbstractComponent {
-  constructor(info, src, imgAmount) {
+  constructor(description, pictures) {
     super();
 
-    this._info = info;
-    this._src = src;
-    this._imgAmount = imgAmount;
+    this._description = description;
+    this._pictures = pictures;
   }
 
   getTemplate() {
-    return createDescriptionElement(this._info, this._src, this._imgAmount);
+    return createDescriptionElement(this._description, this._pictures);
   }
 }
