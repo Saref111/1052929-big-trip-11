@@ -13,6 +13,7 @@ const api = new API(AUTHORIZATION_TOKEN);
 
 const tripControlsElement = document.querySelector(`.trip-controls`);
 const container = document.querySelector(`.trip-events`);
+container.innerHTML = `<p class="trip-events__msg">Loading...</p>`;
 const eventsModel = new EventsModel();
 
 const filterController = new FilterController(tripControlsElement, eventsModel);
@@ -48,17 +49,14 @@ menuComponent.setShowTableHandler(() => {
 
 render(menuHeaderElement.nextSibling, menuComponent);
 
-
 api.getEvents()
-  .then((events) => {
-    console.log(events);
-    container.innerHTML = `<p class="trip-events__msg">Loading...</p>`;
+.then((events) => {
+  console.log(events);
+  eventsModel.setEvents(events);
+  container.innerHTML = ``;
+  tripController.render();
+}).catch(() => {
+  container.innerHTML = ``;
+  tripController.render();
+});
 
-    eventsModel.setEvents(events);
-
-    return eventsModel;
-  }).then(() => {
-    debugger
-    container.innerHTML = ``;
-    tripController.render();
-  });
