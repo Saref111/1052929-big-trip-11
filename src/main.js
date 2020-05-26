@@ -12,50 +12,53 @@ const AUTHORIZATION_TOKEN = `Basic asasfs88666wge82h33`;
 const api = new API(AUTHORIZATION_TOKEN);
 
 const tripControlsElement = document.querySelector(`.trip-controls`);
+const container = document.querySelector(`.trip-events`);
+const eventsModel = new EventsModel();
+
+const filterController = new FilterController(tripControlsElement, eventsModel);
+filterController.render();
+
+const daysListComponent = new DaysListComponent();
+const tripController = new TripController(daysListComponent, eventsModel);
+
+
+filterController.joinSort(tripController.getSortComponent());
+
+const statisticComponent = new StatisticComponent(eventsModel);
+statisticComponent.render();
+
+const menuComponent = new MenuComponent();
+const menuHeaderElement = tripControlsElement.querySelector(`h2`);
+menuComponent.setShowStatsHandler(() => {
+  tripController.hide();
+  statisticComponent.update();
+  statisticComponent.show();
+
+  const sortComponent = tripController.getSortComponent();
+  sortComponent.rerender();
+});
+
+menuComponent.setShowTableHandler(() => {
+  statisticComponent.hide();
+  tripController.show();
+
+  const sortComponent = tripController.getSortComponent();
+  sortComponent.rerender();
+});
+
+render(menuHeaderElement.nextSibling, menuComponent);
+
 
 api.getEvents()
   .then((events) => {
     console.log(events);
-    const container = document.querySelector(`.trip-events`);
     container.innerHTML = `<p class="trip-events__msg">Loading...</p>`;
 
-    const eventsModel = new EventsModel();
     eventsModel.setEvents(events);
 
-    return {eventsModel, container};
-  }).then(({eventsModel, container}) => {
+    return eventsModel;
+  }).then(() => {
+    debugger
     container.innerHTML = ``;
-
-    const filterController = new FilterController(tripControlsElement, eventsModel);
-    filterController.render();
-
-    const daysListComponent = new DaysListComponent();
-    const tripController = new TripController(daysListComponent, eventsModel);
     tripController.render();
-
-    filterController.joinSort(tripController.getSortComponent());
-
-    const statisticComponent = new StatisticComponent(eventsModel);
-    statisticComponent.render();
-
-    const menuComponent = new MenuComponent();
-    const menuHeaderElement = tripControlsElement.querySelector(`h2`);
-    menuComponent.setShowStatsHandler(() => {
-      tripController.hide();
-      statisticComponent.update();
-      statisticComponent.show();
-
-      const sortComponent = tripController.getSortComponent();
-      sortComponent.rerender();
-    });
-
-    menuComponent.setShowTableHandler(() => {
-      statisticComponent.hide();
-      tripController.show();
-
-      const sortComponent = tripController.getSortComponent();
-      sortComponent.rerender();
-    });
-
-    render(menuHeaderElement.nextSibling, menuComponent);
   });
