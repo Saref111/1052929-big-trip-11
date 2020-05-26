@@ -1,5 +1,4 @@
 import API from "./api.js";
-// import {getEventObjects} from "./mock/event.js";
 import {render} from "./utils/render.js";
 import DaysListComponent from "./components/days-list.js";
 import StatisticComponent from "./components/statistic.js";
