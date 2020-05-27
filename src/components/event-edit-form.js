@@ -34,27 +34,24 @@ const checkPrice = (evt) => {
   }
 };
 
-const getOffersArray = (formData) => {
-  const offers = getOffers();
-  const activeOffers = Array.from(formData.keys()).filter((it) => it.startsWith(`event-offer-`));
-  offers.forEach((offer) => {
-    const isActive = activeOffers.includes(`event-offer-${offer.name}`);
-    if (isActive) {
-      offer.active = true;
-    } else {
-      offer.active = false;
-    }
+const getOffersArray = (formData, totalOffers) => {
+  const offersNames = Array.from(formData.keys()).filter((it) => it.startsWith(`event-offer-`));
+
+  return offersNames.map((name) => {
+    const offerName = name.slice(12).split(`-`).join(` `); // 12 is length of `event-offer-`
+    const title = `${offerName[0].toUpperCase()}${offerName.slice(1, offerName.length)}`;
+    const templateOffer = totalOffers.find((it) => it.title === title);
+    return templateOffer;
   });
-  return offers;
 };
 
-const parseFormData = (formData, id) => {
+const parseFormData = (formData, id, currentOffers) => {
   return {
     id,
     type: formData.get(`event-type`),
     place: formData.get(`event-destination`),
     price: formData.get(`event-price`),
-    offers: getOffersArray(formData),
+    offers: getOffersArray(formData, currentOffers),
     startTime: new Date(formData.get(`event-start-time`)),
     endTime: new Date(formData.get(`event-end-time`)),
     isFavorite: formData.get(`event-isFavorite`),
@@ -71,10 +68,9 @@ const getPlacesList = () => {
 
 const createEventDetails = (offers, totalOffers) => {
   const currentOffers = totalOffers.reduce((total, offer) => {
-    const titleWords = offer.title.split(` `);
-    const name = titleWords[titleWords.length - 1];
+    const name = offer.title.split(` `).join(`-`).toLowerCase();
     total += `<div class="event__offer-selector">
-                <input class="event__offer-checkbox  visually-hidden" id="event-offer-${name}-1" type="checkbox" name="event-offer-${name}" ${offers.some((o) => o.title === offer.title && o.price === offer.price) ? `checked` : ``}>
+                <input class="event__offer-checkbox  visually-hidden" id="event-offer-${name}-1" type="checkbox" data-price="${offer.price}" name="event-offer-${name}" ${offers.some((o) => o.title === offer.title && o.price === offer.price) ? `checked` : ``}>
                 <label class="event__offer-label" for="event-offer-${name}-1">
                   <span class="event__offer-title">${offer.title}</span>
                   +
@@ -340,7 +336,7 @@ export default class EventEditForm extends AbstractSmartComponent {
     const form = this.getElement().querySelector(`form`) ? this.getElement().querySelector(`form`) : this.getElement();
     const formData = new FormData(form);
 
-    return parseFormData(formData, form.id);
+    return parseFormData(formData, form.id, this._totalOffers);
   }
 
   _subscribeOnEvents() {
