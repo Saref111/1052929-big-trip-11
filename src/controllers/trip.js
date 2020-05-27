@@ -4,7 +4,7 @@ import TripInfoComponent from "../components/trip-info.js";
 import SortComponent, {SortType} from "../components/sort.js";
 import PointController from "./point.js";
 import DayComponent from "../components/day.js";
-import {render, RenderPosition, remove} from "../utils/render.js";
+import {render, RenderPosition} from "../utils/render.js";
 import {stringifyDate} from "../utils/util.js";
 import {EditFormMode, DefaultEvent} from "../const.js";
 import NewButtonComponent from "../components/new-event-button.js";
@@ -51,8 +51,9 @@ const sortDaysAndEventsByDefault = (days, container) => {
 };
 
 export default class TripController {
-  constructor(containerComponent, eventsModel) {
+  constructor(containerComponent, eventsModel, api) {
     this._container = containerComponent;
+    this._api = api;
 
     this._controllers = [];
     this._eventsModel = eventsModel;
@@ -84,11 +85,14 @@ export default class TripController {
       this._updateEvents();
       return;
     } else {
-      const isSuccess = this._eventsModel.updateEvent(oldData.id, newData);
+      this._api.updateEvent(oldData.id, newData)
+        .then((event) => {
+          const isSuccess = this._eventsModel.updateEvent(oldData.id, event);
 
-      if (isSuccess) {
-        pointController.render(newData, null, null, EditFormMode.EDIT);
-      }
+          if (isSuccess) {
+            pointController.render(event, null, null, EditFormMode.EDIT);
+          }
+        });
     }
   }
 

@@ -1,7 +1,6 @@
-import {getTitleByType, stringifyTime, stringifyDate, getRandomInt} from "../utils/util.js";
+import {getTitleByType, stringifyTime, stringifyDate} from "../utils/util.js";
 import {remove, render, RenderPosition} from "../utils/render.js";
-import {CITIES, PICTURE, getTripInfo, EditFormMode, getOffers} from "../const.js";
-// import {getDestinations} from "../mock/destination.js";
+import {EditFormMode} from "../const.js";
 import AbstractSmartComponent from "./abstract-smart-component.js";
 import DescriptionComponent from "./description.js";
 import flatpickr from "flatpickr";
