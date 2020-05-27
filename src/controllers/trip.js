@@ -57,6 +57,7 @@ export default class TripController {
     this._controllers = [];
     this._eventsModel = eventsModel;
     this._destinationsModel = null;
+    this._offersModel = null;
     this._newButtonComponent = new NewButtonComponent();
     this._noEventsComponent = new NoEventsComponent();
     this._tripInfoComponent = new TripInfoComponent();
@@ -169,7 +170,7 @@ export default class TripController {
     }
 
     const controllers = eventsCopy.map((event) => {
-      const pointController = new PointController(container, onDataChange, onViewChange, this._destinationsModel);
+      const pointController = new PointController(container, onDataChange, onViewChange, this._destinationsModel, this._offersModel);
 
       pointController.render(event, this._dayComponents, isSorting, EditFormMode.EDIT);
 
@@ -183,6 +184,10 @@ export default class TripController {
 
   setDestinationsModel(d) {
     this._destinationsModel = d;
+  }
+
+  setOffersModel(o) {
+    this._offersModel = o;
   }
 
   hide() {

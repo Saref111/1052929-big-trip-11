@@ -56,9 +56,14 @@ api.getEvents()
   container.innerHTML = ``;
 
   api.getDestinations().then((d) => {
-    console.log(d);
-
     tripController.setDestinationsModel(d);
+    tripController.render();
+  });
+
+  api.getOffers().then((o) => {
+    console.log(o);
+
+    // tripController.setDestinationsModel(d);
     tripController.render();
   });
 

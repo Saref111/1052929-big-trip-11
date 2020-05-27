@@ -31,7 +31,6 @@ export default class API {
     headers.append(`Authorization`, this._authorization);
 
     return fetch(`https://11.ecmascript.pages.academy/big-trip/offers`, {headers})
-      .then((response) => response.json())
-      .then(Point.parsePoints);
+      .then((response) => response.json());
   }
 }
