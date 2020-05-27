@@ -8,6 +8,7 @@ export default class Point {
     this.endTime = new Date(point[`date_to`]);
     this.isFavorite = point[`is_favorite`];
     this.price = point[`base_price`];
+    this.destination = point[`destination`];
   }
 
   static parsePoint(point) {
@@ -22,9 +23,7 @@ export default class Point {
     return {
       "id": this._id,
       "type": this.type,
-      "destination": {
-        "name": this.place
-      },
+      "destination": this.destination,
       "offers": this.offers,
       "date_from": this.startTime,
       "date_to": this.endTime,

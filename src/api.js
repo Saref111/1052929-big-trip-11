@@ -47,9 +47,9 @@ export default class API {
   }
 
   updateEvent(id, data) {
-    debugger
     const headers = new Headers();
     headers.append(`Authorization`, this._authorization);
+    headers.append(`Content-Type`, `application/json`);
     const rawData = data.toRaw();
 
     return fetch(`https://11.ecmascript.pages.academy/big-trip/points/${id}`, {
@@ -58,6 +58,6 @@ export default class API {
       headers
     }).then(checkStatus)
       .then(((response) => response.json()))
-      .then(Point.parsePoints);
+      .then(Point.parsePoint);
   }
 }

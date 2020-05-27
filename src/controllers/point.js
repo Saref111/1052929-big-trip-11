@@ -4,7 +4,13 @@ import PointModel from "../models/point.js";
 import {render, replace, RenderPosition, remove} from "../utils/render.js";
 import {stringifyDate} from "../utils/util.js";
 import {EditFormMode} from "../const.js";
-import Point from "../models/point.js";
+
+const getDestination = (place, model) => {
+  debugger
+  const {name, description, pictures} = model.getInfo(place);
+  const reply = {"name": name, "description": description, "pictures": pictures}
+  return reply;
+};
 
 const getOffersArray = (formData, totalOffers) => {
   const offersNames = Array.from(formData.keys()).filter((it) => it.startsWith(`event-offer-`));
@@ -17,16 +23,16 @@ const getOffersArray = (formData, totalOffers) => {
   });
 };
 
-const parseFormData = (formData, id, currentOffers) => {
+const parseFormData = (formData, id, currentOffers, destinationModel) => {
   return new PointModel({
     "id": id,
     "type": formData.get(`event-type`),
-    "destination": {"name": formData.get(`event-destination`)},
-    "base_price": formData.get(`event-price`),
+    "destination": getDestination(formData.get(`event-destination`), destinationModel),
+    "base_price": Number(formData.get(`event-price`)),
     "offers": getOffersArray(formData, currentOffers),
     "date_from": new Date(formData.get(`event-start-time`)),
     "date_to": new Date(formData.get(`event-end-time`)),
-    "is_favorite": formData.get(`event-isFavorite`),
+    "is_favorite": Boolean(formData.get(`event-isFavorite`)),
   });
 };
 
@@ -98,7 +104,7 @@ export default class PointController {
             (evt) => {
               evt.preventDefault();
               const formData = this._eventEditComponent.getData();
-              const data = parseFormData(formData, event.id, offers);
+              const data = parseFormData(formData, event.id, offers, this._destinationsModel);
               this._onDataChange(this, event, data);
             },
             () => {

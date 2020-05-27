@@ -51,7 +51,6 @@ render(menuHeaderElement.nextSibling, menuComponent);
 
 api.getEvents()
 .then((events) => {
-  console.log(events);
   eventsModel.setEvents(events);
   container.innerHTML = ``;
 
@@ -60,8 +59,6 @@ api.getEvents()
   });
 
   api.getOffers().then((o) => {
-    console.log(o);
-
     tripController.setOffersModel(o);
     tripController.render();
   });
