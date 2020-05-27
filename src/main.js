@@ -63,7 +63,7 @@ api.getEvents()
   api.getOffers().then((o) => {
     console.log(o);
 
-    // tripController.setDestinationsModel(d);
+    tripController.setOffersModel(o);
     tripController.render();
   });
 

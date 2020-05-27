@@ -35,8 +35,10 @@ export default class PointController {
     const oldEventComponent = this._eventComponent;
     const oldEventEditComponent = this._eventEditComponent;
 
+    const {offers} = this._offersModel.getOffersByType(event.type);
+
     this._eventComponent = new EventComponent(event);
-    this._eventEditComponent = new EventEditComponent(this._mode, event, this._destinationsModel, this._offersModel);
+    this._eventEditComponent = new EventEditComponent(this._mode, event, this._destinationsModel, offers);
     this._dayComponent = isSorting ? this._dayComponents[0] : this._dayComponents.find((day) => stringifyDate(day.date.startTime) === stringifyDate(event.startTime));
 
     switch (this._mode) {

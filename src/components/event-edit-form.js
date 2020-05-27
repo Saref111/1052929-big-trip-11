@@ -69,12 +69,14 @@ const getPlacesList = () => {
   }, ``);
 };
 
-const createEventDetails = (offers) => {
-  const activeOffers = offers.reduce((total, offer) => {
+const createEventDetails = (offers, totalOffers) => {
+  const currentOffers = totalOffers.reduce((total, offer) => {
+    const titleWords = offer.title.split(` `);
+    const name = titleWords[titleWords.length - 1];
     total += `<div class="event__offer-selector">
-                <input class="event__offer-checkbox  visually-hidden" id="event-offer-${offer.name}-1" type="checkbox" name="event-offer-${offer.name}" ${offer.active ? `checked` : ``}>
-                <label class="event__offer-label" for="event-offer-${offer.name}-1">
-                  <span class="event__offer-title">${offer.text}</span>
+                <input class="event__offer-checkbox  visually-hidden" id="event-offer-${name}-1" type="checkbox" name="event-offer-${name}" ${offers.some((o) => o.title === offer.title && o.price === offer.price) ? `checked` : ``}>
+                <label class="event__offer-label" for="event-offer-${name}-1">
+                  <span class="event__offer-title">${offer.title}</span>
                   +
                   €&nbsp;<span class="event__offer-price">${offer.price}</span>
                 </label>
@@ -88,7 +90,7 @@ const createEventDetails = (offers) => {
         <h3 class="event__section-title  event__section-title--offers">Offers</h3>
 
         <div class="event__available-offers">
-          ${activeOffers}
+          ${currentOffers}
         </div>
       </section>
 
@@ -112,7 +114,7 @@ const buttonFavoriteTemplate = (isFavorite) => {
   );
 };
 
-const createEventFormElement = (mode, {type, place, price, offers, startTime, endTime, isFavorite, id}) => {
+const createEventFormElement = (mode, {type, place, price, offers, startTime, endTime, isFavorite, id}, totalOffers) => {
   if (!id) {
     id = Math.floor(Math.random() * 999999);
   }
@@ -221,19 +223,19 @@ const createEventFormElement = (mode, {type, place, price, offers, startTime, en
       <button class="event__reset-btn" type="reset">${mode === EditFormMode.EDIT ? `Delete` : `Cancel`}</button>
       ${mode === EditFormMode.EDIT ? buttonFavoriteTemplate(isFavorite) : ``}
     </header>
-    ${mode === EditFormMode.FIRST ? `` : createEventDetails(offers)}
+    ${mode === EditFormMode.FIRST ? `` : createEventDetails(offers, totalOffers)}
     ${mode === EditFormMode.EDIT ? `</li>` : ``}`
   );
 };
 
 export default class EventEditForm extends AbstractSmartComponent {
-  constructor(mode, data, destinationsModel, offersModel) {
+  constructor(mode, data, destinationsModel, offers) {
     super();
 
     this._data = data;
     this._mode = mode;
     this._destinationsModel = destinationsModel;
-    this._offersModel = offersModel;
+    this._totalOffers = offers;
     this._flatpickrStart = null;
     this._flatpickrEnd = null;
 
@@ -250,7 +252,7 @@ export default class EventEditForm extends AbstractSmartComponent {
   }
 
   getTemplate() {
-    return createEventFormElement(this._mode, this._data);
+    return createEventFormElement(this._mode, this._data, this._totalOffers);
   }
 
   setCloseHandler(handler) {

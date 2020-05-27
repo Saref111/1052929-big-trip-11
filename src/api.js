@@ -1,5 +1,6 @@
 import Point from "./models/point.js";
 import Destinations from "./models/destinations.js";
+import Offers from "./models/offers.js";
 
 export default class API {
   constructor(authorization) {
@@ -31,6 +32,7 @@ export default class API {
     headers.append(`Authorization`, this._authorization);
 
     return fetch(`https://11.ecmascript.pages.academy/big-trip/offers`, {headers})
-      .then((response) => response.json());
+      .then((response) => response.json())
+      .then((offers) => new Offers(offers));
   }
 }

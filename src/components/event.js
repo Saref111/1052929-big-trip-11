@@ -2,12 +2,11 @@ import {getTitleByType, stringifyDate, stringifyTime, getDuration} from "../util
 import AbstractComponent from "./abstract-component.js";
 
 const getOffers = (offers) => {
-  const activeOffers = offers.filter((it) => it.active).slice(0, 3);
-
-  return activeOffers.map((it) => {
+  offers.length = 3;
+  return offers.map((it) => {
     return (
       `<li class="event__offer">
-        <span class="event__offer-title">${it.text}</span>
+        <span class="event__offer-title">${it.title}</span>
         &plus;
         &euro;&nbsp;<span class="event__offer-price">${it.price}</span>
       </li>`
@@ -15,9 +14,7 @@ const getOffers = (offers) => {
   }).join(`\n`);
 };
 
-const createEventElement = (data) => {
-  let {type, place, offers, startTime, endTime, price} = data;
-
+const createEventElement = ({type, place, offers, startTime, endTime, price}) => {
   return (
     `<li class="trip-events__item">
       <div class="event">
