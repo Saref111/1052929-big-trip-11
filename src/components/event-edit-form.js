@@ -33,29 +33,29 @@ const checkPrice = (evt) => {
   }
 };
 
-const getOffersArray = (formData, totalOffers) => {
-  const offersNames = Array.from(formData.keys()).filter((it) => it.startsWith(`event-offer-`));
+// const getOffersArray = (formData, totalOffers) => {
+//   const offersNames = Array.from(formData.keys()).filter((it) => it.startsWith(`event-offer-`));
 
-  return offersNames.map((name) => {
-    const offerName = name.slice(12).split(`-`).join(` `); // 12 is length of `event-offer-`
-    const title = `${offerName[0].toUpperCase()}${offerName.slice(1, offerName.length)}`;
-    const templateOffer = totalOffers.find((it) => it.title === title);
-    return templateOffer;
-  });
-};
+//   return offersNames.map((name) => {
+//     const offerName = name.slice(12).split(`-`).join(` `); // 12 is length of `event-offer-`
+//     const title = `${offerName[0].toUpperCase()}${offerName.slice(1, offerName.length)}`;
+//     const templateOffer = totalOffers.find((it) => it.title === title);
+//     return templateOffer;
+//   });
+// };
 
-const parseFormData = (formData, id, currentOffers) => {
-  return {
-    id,
-    type: formData.get(`event-type`),
-    place: formData.get(`event-destination`),
-    price: formData.get(`event-price`),
-    offers: getOffersArray(formData, currentOffers),
-    startTime: new Date(formData.get(`event-start-time`)),
-    endTime: new Date(formData.get(`event-end-time`)),
-    isFavorite: formData.get(`event-isFavorite`),
-  };
-};
+// const parseFormData = (formData, id, currentOffers) => {
+//   return {
+//     id,
+//     type: formData.get(`event-type`),
+//     place: formData.get(`event-destination`),
+//     price: formData.get(`event-price`),
+//     offers: getOffersArray(formData, currentOffers),
+//     startTime: new Date(formData.get(`event-start-time`)),
+//     endTime: new Date(formData.get(`event-end-time`)),
+//     isFavorite: formData.get(`event-isFavorite`),
+//   };
+// };
 
 const getPlacesList = () => {
   const places = []; // FIX
@@ -333,9 +333,7 @@ export default class EventEditForm extends AbstractSmartComponent {
 
   getData() {
     const form = this.getElement().querySelector(`form`) ? this.getElement().querySelector(`form`) : this.getElement();
-    const formData = new FormData(form);
-
-    return parseFormData(formData, form.id, this._totalOffers);
+    return new FormData(form);
   }
 
   _subscribeOnEvents() {

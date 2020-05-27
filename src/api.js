@@ -2,6 +2,16 @@ import Point from "./models/point.js";
 import Destinations from "./models/destinations.js";
 import Offers from "./models/offers.js";
 
+const checkStatus = (response) => {
+  if (response.status >= 200 && response.status < 300) {
+    return response;
+  } else {
+    console.log(response);
+
+    throw new Error(`${response.status}: ${response.statusText}`);
+  }
+};
+
 export default class API {
   constructor(authorization) {
     this._authorization = authorization;
@@ -37,14 +47,17 @@ export default class API {
   }
 
   updateEvent(id, data) {
+    debugger
     const headers = new Headers();
     headers.append(`Authorization`, this._authorization);
+    const rawData = data.toRaw();
 
     return fetch(`https://11.ecmascript.pages.academy/big-trip/points/${id}`, {
       method: `PUT`,
-      body: JSON.stringify(data),
+      body: JSON.stringify(rawData),
       headers
-    }).then(((response) => response.json()))
+    }).then(checkStatus)
+      .then(((response) => response.json()))
       .then(Point.parsePoints);
   }
 }

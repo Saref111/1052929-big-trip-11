@@ -1,8 +1,34 @@
 import EventEditComponent from "../components/event-edit-form.js";
 import EventComponent from "../components/event.js";
+import PointModel from "../models/point.js";
 import {render, replace, RenderPosition, remove} from "../utils/render.js";
 import {stringifyDate} from "../utils/util.js";
 import {EditFormMode} from "../const.js";
+import Point from "../models/point.js";
+
+const getOffersArray = (formData, totalOffers) => {
+  const offersNames = Array.from(formData.keys()).filter((it) => it.startsWith(`event-offer-`));
+
+  return offersNames.map((name) => {
+    const offerName = name.slice(12).split(`-`).join(` `); // 12 is length of `event-offer-`
+    const title = `${offerName[0].toUpperCase()}${offerName.slice(1, offerName.length)}`;
+    const templateOffer = totalOffers.find((it) => it.title === title);
+    return templateOffer;
+  });
+};
+
+const parseFormData = (formData, id, currentOffers) => {
+  return new PointModel({
+    "id": id,
+    "type": formData.get(`event-type`),
+    "destination": {"name": formData.get(`event-destination`)},
+    "base_price": formData.get(`event-price`),
+    "offers": getOffersArray(formData, currentOffers),
+    "date_from": new Date(formData.get(`event-start-time`)),
+    "date_to": new Date(formData.get(`event-end-time`)),
+    "is_favorite": formData.get(`event-isFavorite`),
+  });
+};
 
 export default class PointController {
   constructor(containerElement, onDataChange, onViewChange, destinationsModel, offersModel) {
@@ -44,39 +70,45 @@ export default class PointController {
     switch (this._mode) {
       case EditFormMode.CREATE:
         this._onViewChange();
+
         this._eventEditComponent.setSubmitHandler((evt) => {
           evt.preventDefault();
           const data = this._eventEditComponent.getData();
           this._onDataChange(this, null, data);
           remove(this._eventEditComponent);
         });
+
         this._eventEditComponent.setDeleteHandler(() => {
           this._onViewChange();
           this.destroy();
         });
+
         render(this._dayComponent.getElement().parentElement, this._eventEditComponent);
         document.addEventListener(`keydown`, this._onEscHandler);
         break;
-
 
       case EditFormMode.EDIT:
         this._eventComponent.setOpenEditHandler(() => {
           this._eventToEditHandler();
           document.addEventListener(`keydown`, this._onEscHandler);
         });
+
         this._eventEditComponent.setEditFormHandlers(
             this._editToEventHandler,
             (evt) => {
               evt.preventDefault();
-
-              const data = this._eventEditComponent.getData();
+              const formData = this._eventEditComponent.getData();
+              const data = parseFormData(formData, event.id, offers);
               this._onDataChange(this, event, data);
             },
             () => {
               this._onDataChange(this, event, null);
             },
             () => {
-              this._onDataChange(this, event, Object.assign({}, event, {isFavorite: !event.isFavorite}));
+              const newEvent = PointModel.clone(event);
+              newEvent.isFavorite = !newEvent.isFavorite;
+
+              this._onDataChange(this, event, newEvent);
             },
             () => {
               const data = this._eventEditComponent.getData();

@@ -17,4 +17,23 @@ export default class Point {
   static parsePoints(points) {
     return points.map(Point.parsePoint);
   }
+
+  toRaw() {
+    return {
+      "id": this._id,
+      "type": this.type,
+      "destination": {
+        "name": this.place
+      },
+      "offers": this.offers,
+      "date_from": this.startTime,
+      "date_to": this.endTime,
+      "base_price": this.price,
+      "is_favorite": this.isFavorite
+    };
+  }
+
+  static clone(data) {
+    return new Point(data.toRaw());
+  }
 }
