@@ -78,7 +78,8 @@ export default class PointController {
 
         this._eventEditComponent.setSubmitHandler((evt) => {
           evt.preventDefault();
-          const data = this._eventEditComponent.getData();
+          const formData = this._eventEditComponent.getData();
+          const data = parseFormData(formData, String(event.id), offers, this._destinationsModel);
           this._onDataChange(this, null, data);
           remove(this._eventEditComponent);
         });
@@ -119,7 +120,6 @@ export default class PointController {
         });
 
         this._eventEditComponent.setChangeTypeHandler(() => {
-          debugger
           const formData = this._eventEditComponent.getData();
           const data = parseFormData(formData, event.id, offers, this._destinationsModel);
 

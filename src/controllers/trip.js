@@ -81,8 +81,11 @@ export default class TripController {
       this._updateEvents();
       return;
     } else if (!oldData) {
-      this._eventsModel.addEvent(newData);
-      this._updateEvents();
+      this._api.createEvent(newData)
+      .then((pointModel) => {
+        this._eventsModel.addEvent(pointModel);
+        this._updateEvents();
+      });
       return;
     } else {
       this._api.updateEvent(oldData.id, newData)
@@ -119,7 +122,7 @@ export default class TripController {
     const tripEventsElement = document.querySelector(`.trip-events`);
 
     this._newButtonComponent.setButtonHandler(() => {
-      const newPointController = new PointController(this._container.getElement(), this._onDataChange, this._onViewChange);
+      const newPointController = new PointController(this._container.getElement(), this._onDataChange, this._onViewChange, this._destinationsModel, this._offersModel);
 
       this._dayComponents.push(new DayComponent(DefaultEvent));
       newPointController.render(DefaultEvent, this._dayComponents, null, EditFormMode.CREATE);
