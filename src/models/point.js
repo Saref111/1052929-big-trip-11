@@ -21,7 +21,7 @@ export default class Point {
 
   toRaw() {
     return {
-      "id": this._id,
+      "id": this.id,
       "type": this.type,
       "destination": this.destination,
       "offers": this.offers,

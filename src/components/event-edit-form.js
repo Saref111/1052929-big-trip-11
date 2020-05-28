@@ -33,36 +33,8 @@ const checkPrice = (evt) => {
   }
 };
 
-// const getOffersArray = (formData, totalOffers) => {
-//   const offersNames = Array.from(formData.keys()).filter((it) => it.startsWith(`event-offer-`));
-
-//   return offersNames.map((name) => {
-//     const offerName = name.slice(12).split(`-`).join(` `); // 12 is length of `event-offer-`
-//     const title = `${offerName[0].toUpperCase()}${offerName.slice(1, offerName.length)}`;
-//     const templateOffer = totalOffers.find((it) => it.title === title);
-//     return templateOffer;
-//   });
-// };
-
-// const parseFormData = (formData, id, currentOffers) => {
-//   return {
-//     id,
-//     type: formData.get(`event-type`),
-//     place: formData.get(`event-destination`),
-//     price: formData.get(`event-price`),
-//     offers: getOffersArray(formData, currentOffers),
-//     startTime: new Date(formData.get(`event-start-time`)),
-//     endTime: new Date(formData.get(`event-end-time`)),
-//     isFavorite: formData.get(`event-isFavorite`),
-//   };
-// };
-
-const getPlacesList = () => {
-  const places = []; // FIX
-  return places.reduce((acc, it) => {
-    acc += `<option value="${it}"></option>`;
-    return acc;
-  }, ``);
+const getPlacesList = (places) => {
+  return places.reduce((acc, it) => `${acc}<option value="${it}"></option>`, ``);
 };
 
 const createEventDetails = (offers, totalOffers) => {
@@ -109,10 +81,8 @@ const buttonFavoriteTemplate = (isFavorite) => {
   );
 };
 
-const createEventFormElement = (mode, {type, place, price, offers, startTime, endTime, isFavorite, id}, totalOffers) => {
-  if (!id) {
-    id = Math.floor(Math.random() * 999999);
-  }
+const createEventFormElement = (mode, {type, place, price, offers, startTime, endTime, isFavorite, id}, totalOffers, allPlaces) => {
+
   return (
     `${mode === EditFormMode.EDIT ? `<li class="trip-events__item">` : ``}<form class="trip-events__item  event  event--edit" action="#" method="post" id="${id}">
     <header class="event__header">
@@ -190,7 +160,7 @@ const createEventFormElement = (mode, {type, place, price, offers, startTime, en
         </label>
         <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${mode === EditFormMode.EDIT ? place : ``}" list="destination-list-1" required>
         <datalist id="destination-list-1">
-          ${getPlacesList()}
+          ${getPlacesList(allPlaces)}
         </datalist>
       </div>
 
@@ -247,14 +217,12 @@ export default class EventEditForm extends AbstractSmartComponent {
   }
 
   getTemplate() {
-    return createEventFormElement(this._mode, this._data, this._totalOffers);
+    return createEventFormElement(this._mode, this._data, this._totalOffers, this._destinationsModel.destinations.map((it) => it.name));
   }
 
   setCloseHandler(handler) {
-    if (handler) {
-      this.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, handler);
-      this._closeHandler = handler;
-    }
+    this.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, handler);
+    this._closeHandler = handler;
   }
 
   setSubmitHandler(handler) {
@@ -273,10 +241,8 @@ export default class EventEditForm extends AbstractSmartComponent {
   }
 
   setAddFavoriteHandler(handler) {
-    if (handler) {
-      this.getElement().querySelector(`#event-favorite-1`).addEventListener(`click`, handler);
-      this._addFavoriteHandler = handler;
-    }
+    this.getElement().querySelector(`#event-favorite-1`).addEventListener(`click`, handler);
+    this._addFavoriteHandler = handler;
   }
 
   setChangeTypeHandler(handler) {

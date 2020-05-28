@@ -2,8 +2,8 @@ import {getTitleByType, stringifyDate, stringifyTime, getDuration} from "../util
 import AbstractComponent from "./abstract-component.js";
 
 const getOffers = (offers) => {
-  offers.length = 3;
-  return offers.map((it) => {
+  const showedOffers = offers.slice(0, 3);
+  return showedOffers.map((it) => {
     return (
       `<li class="event__offer">
         <span class="event__offer-title">${it.title}</span>

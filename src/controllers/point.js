@@ -6,9 +6,8 @@ import {stringifyDate} from "../utils/util.js";
 import {EditFormMode} from "../const.js";
 
 const getDestination = (place, model) => {
-  debugger
   const {name, description, pictures} = model.getInfo(place);
-  const reply = {"name": name, "description": description, "pictures": pictures}
+  const reply = {"name": name, "description": description, "pictures": pictures};
   return reply;
 };
 

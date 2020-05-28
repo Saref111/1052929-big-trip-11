@@ -51,17 +51,20 @@ render(menuHeaderElement.nextSibling, menuComponent);
 
 api.getEvents()
 .then((events) => {
+  console.log(events);
+
   eventsModel.setEvents(events);
   container.innerHTML = ``;
 
   api.getDestinations().then((d) => {
     tripController.setDestinationsModel(d);
+
+    api.getOffers().then((o) => {
+      tripController.setOffersModel(o);
+      tripController.render();
+    });
   });
 
-  api.getOffers().then((o) => {
-    tripController.setOffersModel(o);
-    tripController.render();
-  });
 
 }).catch(() => {
   container.innerHTML = ``;
