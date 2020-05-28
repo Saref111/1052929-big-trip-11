@@ -246,7 +246,7 @@ export default class EventEditForm extends AbstractSmartComponent {
   }
 
   setChangeTypeHandler(handler) {
-    this.getElement().querySelector(`.event__type-list`).addEventListener(`change`, handler);
+    this.getElement().querySelector(`.event__type-list`).addEventListener(`click`, handler);
     this._typeChangeHandler = handler;
   }
 
@@ -307,9 +307,10 @@ export default class EventEditForm extends AbstractSmartComponent {
 
     element.querySelector(`.event__type-list`).addEventListener(`click`, (evt) => {
       if (evt.target.tagName === `INPUT`) {
-        this._data.type = evt.target.value;
-
+        let targetValue = evt.target.value;
+        [this._data.type, targetValue] = [targetValue, this._data.type];
         this.rerender();
+        [this._data.type, targetValue] = [targetValue, this._data.type];
       }
     });
 

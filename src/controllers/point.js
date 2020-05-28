@@ -98,29 +98,33 @@ export default class PointController {
           document.addEventListener(`keydown`, this._onEscHandler);
         });
 
-        this._eventEditComponent.setEditFormHandlers(
-            this._editToEventHandler,
-            (evt) => {
-              evt.preventDefault();
-              const formData = this._eventEditComponent.getData();
-              const data = parseFormData(formData, event.id, offers, this._destinationsModel);
-              this._onDataChange(this, event, data);
-            },
-            () => {
-              this._onDataChange(this, event, null);
-            },
-            () => {
-              const newEvent = PointModel.clone(event);
-              newEvent.isFavorite = !newEvent.isFavorite;
+        this._eventEditComponent.setCloseHandler(this._editToEventHandler);
 
-              this._onDataChange(this, event, newEvent);
-            },
-            () => {
-              const data = this._eventEditComponent.getData();
-              this._onDataChange(this, event, data);
-            }
-        );
+        this._eventEditComponent.setSubmitHandler((evt) => {
+          evt.preventDefault();
+          const formData = this._eventEditComponent.getData();
+          const data = parseFormData(formData, event.id, offers, this._destinationsModel);
+          this._onDataChange(this, event, data);
+        });
 
+        this._eventEditComponent.setDeleteHandler(() => {
+          this._onDataChange(this, event, null);
+        });
+
+        this._eventEditComponent.setAddFavoriteHandler(() => {
+          const newEvent = PointModel.clone(event);
+          newEvent.isFavorite = !newEvent.isFavorite;
+
+          this._onDataChange(this, event, newEvent);
+        });
+
+        this._eventEditComponent.setChangeTypeHandler(() => {
+          debugger
+          const formData = this._eventEditComponent.getData();
+          const data = parseFormData(formData, event.id, offers, this._destinationsModel);
+
+          this._onDataChange(this, event, data);
+        });
 
         if (oldEventEditComponent && oldEventComponent) {
           replace(this._eventComponent, oldEventComponent);
