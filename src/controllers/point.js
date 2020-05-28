@@ -2,11 +2,7 @@ import EventEditComponent from "../components/event-edit-form.js";
 import EventComponent from "../components/event.js";
 import {render, replace, RenderPosition, remove} from "../utils/render.js";
 import {stringifyDate} from "../utils/util.js";
-
-const Mode = {
-  DEFAULT: `default`,
-  EDIT: `edit`,
-};
+import {EditFormMode} from "../const.js";
 
 export default class PointController {
   constructor(containerElement, onDataChange, onViewChange) {
@@ -16,7 +12,7 @@ export default class PointController {
 
     this._eventComponent = null;
     this._eventEditComponent = null;
-    this._mode = Mode.DEFAULT;
+    this._mode = EditFormMode.EDIT;
 
     this._onViewChange = onViewChange;
     this._onDataChange = onDataChange;
@@ -31,48 +27,75 @@ export default class PointController {
     if (dayComponents) {
       this._dayComponents = dayComponents;
     }
+
     this._mode = mode;
 
     const oldEventComponent = this._eventComponent;
     const oldEventEditComponent = this._eventEditComponent;
 
     this._eventComponent = new EventComponent(event);
-    this._eventEditComponent = new EventEditComponent(`edit`, event);
+    this._eventEditComponent = new EventEditComponent(this._mode, event);
     this._dayComponent = isSorting ? this._dayComponents[0] : this._dayComponents.find((day) => stringifyDate(day.date.startTime) === stringifyDate(event.startTime));
 
-    this._eventComponent.setOpenEditHandler(() => {
-      this._eventToEditHandler();
-      document.addEventListener(`keydown`, this._onEscHandler);
-    });
-
-    this._eventEditComponent.setEditFormHandlers(
-        this._editToEventHandler,
-        (evt) => {
+    switch (this._mode) {
+      case EditFormMode.CREATE:
+        this._onViewChange();
+        this._eventEditComponent.setSubmitHandler((evt) => {
           evt.preventDefault();
           const data = this._eventEditComponent.getData();
-          this._onDataChange(this, event, data);
-        },
-        () => {
-          this._onDataChange(this, event, null);
-        },
-        () => {
-          this._onDataChange(this, event, Object.assign({}, event, {isFavorite: !event.isFavorite}));
-        }
-    );
+          this._onDataChange(this, null, data);
+          remove(this._eventEditComponent);
+        });
+        this._eventEditComponent.setDeleteHandler(() => {
+          this._onViewChange();
+          this.destroy();
+        });
+        render(this._dayComponent.getElement().parentElement, this._eventEditComponent);
+        document.addEventListener(`keydown`, this._onEscHandler);
+        break;
 
-    if (oldEventEditComponent && oldEventComponent) {
-      replace(this._eventComponent, oldEventComponent);
-      replace(this._eventEditComponent, oldEventEditComponent);
-      this._edit
-    } else {
-      render(this._dayComponent.getElement().querySelector(`ul`), this._eventComponent, RenderPosition.BEFOREEND);
+
+      case EditFormMode.EDIT:
+        this._eventComponent.setOpenEditHandler(() => {
+          this._eventToEditHandler();
+          document.addEventListener(`keydown`, this._onEscHandler);
+        });
+        this._eventEditComponent.setEditFormHandlers(
+            this._editToEventHandler,
+            (evt) => {
+              evt.preventDefault();
+
+              const data = this._eventEditComponent.getData();
+              this._onDataChange(this, event, data);
+            },
+            () => {
+              this._onDataChange(this, event, null);
+            },
+            () => {
+              this._onDataChange(this, event, Object.assign({}, event, {isFavorite: !event.isFavorite}));
+            },
+            () => {
+              const data = this._eventEditComponent.getData();
+              this._onDataChange(this, event, data);
+            }
+        );
+
+
+        if (oldEventEditComponent && oldEventComponent) {
+          replace(this._eventComponent, oldEventComponent);
+          replace(this._eventEditComponent, oldEventEditComponent);
+          this._editToEventHandler();
+        } else {
+          render(this._dayComponent.getElement().querySelector(`ul`), this._eventComponent, RenderPosition.BEFOREEND);
+        }
+        break;
     }
   }
 
   _eventToEditHandler() {
     this._onViewChange();
     replace(this._eventEditComponent, this._eventComponent);
-    this._mode = Mode.EDIT;
+    this._mode = EditFormMode.EDIT;
   }
 
   _editToEventHandler() {
@@ -95,12 +118,17 @@ export default class PointController {
 
   _onEscHandler(evt) {
     if (evt.keyCode === 27) {
-      this._editToEventHandler();
+      if (this._mode === EditFormMode.EDIT) {
+        this._editToEventHandler();
+      } else {
+        document.removeEventListener(`keydown`, this._onEscHandler);
+        this.destroy();
+      }
     }
   }
 
   setDefaultView() {
-    if (this._mode === Mode.EDIT) {
+    if (this._mode === EditFormMode.EDIT) {
       this._editToEventHandler();
     }
   }
