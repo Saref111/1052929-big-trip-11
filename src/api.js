@@ -49,8 +49,7 @@ export default class API {
       method: Method.PUT,
       body: JSON.stringify(data.toRaw()),
       headers: new Headers({"Content-Type": `application/json`})
-    }).then(checkStatus)
-      .then(((response) => response.json()))
+    }).then(((response) => response.json()))
       .then(Point.parsePoint);
   }
 
@@ -70,8 +69,11 @@ export default class API {
       method: Method.POST,
       body: JSON.stringify(data.toRaw()),
       headers: new Headers({"Content-Type": `application/json`})
-    }).then(checkStatus)
-      .then(((response) => response.json()))
+    }).then(((response) => response.json()))
       .then(Point.parsePoint);
+  }
+
+  deleteEvent(id) {
+    return this._load({url: `points/${id}`, method: Method.DELETE});
   }
 }

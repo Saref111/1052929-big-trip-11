@@ -76,16 +76,19 @@ export default class TripController {
   _onDataChange(pointController, oldData, newData) {
 
     if (!newData) {
-      pointController.destroy();
-      this._eventsModel.removeEvent(oldData.id);
-      this._updateEvents();
+      this._api.deleteEvent(String(oldData.id))
+        .then(() => {
+          pointController.destroy();
+          this._eventsModel.removeEvent(oldData.id);
+          this._updateEvents();
+        });
       return;
     } else if (!oldData) {
       this._api.createEvent(newData)
-      .then((pointModel) => {
-        this._eventsModel.addEvent(pointModel);
-        this._updateEvents();
-      });
+        .then((pointModel) => {
+          this._eventsModel.addEvent(pointModel);
+          this._updateEvents();
+        });
       return;
     } else {
       this._api.updateEvent(oldData.id, newData)
