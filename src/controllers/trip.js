@@ -4,7 +4,7 @@ import TripInfoComponent from "../components/trip-info.js";
 import SortComponent, {SortType} from "../components/sort.js";
 import PointController from "./point.js";
 import DayComponent from "../components/day.js";
-import {render, RenderPosition, remove} from "../utils/render.js";
+import {render, RenderPosition} from "../utils/render.js";
 import {stringifyDate} from "../utils/util.js";
 import {EditFormMode, DefaultEvent} from "../const.js";
 import NewButtonComponent from "../components/new-event-button.js";
@@ -51,11 +51,14 @@ const sortDaysAndEventsByDefault = (days, container) => {
 };
 
 export default class TripController {
-  constructor(containerComponent, eventsModel) {
+  constructor(containerComponent, eventsModel, api) {
     this._container = containerComponent;
+    this._api = api;
 
     this._controllers = [];
-    this._model = eventsModel;
+    this._eventsModel = eventsModel;
+    this._destinationsModel = null;
+    this._offersModel = null;
     this._newButtonComponent = new NewButtonComponent();
     this._noEventsComponent = new NoEventsComponent();
     this._tripInfoComponent = new TripInfoComponent();
@@ -67,31 +70,50 @@ export default class TripController {
     this._onFilterChange = this._onFilterChange.bind(this);
 
     this._sortComponent.setSortTypeChangeHandler(this._onSortTypeChange);
-    this._model.setFilterChangeHandler(this._onFilterChange);
+    this._eventsModel.setFilterChangeHandler(this._onFilterChange);
   }
 
   _onDataChange(pointController, oldData, newData) {
 
     if (!newData) {
-      pointController.destroy();
-      this._model.removeEvent(oldData.id);
-      this._updateEvents();
+      this._api.deleteEvent(String(oldData.id))
+        .then(() => {
+          pointController.destroy();
+          this._eventsModel.removeEvent(oldData.id);
+          this._updateEvents();
+        })
+        .catch(() => {
+          pointController.shake();
+        });
       return;
     } else if (!oldData) {
-      this._model.addEvent(newData);
-      this._updateEvents();
+      this._api.createEvent(newData)
+        .then((pointModel) => {
+          this._eventsModel.addEvent(pointModel);
+          this._updateEvents();
+          this._newButtonComponent.enabled();
+        })
+        .catch(() => {
+          pointController.shake();
+        });
       return;
     } else {
-      const isSuccess = this._model.updateEvent(oldData.id, newData);
+      this._api.updateEvent(oldData.id, newData)
+        .then((event) => {
+          const isSuccess = this._eventsModel.updateEvent(oldData.id, event);
 
-      if (isSuccess) {
-        pointController.render(newData, null, null, EditFormMode.EDIT);
-      }
+          if (isSuccess) {
+            pointController.render(event, null, null, EditFormMode.EDIT);
+          }
+        })
+        .catch(() => {
+          pointController.shake();
+        });
     }
   }
 
   _onSortTypeChange(currentSortType) {
-    const sortedEvents = getSortedEvents(this._model.getEvents(), currentSortType);
+    const sortedEvents = getSortedEvents(this._eventsModel.getEvents(), currentSortType);
 
     this._container.getElement().innerHTML = ``;
     this._controllers = this._renderTripEvents(
@@ -106,25 +128,20 @@ export default class TripController {
   }
 
   render() {
-    this._events = this._model.getEvents();
+    this._events = this._eventsModel.getEvents();
     const containerElement = this._container.getElement();
 
-    if (!this._events) {
-      render(containerElement, this._noEventsComponent, RenderPosition.BEFOREEND);
-      return;
-    }
-
     const headerMainElement = document.querySelector(`.trip-main`);
-    // const tripControlsElement = headerMainElement.querySelector(`.trip-controls`);
-    // const menuHeaderElement = tripControlsElement.querySelector(`h2`);
     const tripEventsElement = document.querySelector(`.trip-events`);
 
     this._newButtonComponent.setButtonHandler(() => {
-      const newPointController = new PointController(this._container.getElement(), this._onDataChange, this._onViewChange);
+      const newPointController = new PointController(this._container.getElement(), this._onDataChange, this._onViewChange, this._destinationsModel, this._offersModel);
 
       this._dayComponents.push(new DayComponent(DefaultEvent));
       newPointController.render(DefaultEvent, this._dayComponents, null, EditFormMode.CREATE);
       this._newButtonComponent.disabled();
+
+      newPointController.setEnableNewButtonHandler(this._newButtonComponent.enabled());
     });
 
     render(headerMainElement, this._tripInfoComponent, RenderPosition.AFTERBEGIN);
@@ -132,6 +149,11 @@ export default class TripController {
 
     render(tripEventsElement, this._sortComponent, RenderPosition.BEFOREEND);
     render(tripEventsElement, this._container, RenderPosition.BEFOREEND);
+
+    if (!this._events || this._events.length === 0) {
+      render(containerElement, this._noEventsComponent, RenderPosition.BEFOREEND);
+      return;
+    }
 
     this._renderEvents(this._events);
   }
@@ -153,7 +175,7 @@ export default class TripController {
 
   _updateEvents() {
     this._removeEvents();
-    this._renderEvents(this._model.getEvents().slice());
+    this._renderEvents(this._eventsModel.getEvents().slice());
   }
 
   _onFilterChange() {
@@ -170,7 +192,7 @@ export default class TripController {
     }
 
     const controllers = eventsCopy.map((event) => {
-      const pointController = new PointController(container, onDataChange, onViewChange);
+      const pointController = new PointController(container, onDataChange, onViewChange, this._destinationsModel, this._offersModel);
 
       pointController.render(event, this._dayComponents, isSorting, EditFormMode.EDIT);
 
@@ -180,6 +202,14 @@ export default class TripController {
     sortDaysAndEventsByDefault(this._dayComponents, container);
 
     return controllers;
+  }
+
+  setDestinationsModel(d) {
+    this._destinationsModel = d;
+  }
+
+  setOffersModel(o) {
+    this._offersModel = o;
   }
 
   hide() {
