@@ -43,10 +43,11 @@ const getPlacesList = (places) => {
 };
 
 const createEventDetails = (offers, totalOffers) => {
+  debugger
   const currentOffers = totalOffers.reduce((total, offer) => {
     const name = offer.title.split(` `).join(`-`).toLowerCase();
     total += `<div class="event__offer-selector">
-                <input class="event__offer-checkbox  visually-hidden" id="event-offer-${name}-1" type="checkbox" data-price="${offer.price}" name="event-offer-${name}" ${offers.some((o) => o.title === offer.title && o.price === offer.price) ? `checked` : ``}>
+                <input class="event__offer-checkbox  visually-hidden" id="event-offer-${name}-1" type="checkbox" data-price="${offer.price}" name="event-offer-${name}" ${offers.some((o) => o.title === offer.title) ? `checked` : ``}>
                 <label class="event__offer-label" for="event-offer-${name}-1">
                   <span class="event__offer-title">${offer.title}</span>
                   +
@@ -193,19 +194,20 @@ const createEventFormElement = (mode, {type, place, price, offers, startTime, en
       <button class="event__reset-btn" type="reset">${mode === EditFormMode.EDIT ? externalData.deleteButtonText : `Cancel`}</button>
       ${mode === EditFormMode.EDIT ? buttonFavoriteTemplate(isFavorite) : ``}
     </header>
-    ${mode === EditFormMode.FIRST ? `` : createEventDetails(offers, totalOffers)}
+    ${mode !== EditFormMode.FIRST ? createEventDetails(offers, totalOffers) : ``}
     ${mode === EditFormMode.EDIT ? `</li>` : ``}`
   );
 };
 
 export default class EventEditForm extends AbstractSmartComponent {
-  constructor(mode, data, destinationsModel, offers) {
+  constructor(mode, data, destinationsModel, offersModel) {
     super();
-
+    debugger
     this._data = data;
     this._mode = mode;
     this._destinationsModel = destinationsModel;
-    this._totalOffers = offers;
+    this._offersModel = offersModel;
+    this._currentOffers = this._offersModel.getOffersByType(this._data.type).offers;
     this._flatpickrStart = null;
     this._flatpickrEnd = null;
     this._externalData = DefaultData;
@@ -223,7 +225,7 @@ export default class EventEditForm extends AbstractSmartComponent {
   }
 
   getTemplate() {
-    return createEventFormElement(this._mode, this._data, this._totalOffers, this._destinationsModel.destinations.map((it) => it.name), this._externalData);
+    return createEventFormElement(this._mode, this._data, this._currentOffers, this._destinationsModel.destinations.map((it) => it.name), this._externalData);
   }
 
   setButtonsText(data) {
@@ -271,6 +273,11 @@ export default class EventEditForm extends AbstractSmartComponent {
   setChangeTypeHandler(handler) {
     this.getElement().querySelector(`.event__type-list`).addEventListener(`click`, handler);
     this._typeChangeHandler = handler;
+  }
+
+  blockForm() {
+    this.getElement().querySelectorAll(`form input, form select, form textarea, form button`)
+    .forEach((elem) => elem.setAttribute(`disabled`, `disabled`));
   }
 
   setEditFormHandlers(closeHandler, saveHandler, deleteHandler, favoriteHandler, typeHandler) {
@@ -327,13 +334,14 @@ export default class EventEditForm extends AbstractSmartComponent {
 
   _subscribeOnEvents() {
     const element = this.getElement();
-
-    element.querySelector(`.event__type-list`).addEventListener(`click`, (evt) => {
+    const typeListElement = element.querySelector(`.event__type-list`);
+    typeListElement.addEventListener(`click`, (evt) => {
       if (evt.target.tagName === `INPUT`) {
-        let targetValue = evt.target.value;
-        [this._data.type, targetValue] = [targetValue, this._data.type];
+        if (this._mode === EditFormMode.CREATE) {
+          this._data.type = evt.target.value;
+          this._currentOffers = this._offersModel.getOffersByType(this._data.type).offers;
+        }
         this.rerender();
-        [this._data.type, targetValue] = [targetValue, this._data.type];
       }
     });
 

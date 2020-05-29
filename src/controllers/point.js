@@ -68,9 +68,8 @@ export default class PointController {
     const oldEventEditComponent = this._eventEditComponent;
 
     const {offers} = this._offersModel.getOffersByType(event.type);
-
     this._eventComponent = new EventComponent(event);
-    this._eventEditComponent = new EventEditComponent(this._mode, event, this._destinationsModel, offers);
+    this._eventEditComponent = new EventEditComponent(this._mode, event, this._destinationsModel, this._offersModel);
     this._dayComponent = isSorting ? this._dayComponents[0] : this._dayComponents.find((day) => stringifyDate(day.date.startTime) === stringifyDate(event.startTime));
 
     switch (this._mode) {
@@ -83,6 +82,7 @@ export default class PointController {
           const formData = this._eventEditComponent.getData();
           const data = parseFormData(formData, String(event.id), offers, this._destinationsModel);
 
+          this._eventEditComponent.blockForm();
           this._eventEditComponent.setButtonsText({deleteButtonText: `Delete`, saveButtonText: `Saving...`});
           this._onDataChange(this, null, data);
           remove(this._eventEditComponent);
@@ -112,11 +112,13 @@ export default class PointController {
           const formData = this._eventEditComponent.getData();
           const data = parseFormData(formData, event.id, offers, this._destinationsModel);
 
+          this._eventEditComponent.blockForm();
           this._eventEditComponent.setButtonsText({deleteButtonText: `Delete`, saveButtonText: `Saving...`});
           this._onDataChange(this, event, data);
         });
 
         this._eventEditComponent.setDeleteHandler(() => {
+          this._eventEditComponent.blockForm();
           this._eventEditComponent.setButtonsText({deleteButtonText: `Deleting...`, saveButtonText: `Save`});
           this._onDataChange(this, event, null);
         });
@@ -195,5 +197,19 @@ export default class PointController {
     remove(this._eventEditComponent);
     remove(this._eventComponent);
     document.removeEventListener(`keydown`, this._onEscHandler);
+  }
+
+  shake() {
+    this._eventEditComponent.getElement().style.animation = `shake ${SHAKE_ANIMATION_TIMEOUT / 1000}s`;
+    this._eventComponent.getElement().style.animation = `shake ${SHAKE_ANIMATION_TIMEOUT / 1000}s`;
+    setTimeout(() => {
+      this._eventEditComponent.getElement().style.animation = ``;
+      this._eventComponent.getElement().style.animation = ``;
+
+      this._eventEditComponent.setData({
+        saveButtonText: `Save`,
+        deleteButtonText: `Delete`,
+      });
+    }, SHAKE_ANIMATION_TIMEOUT);
   }
 }
