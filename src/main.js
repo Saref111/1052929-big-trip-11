@@ -52,8 +52,6 @@ render(menuHeaderElement.nextSibling, menuComponent);
 
 api.getEvents()
 .then((events) => {
-  console.log(events);
-
   eventsModel.setEvents(events);
   container.innerHTML = ``;
 

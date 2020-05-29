@@ -88,6 +88,7 @@ export default class TripController {
         .then((pointModel) => {
           this._eventsModel.addEvent(pointModel);
           this._updateEvents();
+          this._newButtonComponent.enabled();
         });
       return;
     } else {
@@ -130,6 +131,8 @@ export default class TripController {
       this._dayComponents.push(new DayComponent(DefaultEvent));
       newPointController.render(DefaultEvent, this._dayComponents, null, EditFormMode.CREATE);
       this._newButtonComponent.disabled();
+
+      newPointController.setEnableNewButtonHandler(this._newButtonComponent.enabled());
     });
 
     render(headerMainElement, this._tripInfoComponent, RenderPosition.AFTERBEGIN);

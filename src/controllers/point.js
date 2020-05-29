@@ -45,6 +45,7 @@ export default class PointController {
     this._dayComponent = null;
     this._eventComponent = null;
     this._eventEditComponent = null;
+    this._newButtonHandler = null;
     this._mode = EditFormMode.EDIT;
 
     this._onViewChange = onViewChange;
@@ -78,8 +79,11 @@ export default class PointController {
 
         this._eventEditComponent.setSubmitHandler((evt) => {
           evt.preventDefault();
+
           const formData = this._eventEditComponent.getData();
           const data = parseFormData(formData, String(event.id), offers, this._destinationsModel);
+
+          this._eventEditComponent.setButtonsText({deleteButtonText: `Delete`, saveButtonText: `Saving...`});
           this._onDataChange(this, null, data);
           remove(this._eventEditComponent);
         });
@@ -87,6 +91,8 @@ export default class PointController {
         this._eventEditComponent.setDeleteHandler(() => {
           this._onViewChange();
           this.destroy();
+
+          this._newButtonHandler();
         });
 
         render(this._dayComponent.getElement().parentElement, this._eventEditComponent);
@@ -105,10 +111,13 @@ export default class PointController {
           evt.preventDefault();
           const formData = this._eventEditComponent.getData();
           const data = parseFormData(formData, event.id, offers, this._destinationsModel);
+
+          this._eventEditComponent.setButtonsText({deleteButtonText: `Delete`, saveButtonText: `Saving...`});
           this._onDataChange(this, event, data);
         });
 
         this._eventEditComponent.setDeleteHandler(() => {
+          this._eventEditComponent.setButtonsText({deleteButtonText: `Deleting...`, saveButtonText: `Save`});
           this._onDataChange(this, event, null);
         });
 
@@ -135,6 +144,10 @@ export default class PointController {
         }
         break;
     }
+  }
+
+  setEnableNewButtonHandler(handler) {
+    this._newButtonHandler = handler;
   }
 
   _eventToEditHandler() {

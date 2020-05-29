@@ -1,4 +1,4 @@
-import {getTitleByType, stringifyTime, stringifyDate} from "../utils/util.js";
+import {getTitleByTypeInEditForm, stringifyTime, stringifyDate} from "../utils/util.js";
 import {remove, render, RenderPosition} from "../utils/render.js";
 import {EditFormMode} from "../const.js";
 import AbstractSmartComponent from "./abstract-smart-component.js";
@@ -6,6 +6,11 @@ import DescriptionComponent from "./description.js";
 import flatpickr from "flatpickr";
 
 import "flatpickr/dist/flatpickr.min.css";
+
+const DefaultData = {
+  deleteButtonText: `Delete`,
+  saveButtonText: `Save`,
+};
 
 const checkDestinationHandler = (evt) => {
 
@@ -81,7 +86,7 @@ const buttonFavoriteTemplate = (isFavorite) => {
   );
 };
 
-const createEventFormElement = (mode, {type, place, price, offers, startTime, endTime, isFavorite, id}, totalOffers, allPlaces) => {
+const createEventFormElement = (mode, {type, place, price, offers, startTime, endTime, isFavorite, id}, totalOffers, allPlaces, externalData) => {
 
   return (
     `${mode === EditFormMode.EDIT ? `<li class="trip-events__item">` : ``}<form class="trip-events__item  event  event--edit" action="#" method="post" id="${id}">
@@ -156,9 +161,9 @@ const createEventFormElement = (mode, {type, place, price, offers, startTime, en
 
       <div class="event__field-group  event__field-group--destination">
         <label class="event__label  event__type-output" for="event-destination-1">
-          ${mode === EditFormMode.EDIT ? `Flight to` : getTitleByType(type, (mode !== EditFormMode.EDIT ? `` : place))}
+          ${getTitleByTypeInEditForm(type)}
         </label>
-        <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${mode === EditFormMode.EDIT ? place : ``}" list="destination-list-1" required>
+        <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" ${mode === EditFormMode.EDIT ? `value="${place}"` : `value=""`} list="destination-list-1" required>
         <datalist id="destination-list-1">
           ${getPlacesList(allPlaces)}
         </datalist>
@@ -184,8 +189,8 @@ const createEventFormElement = (mode, {type, place, price, offers, startTime, en
         <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${price ? price : ``}" required>
       </div>
 
-      <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-      <button class="event__reset-btn" type="reset">${mode === EditFormMode.EDIT ? `Delete` : `Cancel`}</button>
+      <button class="event__save-btn  btn  btn--blue" type="submit">${externalData.saveButtonText}</button>
+      <button class="event__reset-btn" type="reset">${mode === EditFormMode.EDIT ? externalData.deleteButtonText : `Cancel`}</button>
       ${mode === EditFormMode.EDIT ? buttonFavoriteTemplate(isFavorite) : ``}
     </header>
     ${mode === EditFormMode.FIRST ? `` : createEventDetails(offers, totalOffers)}
@@ -203,6 +208,7 @@ export default class EventEditForm extends AbstractSmartComponent {
     this._totalOffers = offers;
     this._flatpickrStart = null;
     this._flatpickrEnd = null;
+    this._externalData = DefaultData;
 
     this._descriptionComponent = null;
 
@@ -217,11 +223,22 @@ export default class EventEditForm extends AbstractSmartComponent {
   }
 
   getTemplate() {
-    return createEventFormElement(this._mode, this._data, this._totalOffers, this._destinationsModel.destinations.map((it) => it.name));
+    return createEventFormElement(this._mode, this._data, this._totalOffers, this._destinationsModel.destinations.map((it) => it.name), this._externalData);
+  }
+
+  setButtonsText(data) {
+    this._externalData = Object.assign({}, DefaultData, data);
+    this.rerender();
   }
 
   setCloseHandler(handler) {
-    this.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, handler);
+    const arrow = this.getElement().querySelector(`.event__rollup-btn`);
+
+    if (!arrow) {
+      return; // Create form doesn't have this button
+    }
+
+    arrow.addEventListener(`click`, handler);
     this._closeHandler = handler;
   }
 
@@ -241,7 +258,13 @@ export default class EventEditForm extends AbstractSmartComponent {
   }
 
   setAddFavoriteHandler(handler) {
-    this.getElement().querySelector(`#event-favorite-1`).addEventListener(`click`, handler);
+    const star = this.getElement().querySelector(`#event-favorite-1`);
+
+    if (!star) {
+      return; // Create form doesn't have this element
+    }
+
+    star.addEventListener(`click`, handler);
     this._addFavoriteHandler = handler;
   }
 
@@ -328,6 +351,7 @@ export default class EventEditForm extends AbstractSmartComponent {
 
         this._descriptionComponent = new DescriptionComponent(description, pictures);
 
+        this._currentChosenDestination = place;
         render(element.querySelector(`.event__details`), this._descriptionComponent, RenderPosition.BEFOREEND);
       }
     });

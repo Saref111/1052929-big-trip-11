@@ -31,6 +31,7 @@ const addEventListenerBySelector = (selector, handler, type = `click`, ctx = doc
 const capitalize = (string) => `${string[0].toUpperCase()}${string.slice(1)}`;
 const getPreposition = (type) => [`sightseeing`, `restaurant`, `check-in`].includes(type) ? ` in ` : ` to `;
 const getTitleByType = (type, place) => `${capitalize(type)}${getPreposition(type)}${place}`;
+const getTitleByTypeInEditForm = (type) => `${capitalize(type)}${getPreposition(type)}`;
 
 const stringifyDate = (date, sign) => {
   return moment(date).format(`YYYY${sign ? sign : `-`}MMMM${sign ? sign : `-`}DD`);
@@ -54,4 +55,5 @@ export {
   stringifyDate,
   stringifyTime,
   getDuration,
+  getTitleByTypeInEditForm,
 };
