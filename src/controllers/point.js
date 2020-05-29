@@ -3,7 +3,7 @@ import EventComponent from "../components/event.js";
 import PointModel from "../models/point.js";
 import {render, replace, RenderPosition, remove} from "../utils/render.js";
 import {stringifyDate} from "../utils/util.js";
-import {EditFormMode} from "../const.js";
+import {EditFormMode, SHAKE_ANIMATION_TIMEOUT} from "../const.js";
 
 const getDestination = (place, model) => {
   const {name, description, pictures} = model.getInfo(place);
@@ -24,7 +24,7 @@ const getOffersArray = (formData, totalOffers) => {
 
 const parseFormData = (formData, id, currentOffers, destinationModel) => {
   return new PointModel({
-    "id": id,
+    id,
     "type": formData.get(`event-type`),
     "destination": getDestination(formData.get(`event-destination`), destinationModel),
     "base_price": Number(formData.get(`event-price`)),
@@ -82,8 +82,8 @@ export default class PointController {
           const formData = this._eventEditComponent.getData();
           const data = parseFormData(formData, String(event.id), offers, this._destinationsModel);
 
-          this._eventEditComponent.blockForm();
           this._eventEditComponent.setButtonsText({deleteButtonText: `Delete`, saveButtonText: `Saving...`});
+          this._eventEditComponent.blockForm();
           this._onDataChange(this, null, data);
           remove(this._eventEditComponent);
         });
@@ -112,14 +112,14 @@ export default class PointController {
           const formData = this._eventEditComponent.getData();
           const data = parseFormData(formData, event.id, offers, this._destinationsModel);
 
-          this._eventEditComponent.blockForm();
           this._eventEditComponent.setButtonsText({deleteButtonText: `Delete`, saveButtonText: `Saving...`});
+          this._eventEditComponent.blockForm();
           this._onDataChange(this, event, data);
         });
 
         this._eventEditComponent.setDeleteHandler(() => {
-          this._eventEditComponent.blockForm();
           this._eventEditComponent.setButtonsText({deleteButtonText: `Deleting...`, saveButtonText: `Save`});
+          this._eventEditComponent.blockForm();
           this._onDataChange(this, event, null);
         });
 
@@ -200,13 +200,14 @@ export default class PointController {
   }
 
   shake() {
-    this._eventEditComponent.getElement().style.animation = `shake ${SHAKE_ANIMATION_TIMEOUT / 1000}s`;
-    this._eventComponent.getElement().style.animation = `shake ${SHAKE_ANIMATION_TIMEOUT / 1000}s`;
+    const form = this._eventEditComponent.getElement();
+    form.style = `outline: 2px solid red;`;
+    form.style.animation = `shake ${SHAKE_ANIMATION_TIMEOUT / 1000}s`;
+
     setTimeout(() => {
       this._eventEditComponent.getElement().style.animation = ``;
-      this._eventComponent.getElement().style.animation = ``;
 
-      this._eventEditComponent.setData({
+      this._eventEditComponent.setButtonsText({
         saveButtonText: `Save`,
         deleteButtonText: `Delete`,
       });

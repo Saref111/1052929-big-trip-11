@@ -81,6 +81,9 @@ export default class TripController {
           pointController.destroy();
           this._eventsModel.removeEvent(oldData.id);
           this._updateEvents();
+        })
+        .catch(() => {
+          pointController.shake();
         });
       return;
     } else if (!oldData) {
@@ -89,6 +92,9 @@ export default class TripController {
           this._eventsModel.addEvent(pointModel);
           this._updateEvents();
           this._newButtonComponent.enabled();
+        })
+        .catch(() => {
+          pointController.shake();
         });
       return;
     } else {
@@ -99,6 +105,9 @@ export default class TripController {
           if (isSuccess) {
             pointController.render(event, null, null, EditFormMode.EDIT);
           }
+        })
+        .catch(() => {
+          pointController.shake();
         });
     }
   }

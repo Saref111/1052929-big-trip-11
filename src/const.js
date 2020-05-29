@@ -85,4 +85,6 @@ const DefaultEvent = {
   price: 150,
 };
 
-export {TYPES, CITIES, getOffers, getTripInfo, PICTURE, FilterType, EditFormMode, DefaultEvent};
+const SHAKE_ANIMATION_TIMEOUT = 600;
+
+export {TYPES, CITIES, getOffers, getTripInfo, PICTURE, FilterType, EditFormMode, DefaultEvent, SHAKE_ANIMATION_TIMEOUT};

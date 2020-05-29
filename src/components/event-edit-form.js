@@ -43,7 +43,6 @@ const getPlacesList = (places) => {
 };
 
 const createEventDetails = (offers, totalOffers) => {
-  debugger
   const currentOffers = totalOffers.reduce((total, offer) => {
     const name = offer.title.split(` `).join(`-`).toLowerCase();
     total += `<div class="event__offer-selector">
@@ -202,7 +201,7 @@ const createEventFormElement = (mode, {type, place, price, offers, startTime, en
 export default class EventEditForm extends AbstractSmartComponent {
   constructor(mode, data, destinationsModel, offersModel) {
     super();
-    debugger
+
     this._data = data;
     this._mode = mode;
     this._destinationsModel = destinationsModel;
@@ -276,6 +275,7 @@ export default class EventEditForm extends AbstractSmartComponent {
   }
 
   blockForm() {
+    debugger
     this.getElement().querySelectorAll(`form input, form select, form textarea, form button`)
     .forEach((elem) => elem.setAttribute(`disabled`, `disabled`));
   }
