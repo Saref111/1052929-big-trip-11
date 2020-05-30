@@ -11,6 +11,7 @@ export default class NewButtonComponent extends AbstractComponent {
     this._handler = null;
 
     this.enabled = this.enabled.bind(this);
+    this._enabledHandler = this._enabledHandler.bind(this);
   }
 
   getTemplate() {
@@ -22,8 +23,14 @@ export default class NewButtonComponent extends AbstractComponent {
       this._handler = handler;
       handler();
       this.disabled();
-      document.addEventListener(`keydown`, this.enabled);
+      document.addEventListener(`keydown`, this._enabledHandler);
     });
+  }
+
+  _enabledHandler(evt) {
+    if (evt.keyCode === 27) {
+      this.enabled();
+    }
   }
 
   disabled() {
@@ -32,6 +39,6 @@ export default class NewButtonComponent extends AbstractComponent {
 
   enabled() {
     this.getElement().disabled = false;
-    document.removeEventListener(`keydown`, this.enabled);
+    document.removeEventListener(`keydown`, this._enabledHandler);
   }
 }

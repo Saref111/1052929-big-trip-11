@@ -136,12 +136,13 @@ export default class TripController {
 
     this._newButtonComponent.setButtonHandler(() => {
       const newPointController = new PointController(this._container.getElement(), this._onDataChange, this._onViewChange, this._destinationsModel, this._offersModel);
-
       this._dayComponents.push(new DayComponent(DefaultEvent));
+
+      newPointController.setEnableNewButtonHandler(this._newButtonComponent.enabled);
       newPointController.render(DefaultEvent, this._dayComponents, null, EditFormMode.CREATE);
       this._newButtonComponent.disabled();
 
-      newPointController.setEnableNewButtonHandler(this._newButtonComponent.enabled());
+      this._controllers.push(newPointController);
     });
 
     render(headerMainElement, this._tripInfoComponent, RenderPosition.AFTERBEGIN);

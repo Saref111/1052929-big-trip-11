@@ -275,7 +275,6 @@ export default class EventEditForm extends AbstractSmartComponent {
   }
 
   blockForm() {
-    debugger
     this.getElement().querySelectorAll(`form input, form select, form textarea, form button`)
     .forEach((elem) => elem.setAttribute(`disabled`, `disabled`));
   }

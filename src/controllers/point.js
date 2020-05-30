@@ -15,9 +15,8 @@ const getOffersArray = (formData, totalOffers) => {
   const offersNames = Array.from(formData.keys()).filter((it) => it.startsWith(`event-offer-`));
 
   return offersNames.map((name) => {
-    const offerName = name.slice(12).split(`-`).join(` `); // 12 is length of `event-offer-`
-    const title = `${offerName[0].toUpperCase()}${offerName.slice(1, offerName.length)}`;
-    const templateOffer = totalOffers.find((it) => it.title === title);
+    const title = name.slice(12).split(`-`).join(` `); // 12 is length of `event-offer-`
+    const templateOffer = totalOffers.find((it) => it.title.toLowerCase() === title);
     return templateOffer;
   });
 };
@@ -90,9 +89,8 @@ export default class PointController {
 
         this._eventEditComponent.setDeleteHandler(() => {
           this._onViewChange();
-          this.destroy();
-
           this._newButtonHandler();
+          this.destroy();
         });
 
         render(this._dayComponent.getElement().parentElement, this._eventEditComponent);
@@ -154,6 +152,12 @@ export default class PointController {
 
   _eventToEditHandler() {
     this._onViewChange();
+
+    if (this._mode !== EditFormMode.EDIT) {
+      debugger
+      this._newButtonHandler();
+    }
+
     replace(this._eventEditComponent, this._eventComponent);
     this._mode = EditFormMode.EDIT;
   }
@@ -190,6 +194,8 @@ export default class PointController {
   setDefaultView() {
     if (this._mode === EditFormMode.EDIT) {
       this._editToEventHandler();
+    } else {
+      this.destroy();
     }
   }
 
