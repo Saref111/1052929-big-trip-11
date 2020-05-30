@@ -82,10 +82,6 @@ export default class Sort extends AbstractComponent {
     const oldElement = this.getElement();
     const parent = oldElement.parentElement;
 
-    // if (!parent) {
-    //   return;
-    // }
-
     this.removeElement();
 
     const newElement = this.getElement();

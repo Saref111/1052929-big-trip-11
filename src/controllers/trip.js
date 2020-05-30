@@ -103,7 +103,7 @@ export default class TripController {
           const isSuccess = this._eventsModel.updateEvent(oldData.id, event);
 
           if (isSuccess) {
-            pointController.render(event, null, null, EditFormMode.EDIT);
+            this._updateEvents();
           }
         })
         .catch(() => {

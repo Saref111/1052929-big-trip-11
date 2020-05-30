@@ -5,6 +5,8 @@ import {render, replace, RenderPosition, remove} from "../utils/render.js";
 import {stringifyDate} from "../utils/util.js";
 import {EditFormMode, SHAKE_ANIMATION_TIMEOUT} from "../const.js";
 
+const PREFIX_LENGTH = 12;
+
 const getDestination = (place, model) => {
   const {name, description, pictures} = model.getInfo(place);
   const reply = {"name": name, "description": description, "pictures": pictures};
@@ -15,7 +17,7 @@ const getOffersArray = (formData, totalOffers) => {
   const offersNames = Array.from(formData.keys()).filter((it) => it.startsWith(`event-offer-`));
 
   return offersNames.map((name) => {
-    const title = name.slice(12).split(`-`).join(` `); // 12 is length of `event-offer-`
+    const title = name.slice(PREFIX_LENGTH).split(`-`).join(` `);
     const templateOffer = totalOffers.find((it) => it.title.toLowerCase() === title);
     return templateOffer;
   });
@@ -154,7 +156,6 @@ export default class PointController {
     this._onViewChange();
 
     if (this._mode !== EditFormMode.EDIT) {
-      debugger
       this._newButtonHandler();
     }
 
