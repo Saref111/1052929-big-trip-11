@@ -5,6 +5,8 @@ import {render, replace, RenderPosition, remove} from "../utils/render.js";
 import {stringifyDate} from "../utils/util.js";
 import {EditFormMode, SHAKE_ANIMATION_TIMEOUT} from "../const.js";
 
+const PREFIX_LENGTH = 12;
+
 const getDestination = (place, model) => {
   const {name, description, pictures} = model.getInfo(place);
   const reply = {"name": name, "description": description, "pictures": pictures};
@@ -15,9 +17,8 @@ const getOffersArray = (formData, totalOffers) => {
   const offersNames = Array.from(formData.keys()).filter((it) => it.startsWith(`event-offer-`));
 
   return offersNames.map((name) => {
-    const offerName = name.slice(12).split(`-`).join(` `); // 12 is length of `event-offer-`
-    const title = `${offerName[0].toUpperCase()}${offerName.slice(1, offerName.length)}`;
-    const templateOffer = totalOffers.find((it) => it.title === title);
+    const title = name.slice(PREFIX_LENGTH).split(`-`).join(` `);
+    const templateOffer = totalOffers.find((it) => it.title.toLowerCase() === title);
     return templateOffer;
   });
 };
@@ -27,7 +28,7 @@ const parseFormData = (formData, id, currentOffers, destinationModel) => {
     id,
     "type": formData.get(`event-type`),
     "destination": getDestination(formData.get(`event-destination`), destinationModel),
-    "base_price": Number(formData.get(`event-price`)),
+    "base_price": Math.round(Number(formData.get(`event-price`))),
     "offers": getOffersArray(formData, currentOffers),
     "date_from": new Date(formData.get(`event-start-time`)),
     "date_to": new Date(formData.get(`event-end-time`)),
@@ -72,6 +73,7 @@ export default class PointController {
     this._eventEditComponent = new EventEditComponent(this._mode, event, this._destinationsModel, this._offersModel);
     this._dayComponent = isSorting ? this._dayComponents[0] : this._dayComponents.find((day) => stringifyDate(day.date.startTime) === stringifyDate(event.startTime));
 
+
     switch (this._mode) {
       case EditFormMode.CREATE:
         this._onViewChange();
@@ -90,14 +92,14 @@ export default class PointController {
 
         this._eventEditComponent.setDeleteHandler(() => {
           this._onViewChange();
-          this.destroy();
-
           this._newButtonHandler();
+          this.destroy();
         });
 
         render(this._dayComponent.getElement().parentElement, this._eventEditComponent);
         document.addEventListener(`keydown`, this._onEscHandler);
         break;
+
 
       case EditFormMode.EDIT:
         this._eventComponent.setOpenEditHandler(() => {
@@ -130,9 +132,10 @@ export default class PointController {
           this._onDataChange(this, event, newEvent);
         });
 
-        this._eventEditComponent.setChangeTypeHandler(() => {
+        this._eventEditComponent.setChangeTypeHandler((evt) => {
           const formData = this._eventEditComponent.getData();
           const data = parseFormData(formData, event.id, offers, this._destinationsModel);
+          data.offers = [];
 
           this._onDataChange(this, event, data);
         });
@@ -145,6 +148,30 @@ export default class PointController {
           render(this._dayComponent.getElement().querySelector(`ul`), this._eventComponent, RenderPosition.BEFOREEND);
         }
         break;
+
+      case EditFormMode.FIRST:
+        this._onViewChange();
+        this._eventEditComponent.setSubmitHandler((evt) => {
+          evt.preventDefault();
+
+          const formData = this._eventEditComponent.getData();
+          const data = parseFormData(formData, String(event.id), offers, this._destinationsModel);
+
+          this._eventEditComponent.setButtonsText({deleteButtonText: `Delete`, saveButtonText: `Saving...`});
+          this._eventEditComponent.blockForm();
+          this._onDataChange(this, null, data);
+          remove(this._eventEditComponent);
+        });
+
+        this._eventEditComponent.setDeleteHandler(() => {
+          this._onViewChange();
+          this._newButtonHandler();
+          this.destroy();
+        });
+
+        render(this._container, this._eventEditComponent);
+        document.addEventListener(`keydown`, this._onEscHandler);
+        break;
     }
   }
 
@@ -154,6 +181,11 @@ export default class PointController {
 
   _eventToEditHandler() {
     this._onViewChange();
+
+    if (this._mode !== EditFormMode.EDIT) {
+      this._newButtonHandler();
+    }
+
     replace(this._eventEditComponent, this._eventComponent);
     this._mode = EditFormMode.EDIT;
   }
@@ -190,6 +222,8 @@ export default class PointController {
   setDefaultView() {
     if (this._mode === EditFormMode.EDIT) {
       this._editToEventHandler();
+    } else {
+      this.destroy();
     }
   }
 

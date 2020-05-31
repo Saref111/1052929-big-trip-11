@@ -193,7 +193,7 @@ const createEventFormElement = (mode, {type, place, price, offers, startTime, en
       <button class="event__reset-btn" type="reset">${mode === EditFormMode.EDIT ? externalData.deleteButtonText : `Cancel`}</button>
       ${mode === EditFormMode.EDIT ? buttonFavoriteTemplate(isFavorite) : ``}
     </header>
-    ${mode !== EditFormMode.FIRST ? createEventDetails(offers, totalOffers) : ``}
+    ${mode !== EditFormMode.FIRST ? createEventDetails(offers, totalOffers) : `</form>`}
     ${mode === EditFormMode.EDIT ? `</li>` : ``}`
   );
 };
@@ -275,7 +275,6 @@ export default class EventEditForm extends AbstractSmartComponent {
   }
 
   blockForm() {
-    debugger
     this.getElement().querySelectorAll(`form input, form select, form textarea, form button`)
     .forEach((elem) => elem.setAttribute(`disabled`, `disabled`));
   }
@@ -311,7 +310,7 @@ export default class EventEditForm extends AbstractSmartComponent {
     super.rerender();
     this._applyFlatpickr();
 
-    if (this._descriptionComponent) {
+    if (this._descriptionComponent && this._mode === EditFormMode.EDIT) {
       render(this.getElement().querySelector(`.event__details`), this._descriptionComponent, RenderPosition.BEFOREEND);
     }
   }
@@ -335,11 +334,12 @@ export default class EventEditForm extends AbstractSmartComponent {
   _subscribeOnEvents() {
     const element = this.getElement();
     const typeListElement = element.querySelector(`.event__type-list`);
-    typeListElement.addEventListener(`click`, (evt) => {
+    typeListElement.addEventListener(`change`, (evt) => {
       if (evt.target.tagName === `INPUT`) {
-        if (this._mode === EditFormMode.CREATE) {
+        if (this._mode !== EditFormMode.EDIT) {
           this._data.type = evt.target.value;
           this._currentOffers = this._offersModel.getOffersByType(this._data.type).offers;
+          this._mode = EditFormMode.CREATE;
         }
         this.rerender();
       }
@@ -359,8 +359,13 @@ export default class EventEditForm extends AbstractSmartComponent {
 
         this._descriptionComponent = new DescriptionComponent(description, pictures);
 
+        if (this._mode === EditFormMode.FIRST) {
+          this._mode = EditFormMode.CREATE;
+        }
+
+        const offersContainerElement = this.getElement().querySelector(`form`) ? this.getElement().querySelector(`form`) : this.getElement();
         this._currentChosenDestination = place;
-        render(element.querySelector(`.event__details`), this._descriptionComponent, RenderPosition.BEFOREEND);
+        render(offersContainerElement, this._descriptionComponent, RenderPosition.BEFOREEND);
       }
     });
   }

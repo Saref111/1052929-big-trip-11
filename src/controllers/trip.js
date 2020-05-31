@@ -4,7 +4,7 @@ import TripInfoComponent from "../components/trip-info.js";
 import SortComponent, {SortType} from "../components/sort.js";
 import PointController from "./point.js";
 import DayComponent from "../components/day.js";
-import {render, RenderPosition} from "../utils/render.js";
+import {render, RenderPosition, remove} from "../utils/render.js";
 import {stringifyDate} from "../utils/util.js";
 import {EditFormMode, DefaultEvent} from "../const.js";
 import NewButtonComponent from "../components/new-event-button.js";
@@ -56,6 +56,7 @@ export default class TripController {
     this._api = api;
 
     this._controllers = [];
+    this._dayComponents = [];
     this._eventsModel = eventsModel;
     this._destinationsModel = null;
     this._offersModel = null;
@@ -103,7 +104,7 @@ export default class TripController {
           const isSuccess = this._eventsModel.updateEvent(oldData.id, event);
 
           if (isSuccess) {
-            pointController.render(event, null, null, EditFormMode.EDIT);
+            this._updateEvents();
           }
         })
         .catch(() => {
@@ -125,23 +126,32 @@ export default class TripController {
 
   _onViewChange() {
     this._controllers.forEach((controller) => controller.setDefaultView());
+
+    this._newButtonComponent.enabled();
   }
 
   render() {
     this._events = this._eventsModel.getEvents();
+    const isFirstEvent = !this._events || this._events.length === 0;
     const containerElement = this._container.getElement();
 
     const headerMainElement = document.querySelector(`.trip-main`);
     const tripEventsElement = document.querySelector(`.trip-events`);
 
     this._newButtonComponent.setButtonHandler(() => {
-      const newPointController = new PointController(this._container.getElement(), this._onDataChange, this._onViewChange, this._destinationsModel, this._offersModel);
+      if (isFirstEvent) {
+        remove(this._noEventsComponent);
+      }
 
+      const newPointController = new PointController(this._container.getElement(), this._onDataChange, this._onViewChange, this._destinationsModel, this._offersModel);
       this._dayComponents.push(new DayComponent(DefaultEvent));
-      newPointController.render(DefaultEvent, this._dayComponents, null, EditFormMode.CREATE);
+
+      newPointController.setEnableNewButtonHandler(this._newButtonComponent.enabled);
+
+      newPointController.render(DefaultEvent, this._dayComponents, null, isFirstEvent ? EditFormMode.FIRST : EditFormMode.CREATE);
       this._newButtonComponent.disabled();
 
-      newPointController.setEnableNewButtonHandler(this._newButtonComponent.enabled());
+      this._controllers.push(newPointController);
     });
 
     render(headerMainElement, this._tripInfoComponent, RenderPosition.AFTERBEGIN);
@@ -150,7 +160,7 @@ export default class TripController {
     render(tripEventsElement, this._sortComponent, RenderPosition.BEFOREEND);
     render(tripEventsElement, this._container, RenderPosition.BEFOREEND);
 
-    if (!this._events || this._events.length === 0) {
+    if (isFirstEvent) {
       render(containerElement, this._noEventsComponent, RenderPosition.BEFOREEND);
       return;
     }

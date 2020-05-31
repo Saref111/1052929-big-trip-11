@@ -20,7 +20,7 @@ const createDayElement = (date, isSorting) => {
   );
 };
 
-export default class Day extends AbstractComponent { // DATE
+export default class Day extends AbstractComponent {
   constructor(date, isSorting) {
     super();
 
