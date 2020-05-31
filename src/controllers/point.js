@@ -152,7 +152,7 @@ export default class PointController {
         this._onViewChange();
         this._eventEditComponent.setSubmitHandler((evt) => {
           evt.preventDefault();
-
+          
           const formData = this._eventEditComponent.getData();
           const data = parseFormData(formData, String(event.id), offers, this._destinationsModel);
 

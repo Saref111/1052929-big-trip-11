@@ -148,7 +148,7 @@ export default class TripController {
 
       newPointController.setEnableNewButtonHandler(this._newButtonComponent.enabled);
 
-      newPointController.render(DefaultEvent, this._dayComponents, null, isFirstEvent ? EditFormMode.FIRST : EditFormMode.EDIT);
+      newPointController.render(DefaultEvent, this._dayComponents, null, isFirstEvent ? EditFormMode.FIRST : EditFormMode.CREATE);
       this._newButtonComponent.disabled();
 
       this._controllers.push(newPointController);
