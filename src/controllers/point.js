@@ -28,7 +28,7 @@ const parseFormData = (formData, id, currentOffers, destinationModel) => {
     id,
     "type": formData.get(`event-type`),
     "destination": getDestination(formData.get(`event-destination`), destinationModel),
-    "base_price": Number(formData.get(`event-price`)),
+    "base_price": Math.round(Number(formData.get(`event-price`))),
     "offers": getOffersArray(formData, currentOffers),
     "date_from": new Date(formData.get(`event-start-time`)),
     "date_to": new Date(formData.get(`event-end-time`)),
@@ -132,9 +132,10 @@ export default class PointController {
           this._onDataChange(this, event, newEvent);
         });
 
-        this._eventEditComponent.setChangeTypeHandler(() => {
+        this._eventEditComponent.setChangeTypeHandler((evt) => {
           const formData = this._eventEditComponent.getData();
           const data = parseFormData(formData, event.id, offers, this._destinationsModel);
+          data.offers = [];
 
           this._onDataChange(this, event, data);
         });
@@ -152,7 +153,7 @@ export default class PointController {
         this._onViewChange();
         this._eventEditComponent.setSubmitHandler((evt) => {
           evt.preventDefault();
-          
+
           const formData = this._eventEditComponent.getData();
           const data = parseFormData(formData, String(event.id), offers, this._destinationsModel);
 

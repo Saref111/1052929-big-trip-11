@@ -334,7 +334,7 @@ export default class EventEditForm extends AbstractSmartComponent {
   _subscribeOnEvents() {
     const element = this.getElement();
     const typeListElement = element.querySelector(`.event__type-list`);
-    typeListElement.addEventListener(`click`, (evt) => {
+    typeListElement.addEventListener(`change`, (evt) => {
       if (evt.target.tagName === `INPUT`) {
         if (this._mode !== EditFormMode.EDIT) {
           this._data.type = evt.target.value;
