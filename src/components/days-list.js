@@ -10,4 +10,8 @@ export default class DaysList extends AbstractComponent {
   getTemplate() {
     return createDaysListElement();
   }
+
+  hideDaysList() {
+    this.getElement().style = `display: none;`;
+  }
 }

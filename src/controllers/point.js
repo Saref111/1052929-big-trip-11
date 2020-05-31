@@ -73,6 +73,7 @@ export default class PointController {
     this._eventEditComponent = new EventEditComponent(this._mode, event, this._destinationsModel, this._offersModel);
     this._dayComponent = isSorting ? this._dayComponents[0] : this._dayComponents.find((day) => stringifyDate(day.date.startTime) === stringifyDate(event.startTime));
 
+
     switch (this._mode) {
       case EditFormMode.CREATE:
         this._onViewChange();
@@ -98,6 +99,7 @@ export default class PointController {
         render(this._dayComponent.getElement().parentElement, this._eventEditComponent);
         document.addEventListener(`keydown`, this._onEscHandler);
         break;
+
 
       case EditFormMode.EDIT:
         this._eventComponent.setOpenEditHandler(() => {
@@ -144,6 +146,30 @@ export default class PointController {
         } else {
           render(this._dayComponent.getElement().querySelector(`ul`), this._eventComponent, RenderPosition.BEFOREEND);
         }
+        break;
+
+      case EditFormMode.FIRST:
+        this._onViewChange();
+        this._eventEditComponent.setSubmitHandler((evt) => {
+          evt.preventDefault();
+
+          const formData = this._eventEditComponent.getData();
+          const data = parseFormData(formData, String(event.id), offers, this._destinationsModel);
+
+          this._eventEditComponent.setButtonsText({deleteButtonText: `Delete`, saveButtonText: `Saving...`});
+          this._eventEditComponent.blockForm();
+          this._onDataChange(this, null, data);
+          remove(this._eventEditComponent);
+        });
+
+        this._eventEditComponent.setDeleteHandler(() => {
+          this._onViewChange();
+          this._newButtonHandler();
+          this.destroy();
+        });
+
+        render(this._container, this._eventEditComponent);
+        document.addEventListener(`keydown`, this._onEscHandler);
         break;
     }
   }
