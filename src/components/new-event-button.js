@@ -20,7 +20,7 @@ export default class NewButtonComponent extends AbstractComponent {
 
   setButtonHandler(handler) {
     this.getElement().addEventListener(`click`, () => {
-      // debugger
+
       this._handler = handler;
       handler();
       this.disabled();
