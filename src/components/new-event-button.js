@@ -22,7 +22,7 @@ export default class NewButtonComponent extends AbstractComponent {
     this.getElement().addEventListener(`click`, () => {
 
       this._handler = handler;
-      handler();
+      this._handler();
       this.disabled();
       document.addEventListener(`keydown`, this._enabledHandler);
     });

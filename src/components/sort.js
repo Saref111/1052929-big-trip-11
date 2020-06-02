@@ -53,10 +53,6 @@ export default class Sort extends AbstractComponent {
     return createSortingElement();
   }
 
-  getSortType() {
-    return this._currentSortType;
-  }
-
   onNewEventChange() {
     this._currentSortType = SortType.DEFAULT;
     this.rerender();

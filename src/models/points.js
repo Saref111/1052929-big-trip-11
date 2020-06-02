@@ -58,10 +58,6 @@ export default class Points {
     this._callHandlers(this._dataChangeHandlers);
   }
 
-  setDataChangeHandler(handler) {
-    this._dataChangeHandlers.push(handler);
-  }
-
   setFilter(filterType) {
     this._activeFilterType = filterType;
     this._callHandlers(this._filterChangeHandlers);
