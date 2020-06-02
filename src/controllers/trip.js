@@ -140,7 +140,7 @@ export default class TripController {
 
     this._newButtonComponent.setButtonHandler(() => {
       this._sortComponent.onNewEventChange();
-      this._eventsModel.setFilter(FilterType.EVERYTHING)
+      this._eventsModel.setFilter(FilterType.EVERYTHING);
       this._events = this._eventsModel.getEvents();
       isFirstEvent = !this._events || this._events.length === 0;
       if (isFirstEvent) {
