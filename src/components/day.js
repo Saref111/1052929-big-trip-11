@@ -1,7 +1,7 @@
 import AbstractComponent from "./abstract-component.js";
 import {stringifyDate} from "../utils/util.js";
+import moment from "moment";
 
-const moment = require(`moment`);
 
 const createDayElement = (date, isSorting) => {
   return (

@@ -1,5 +1,3 @@
-const moment = require(`moment`);
-
 const countMoney = (events, types) => {
   return types.map((type) => {
     return events.reduce((acc, it) => it.type === type ? acc + it.price : acc, 0);

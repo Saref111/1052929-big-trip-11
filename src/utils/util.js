@@ -1,4 +1,4 @@
-const moment = require(`moment`);
+import moment from "moment";
 
 const getRandomInt = (max) => Math.floor(Math.random() * max);
 const getRandomArrayElement = (arr) => arr[getRandomInt(arr.length)];

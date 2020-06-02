@@ -132,17 +132,18 @@ export default class TripController {
 
   render() {
     this._events = this._eventsModel.getEvents();
-    const isFirstEvent = !this._events || this._events.length === 0;
+    let isFirstEvent = !this._events || this._events.length === 0;
     const containerElement = this._container.getElement();
 
     const headerMainElement = document.querySelector(`.trip-main`);
     const tripEventsElement = document.querySelector(`.trip-events`);
 
     this._newButtonComponent.setButtonHandler(() => {
+      this._events = this._eventsModel.getEvents();
+      isFirstEvent = !this._events || this._events.length === 0;
       if (isFirstEvent) {
         remove(this._noEventsComponent);
       }
-
       const newPointController = new PointController(this._container.getElement(), this._onDataChange, this._onViewChange, this._destinationsModel, this._offersModel);
       this._dayComponents.push(new DayComponent(DefaultEvent));
 

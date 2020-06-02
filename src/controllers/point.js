@@ -86,6 +86,7 @@ export default class PointController {
 
           this._eventEditComponent.setButtonsText({deleteButtonText: `Delete`, saveButtonText: `Saving...`});
           this._eventEditComponent.blockForm();
+
           this._onDataChange(this, null, data);
           remove(this._eventEditComponent);
         });
@@ -132,7 +133,7 @@ export default class PointController {
           this._onDataChange(this, event, newEvent);
         });
 
-        this._eventEditComponent.setChangeTypeHandler((evt) => {
+        this._eventEditComponent.setChangeTypeHandler(() => {
           const formData = this._eventEditComponent.getData();
           const data = parseFormData(formData, event.id, offers, this._destinationsModel);
           data.offers = [];
