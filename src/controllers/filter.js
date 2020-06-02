@@ -46,8 +46,12 @@ export default class FilterController {
     }
   }
 
+  onNewEventChange() {
+    this._onFilterChange(FilterType.EVERYTHING);
+  }
+
   _onDataChange() {
-    this._render();
+    this.render();
   }
 
   _onFilterChange(filterType) {

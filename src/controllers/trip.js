@@ -6,7 +6,7 @@ import PointController from "./point.js";
 import DayComponent from "../components/day.js";
 import {render, RenderPosition, remove} from "../utils/render.js";
 import {stringifyDate} from "../utils/util.js";
-import {EditFormMode, DefaultEvent} from "../const.js";
+import {EditFormMode, DefaultEvent, FilterType} from "../const.js";
 import NewButtonComponent from "../components/new-event-button.js";
 
 const getEventDuration = (start, end) => end - start;
@@ -139,6 +139,8 @@ export default class TripController {
     const tripEventsElement = document.querySelector(`.trip-events`);
 
     this._newButtonComponent.setButtonHandler(() => {
+      this._sortComponent.onNewEventChange();
+      this._eventsModel.setFilter(FilterType.EVERYTHING)
       this._events = this._eventsModel.getEvents();
       isFirstEvent = !this._events || this._events.length === 0;
       if (isFirstEvent) {
@@ -191,6 +193,7 @@ export default class TripController {
 
   _onFilterChange() {
     this._updateEvents();
+    this._newButtonComponent.enabled();
   }
 
   _renderTripEvents(events, container, isSorting = false, onDataChange, onViewChange) {

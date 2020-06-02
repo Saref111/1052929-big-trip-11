@@ -23,7 +23,6 @@ filterController.render();
 const daysListComponent = new DaysListComponent();
 const tripController = new TripController(daysListComponent, eventsModel, api);
 
-
 filterController.joinSort(tripController.getSortComponent());
 
 const statisticComponent = new StatisticComponent(eventsModel);
