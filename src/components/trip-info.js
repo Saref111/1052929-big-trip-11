@@ -1,23 +1,49 @@
-import AbstractComponent from "./abstract-component.js";
+import AbstractSmartComponent from "./abstract-smart-component.js";
 
-const createTripInfoElement = () => {
+const stringifyDates = (dates) => {
+  console.log(dates);
+  return `Mar 18&nbsp;&mdash;&nbsp;20`;
+};
+
+const stringifyPlaces = (places) => {
+  return `Amsterdam &mdash; Chamonix &mdash; Geneva`;
+};
+
+const createTripInfoElement = (price, dates, places) => {
   return (
     `<section class="trip-main__trip-info  trip-info">
       <div class="trip-info__main">
-        <h1 class="trip-info__title">Amsterdam &mdash; Chamonix &mdash; Geneva</h1>
+        <h1 class="trip-info__title">${stringifyPlaces(places)}</h1>
 
-        <p class="trip-info__dates">Mar 18&nbsp;&mdash;&nbsp;20</p>
+        <p class="trip-info__dates">${stringifyDates(dates)}</p>
       </div>
 
       <p class="trip-info__cost">
-        Total: &euro;&nbsp;<span class="trip-info__cost-value">1230</span>
+        Total: &euro;&nbsp;<span class="trip-info__cost-value">${price}</span>
       </p>
     </section>`
   );
 };
 
-export default class TripInfo extends AbstractComponent {
+export default class TripInfo extends AbstractSmartComponent {
+  constructor() {
+    super();
+
+    this._totalPrice = 0;
+    this._dates = [];
+    this._places = [];
+  }
+
   getTemplate() {
-    return createTripInfoElement();
+    return createTripInfoElement(this._totalPrice, this._dates, this._places);
+  }
+
+  setData(totalPrice, dates, places) {
+    this._totalPrice = totalPrice;
+    this._dates = dates;
+    this._places = places;
+  }
+
+  recoveryListeners() {
   }
 }

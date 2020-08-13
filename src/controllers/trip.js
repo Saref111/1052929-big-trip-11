@@ -74,13 +74,22 @@ export default class TripController {
     this._eventsModel.setFilterChangeHandler(this._onFilterChange);
   }
 
-  _onDataChange(pointController, oldData, newData) {
+  _updateTripInfo() {
+    this._tripInfoComponent.setData(
+        this._eventsModel.getTotalPrice(),
+        this._eventsModel.getAllDates(),
+        this._eventsModel.getAllPlaces()
+    );
+    this._tripInfoComponent.rerender();
+  }
 
+  _onDataChange(pointController, oldData, newData) {
     if (!newData) {
       this._api.deleteEvent(String(oldData.id))
         .then(() => {
           pointController.destroy();
           this._eventsModel.removeEvent(oldData.id);
+          this._updateTripInfo();
           this._updateEvents();
         })
         .catch(() => {
@@ -91,6 +100,7 @@ export default class TripController {
       this._api.createEvent(newData)
         .then((pointModel) => {
           this._eventsModel.addEvent(pointModel);
+          this._updateTripInfo();
           this._updateEvents();
           this._newButtonComponent.enabled();
         })
@@ -104,6 +114,7 @@ export default class TripController {
           const isSuccess = this._eventsModel.updateEvent(oldData.id, event);
 
           if (isSuccess) {
+            this._updateTripInfo();
             this._updateEvents();
           }
         })
@@ -134,6 +145,8 @@ export default class TripController {
     this._events = this._eventsModel.getEvents();
     let isFirstEvent = !this._events || this._events.length === 0;
     const containerElement = this._container.getElement();
+
+    this._updateTripInfo();
 
     const headerMainElement = document.querySelector(`.trip-main`);
     const tripEventsElement = document.querySelector(`.trip-events`);

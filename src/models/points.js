@@ -13,6 +13,28 @@ export default class Points {
     this.updateEvent = this.updateEvent.bind(this);
   }
 
+  getTotalPrice() {
+    return this._events.reduce((acc, event) => {
+      acc += event.price;
+
+      return acc;
+    }, 0);
+  }
+
+  getAllPlaces() {
+    return this._events.map((event) => event.place);
+  }
+
+  getAllDates() {
+    let dates = [];
+    this._events.forEach((event) => {
+      dates.push(event.startTime);
+      dates.push(event.endTime);
+    });
+
+    return dates.sort((a, b) => a - b);
+  }
+
   getEvents() {
     return getEventsByFilter(this._events, this._activeFilterType);
   }
