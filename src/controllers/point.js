@@ -97,7 +97,7 @@ export default class PointController {
           this.destroy();
         });
 
-        render(this._dayComponent.getElement().parentElement, this._eventEditComponent);
+        render(this._container, this._eventEditComponent);
         document.addEventListener(`keydown`, this._onEscHandler);
         break;
 
