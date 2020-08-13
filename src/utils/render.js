@@ -11,7 +11,6 @@ export const RenderPosition = {
 };
 
 export const render = (container, component, place) => {
-  console.log(container, component, place);
   switch (place) {
     case RenderPosition.AFTERBEGIN:
       container.prepend(component.getElement());

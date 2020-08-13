@@ -19,7 +19,6 @@ export default class NewButtonComponent extends AbstractComponent {
   }
 
   setButtonHandler(handler) {
-    console.log(handler);
     this.getElement().addEventListener(`click`, () => {
       this._handler = handler;
       this._handler();
