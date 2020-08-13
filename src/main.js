@@ -7,6 +7,7 @@ import TripController from "./controllers/trip.js";
 import FilterController from "./controllers/filter.js";
 import EventsModel from "./models/points.js";
 
+
 const AUTHORIZATION_TOKEN = `Basic asasfs88666wge82h33`;
 const END_POINT = `https://11.ecmascript.pages.academy/big-trip/`;
 
