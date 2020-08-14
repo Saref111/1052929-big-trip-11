@@ -1,13 +1,5 @@
 import AbstractSmartComponent from "./abstract-smart-component.js";
-
-const stringifyDates = (dates) => {
-  console.log(dates);
-  return `Mar 18&nbsp;&mdash;&nbsp;20`;
-};
-
-const stringifyPlaces = (places) => {
-  return `Amsterdam &mdash; Chamonix &mdash; Geneva`;
-};
+import {stringifyTripDuration, stringifyPlaces} from "../utils/util.js";
 
 const createTripInfoElement = (price, dates, places) => {
   return (
@@ -15,7 +7,7 @@ const createTripInfoElement = (price, dates, places) => {
       <div class="trip-info__main">
         <h1 class="trip-info__title">${stringifyPlaces(places)}</h1>
 
-        <p class="trip-info__dates">${stringifyDates(dates)}</p>
+        <p class="trip-info__dates">${stringifyTripDuration(dates)}</p>
       </div>
 
       <p class="trip-info__cost">

@@ -45,7 +45,43 @@ const getDuration = (ms) => {
   return moment.duration(ms, `milliseconds`).humanize();
 };
 
+const stringifyTripDuration = (dates) => {
+  if (!dates || dates.length === 0) {
+    return ``;
+  }
+
+  const start = dates[0];
+  const end = dates[dates.length - 1];
+
+  if (start.getMonth() === end.getMonth()) {
+    return moment(start).format(`MMM D${`&nbsp;&mdash;&nbsp;`}${moment(end).format(`D`)}`);
+  }
+
+  return `${moment(start).format(`MMM D`)}&nbsp;&mdash;&nbsp;${moment(end).format(`MMM D`)}`;
+};
+
+const stringifyPlaces = (places) => {
+  if (!places || places.length === 0) {
+    return ``;
+  }
+
+  if (places.length < 3) {
+    return places.reduce((acc, it, i) => {
+      if (i < places.length - 1) {
+        acc += `${it} &mdash; `;
+      } else {
+        acc += `${it}`;
+      }
+      return acc;
+    }, ``);
+  }
+
+  return `${places[0]} &mdash; ... &mdash; ${places[places.length - 1]}`;
+};
+
 export {
+  stringifyPlaces,
+  stringifyTripDuration,
   getRandomArrayElement,
   getRandomInt,
   addEventListenerBySelector,
